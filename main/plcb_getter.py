@@ -86,23 +86,24 @@ def dict_builder(url):
     assembles our objects into serializable form
     '''
     tree = treeify(url)
-    # will give us a string, just so we have an idea we've hit the right thing
+    # will give us an output string, just so we have an idea we've
+    # hit the right thing
     num_stores_xpath = '/html/body/div[1]/div/div[3]/div[4]/div[5]/div/span/text()'
     print tree.xpath(num_stores_xpath)
 
     retail_store_ids = get_retail_ids(tree)
-    hours_sets = get_retail_hours(tree)
+    hours = get_retail_hours(tree)
     retail_store_data = assemble_lat_long_address_phone(tree)
     lat_long = get_lat_long(retail_store_data)
     address_phone = get_address_phone(retail_store_data)
 
     print "building serializable data sets ...."
     # creates a list of dictionaries for serializing into json
-    return [{"id": store, "hours": hours_sets[i], "latitude": float(lat_long[i][0]), "longitude": float(lat_long[i][1]), "address": address_phone[i][0], "phone": address_phone[i][1]} for i, store in enumerate(retail_store_ids)]
+    return [{"id": store, "hours": hours[i], "latitude": float(lat_long[i][0]), "longitude": float(lat_long[i][1]), "address": address_phone[i][0], "phone": address_phone[i][1]} for i, store in enumerate(retail_store_ids)]
 
     # print "finding store types ...."
     # need to investigate why this is giving me a weird number of values --
-    # I'll want this, but not worth slowing down everything.
+    # I'll want this, but not worth slowing down workong on everything else.
     # they're mostly blank, but we should ID premium collection stores
     # retail_store_type_list = [elem.strip() for elem in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[3]/text()')]
 
