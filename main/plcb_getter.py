@@ -64,7 +64,7 @@ def assemble_lat_long_address_phone(tree):
     return [option.values()[2] for option in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[5]/form/input') if '<br>' not in option.values()[2]]
 
 
-def get_lat_long(tree, retail_store_data):
+def get_lat_long(retail_store_data):
     '''
     makes sure we store these together for later mapping to an object
     '''
@@ -72,7 +72,7 @@ def get_lat_long(tree, retail_store_data):
     return [tuple(retail_store_data[x:x + 2]) for x in xrange(0, len(retail_store_data), 4)]
 
 
-def get_address_phone(tree, retail_store_data):
+def get_address_phone(retail_store_data):
     '''
     stores these together for later display in predictable order
     '''
@@ -91,8 +91,8 @@ def dict_builder(url):
     retail_store_ids = get_retail_ids(tree)
     hours_sets = get_retail_hours(tree)
     retail_store_data = assemble_lat_long_address_phone(tree)
-    lat_long = get_lat_long(tree, retail_store_data)
-    address_phone = get_address_phone(tree, retail_store_data)
+    lat_long = get_lat_long(retail_store_data)
+    address_phone = get_address_phone(retail_store_data)
 
     print "building serializable data sets ...."
     # creates a list of dictionaries for serializing into json
