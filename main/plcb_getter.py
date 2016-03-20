@@ -41,9 +41,11 @@ def dict_builder(url):
 
     print "getting hours ...."
     retail_store_hours = tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[4]/div/div/text()')
-    # makes a list of tuples of (day_of_week, hours_of_operation)
-    # with Sunday at list position[0]
+    # makes one big list of tuples of (day_of_week, hours_of_operation)
     hours_tuples = zip(retail_store_hours, retail_store_hours[1::])[::2]
+    # chunks hours_tuples out into lists of tuples, each representing a week
+    # and the regular hours of each store
+    hours_sets = [hours_tuples[x:x + 7] for x in xrange(0, len(hours_tuples), 7)]
 
     # print "finding store types ...."
     # need to investigate why this is giving me a weird number of values --
@@ -55,25 +57,27 @@ def dict_builder(url):
 
     print "demystifying store location data ...."
     retail_store_data = [option.values()[2] for option in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[5]/form/input') if '<br>' not in option.values()[2]]
+
+    # we'll use latitude and longitude together, and differently than address and phone. so let's chunk those out into usable storage.
+    lat_long = [tuple(retail_store_data[x:x + 2]) for x in xrange(0, len(retail_store_data), 4)]
+
+    address_phone = [tuple(retail_store_data[x:x + 2]) for x in xrange(2, len(retail_store_data), 4)]
     # this will chunk it out into lists of lists, each containing
     # one discrete set of long, lat, address, phone
     # retail_store_data_final = [retail_store_data[x:x + 4] for x in xrange(0, len(retail_store_data), 4)]
 
     print "building dict ...."
-    # resulting dict has retail hours by (day_of_week, hours) in tuples
-    # at indices 0-6, longitude at 7, latitude at 8, address at 9, phone at 10
+    # resulting dict has its values in a list of tuples:
+    # retail hours by (day_of_week, hours) at indices 0-6,
+    # (longitude, latitude) at 7, (address, phone) at 9,
     # and unique store ids in strings as keys
     for i, store in enumerate(retail_store_ids):
-        days = 7
-        len_location_data = 4
-        stores[store] = hours_tuples[:days]
-        # busting these out of list form; we'll need to use them differently
-        for data in retail_store_data[:len_location_data]:
-            stores[store].append(data)
-        del hours_tuples[:days]
-        del retail_store_data[:len_location_data]
+        stores[store] = hours_sets[i]
+        stores[store].append(lat_long[i])
+        stores[store].append(address_phone[i])
 
-    print stores
+    print "done."
+
     return stores
 
 
