@@ -42,7 +42,7 @@ def dict_builder(url):
     print "getting hours ...."
     retail_store_hours = tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[4]/div/div/text()')
     # makes a list of tuples of (day_of_week, hours_of_operation)
-    # with Sunday at position[0]
+    # with Sunday at list position[0]
     hours_tuples = zip(retail_store_hours, retail_store_hours[1::])[::2]
 
     # print "finding store types ...."
