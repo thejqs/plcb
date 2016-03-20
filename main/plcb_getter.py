@@ -49,7 +49,9 @@ def dict_builder(url):
     hours_tuples = zip(retail_store_hours, retail_store_hours[1::])[::2]
 
     # print "finding store types ...."
-    # mostly blank, but we should ID premium collection stores
+    # need to investigate why this is giving me a weird number of values --
+    # I'll want this, but not worth slowing down everything.
+    # they're mostly blank, but we should ID premium collection stores
     # retail_store_type_list = [elem.strip() for elem in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[3]/text()')]
 
     # print "there are", len(retail_store_type_list), "things in the type_list"
