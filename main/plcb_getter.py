@@ -1,6 +1,11 @@
+#!usr/bin/env python
+
+import collections
 import requests
 from lxml import etree
 import StringIO
+import csv
+import json
 
 
 def open_url(url):
@@ -24,14 +29,14 @@ def treeify(url):
     gets the parsed tree to begin the scrape
     '''
     html = open_url(url)
-    parse_html(html)
+    return parse_html(html)
 
 
 def dict_builder(url):
     tree = treeify(url)
 
     # will store data about each PLCB retail location; store_id as key
-    stores = {}
+    # stores = []
     # will give us a string, just so we have an idea we've hit the right thing
     num_stores_xpath = '/html/body/div[1]/div/div[3]/div[4]/div[5]/div/span/text()'
     print tree.xpath(num_stores_xpath)
@@ -66,23 +71,26 @@ def dict_builder(url):
     # one discrete set of long, lat, address, phone
     # retail_store_data_final = [retail_store_data[x:x + 4] for x in xrange(0, len(retail_store_data), 4)]
 
-    print "building dict ...."
-    # resulting dict has its values in a list of tuples:
-    # retail hours by (day_of_week, hours) at indices 0-6,
-    # (longitude, latitude) at 7, (address, phone) at 9,
-    # and unique store ids in strings as keys
-    for i, store in enumerate(retail_store_ids):
-        stores[store] = hours_sets[i]
-        stores[store].append(lat_long[i])
-        stores[store].append(address_phone[i])
+    print "building data sets ...."
+    # creates a list of dictionaries for serializing into json
+    data = [{"id": store, "hours": hours_sets[i], "latitude": float(lat_long[i][0]), "longitude": float(lat_long[i][1]), "address": address_phone[i][0], "phone": address_phone[i][1]} for i, store in enumerate(retail_store_ids)]
+
+    print 'writing json'
+    j = json.dumps(data, indent=4)
+    with open('retail_location_data.json', 'w') as f:
+        print >> f, j
+
+    # print 'writing csv'
+    # writer = csv.writer(open('retail_data.csv', 'wb'))
+    # writer.writerow(data)
 
     print "done."
 
-    return stores
+    return data
 
 
-def start_scrape():
-    '''
-    runs the functions to do the damn thang
-    '''
-    dict_builder(url)
+# def start_scrape():
+#     '''
+#     runs the functions to do the damn thang
+#     '''
+dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize=700&category=&city=&zip_code=&county=All+Stores&storeNO=%')
