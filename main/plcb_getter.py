@@ -61,12 +61,14 @@ def assemble_lat_long_address_phone(tree):
     them apart in short order to use them differently
     '''
     print "demystifying store location data ...."
+    # ignoring a duplicate value with extra html tags
     return [option.values()[2] for option in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[5]/form/input') if '<br>' not in option.values()[2]]
 
 
 def get_lat_long(retail_store_data):
     '''
-    makes sure we store these together for later mapping to an object
+    makes sure we store these somewhere predictable for
+    later mapping, both to an object and to a, um, map
     '''
     # we'll use latitude and longitude together, and differently than address and phone. so let's chunk those out into usable storage.
     return [tuple(retail_store_data[x:x + 2]) for x in xrange(0, len(retail_store_data), 4)]
