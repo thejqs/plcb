@@ -62,27 +62,18 @@ def dict_builder(url):
 
     print "demystifying store location data ...."
     retail_store_data = [option.values()[2] for option in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[5]/form/input') if '<br>' not in option.values()[2]]
-
     # we'll use latitude and longitude together, and differently than address and phone. so let's chunk those out into usable storage.
     lat_long = [tuple(retail_store_data[x:x + 2]) for x in xrange(0, len(retail_store_data), 4)]
-
     address_phone = [tuple(retail_store_data[x:x + 2]) for x in xrange(2, len(retail_store_data), 4)]
-    # this will chunk it out into lists of lists, each containing
-    # one discrete set of long, lat, address, phone
-    # retail_store_data_final = [retail_store_data[x:x + 4] for x in xrange(0, len(retail_store_data), 4)]
 
-    print "building data sets ...."
+    print "building serializable data sets ...."
     # creates a list of dictionaries for serializing into json
     data = [{"id": store, "hours": hours_sets[i], "latitude": float(lat_long[i][0]), "longitude": float(lat_long[i][1]), "address": address_phone[i][0], "phone": address_phone[i][1]} for i, store in enumerate(retail_store_ids)]
 
-    print 'writing json'
+    print 'writing json ....'
     j = json.dumps(data, indent=4)
     with open('retail_location_data.json', 'w') as f:
         print >> f, j
-
-    # print 'writing csv'
-    # writer = csv.writer(open('retail_data.csv', 'wb'))
-    # writer.writerow(data)
 
     print "done."
 
