@@ -1,9 +1,6 @@
-import urllib
-import urllib2
 import requests
 from lxml import etree
 import StringIO
-import re
 
 
 def open_url(url):
