@@ -1,10 +1,8 @@
 #!usr/bin/env python
 
-import collections
 import requests
 from lxml import etree
 import StringIO
-import csv
 import json
 
 
