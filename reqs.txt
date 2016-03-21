@@ -16,6 +16,7 @@ decorator==4.0.9
 functools32==3.2.3.post2
 futures==3.0.5
 gnureadline==6.3.3
+ipdb==0.9.0
 ipykernel==4.3.1
 ipython==4.1.2
 ipython-genutils==0.1.0
@@ -28,6 +29,7 @@ jupyter-console==4.1.1
 jupyter-core==4.1.0
 lxml==3.4.4
 mistune==0.7.2
+mpmath==0.19
 nbconvert==4.1.0
 nbformat==4.0.1
 notebook==4.1.0
