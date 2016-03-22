@@ -46,15 +46,15 @@ def get_retail_ids(tree):
     each PLCB retail location has a unique store number
     '''
     print "collecting IDs like a bouncer ..."
-    store_id_selectors = CSSSelector('span.boldMaroonText')
-    store_ids = store_id_selectors(tree)
-    return [store_id.text.strip() for store_id in store_ids]
+    store_ids_elements = CSSSelector('span.boldMaroonText')(tree)
+    # store_ids_elements = store_id_selectors(tree)
+    return [store_id.text.strip() for store_id in store_ids_elements]
 
 
 def get_store_types(tree):
     print "finding store types ...."
-    store_type_selectors = CSSSelector('div#storetype.columnTypeOfStore')
-    store_type_elements = store_type_selectors(tree)
+    store_type_elements = CSSSelector('div#storetype.columnTypeOfStore')(tree)
+    # store_type_elements = store_type_selectors(tree)
     return [store_type.text.strip() for store_type in store_type_elements]
 
 
@@ -65,29 +65,41 @@ def get_retail_hours(tree):
     '''
     print "getting hours ...."
     # grabbing days and hours separately
-    retail_store_days_selectors = CSSSelector('div.weekDayParent')
-    retail_store_hours_selectors = CSSSelector('div.timeSpanParent')
+    retail_store_days_elements = CSSSelector('div.weekDayParent')(tree)
+    retail_store_hours_elements = CSSSelector('div.timeSpanParent')(tree)
     # pairing DOM elements containing days and hours
-    retail_store_hours_elements = zip(retail_store_days_selectors(tree), retail_store_hours_selectors(tree))
+    retail_store_hours_zipped = zip(retail_store_days_elements, retail_store_hours_elements)
     # unpacking elements
-    retail_store_hours = [(day.text, hours_range.text) for (day, hours_range) in retail_store_hours_elements]
+    retail_store_hours = [(day.text, hours_range.text) for (day, hours_range) in retail_store_hours_zipped]
     # chunking (days, hours) tuples out into weeks
-    return [retail_store_hours[x:x + 7] for x in xrange(0, len(retail_store_hours), 7)]
+    weeks_offset = 7
+    return [retail_store_hours[x:x + weeks_offset] for x in xrange(0, len(retail_store_hours), weeks_offset)]
 
 
 def unpack_lat_long_address_phone(tree):
     '''
     the cleanest place on the page to collect these and separate them
     into their own discrete lists for later use
+    comes in as:
+    [0]longitude
+    [1]latitude
+    [2]address
+    [3]phone
+    [4]duplicate (and messy) address field, which we don't need
     '''
     print "demystifying store location data ...."
-    lat_long_address_phone_selectors = CSSSelector('.columnDistance form input')
-    lat_long_address_phone_elements = lat_long_address_phone_selectors(tree)
+    elements = CSSSelector('.columnDistance form input')(tree)
+    # lat_long_address_phone_elements = lat_long_address_phone_selectors(tree)
+    longitude_offset = 0
+    latitude_offset = 1
+    address_offset = 2
+    phone_offset = 3
+    len_input_fields = 5
 
-    longitudes = [float(lat_long_address_phone_elements[x].value) for x in xrange(0, len(lat_long_address_phone_elements), 5)]
-    latitudes = [float(lat_long_address_phone_elements[x].value) for x in xrange(1, len(lat_long_address_phone_elements), 5)]
-    addresses = [lat_long_address_phone_elements[x].value for x in xrange(2, len(lat_long_address_phone_elements), 5)]
-    phone_numbers = [lat_long_address_phone_elements[x].value for x in xrange(3, len(lat_long_address_phone_elements), 5)]
+    longitudes = [float(elements[x].value) for x in xrange(longitude_offset, len(elements), len_input_fields)]
+    latitudes = [float(elements[x].value) for x in xrange(latitude_offset, len(elements), len_input_fields)]
+    addresses = [elements[x].value for x in xrange(address_offset, len(elements), len_input_fields)]
+    phone_numbers = [elements[x].value for x in xrange(phone_offset, len(elements), len_input_fields)]
 
     return longitudes, latitudes, addresses, phone_numbers
 
