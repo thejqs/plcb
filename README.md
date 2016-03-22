@@ -16,7 +16,7 @@ I can't search it like I'd want. So I guess I have to go get the data.
 
 This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. My inspiration for this came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013).
 
-The state's database can do this, but the existing interfaces won't let me. There's no API. So here we are.
+The state's database can do this, but the existing interfaces won't let me. There's no API. **So here we are.**
 
 The state's database conveniently updates at the close of business each day. So at least one of the scripts in the project might end up doing the same.
 
