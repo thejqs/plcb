@@ -32,6 +32,15 @@ def treeify(url):
     return parse_html(unparsed_html)
 
 
+def how_many_stores(tree):
+    '''
+    not strictly necessary, but it will give us a value to check our
+    data-container counts against if we need it plus a little quick output
+    '''
+    num_stores_selector = CSSSelector('span.collectionText_SL')
+    print num_stores_selector(tree)[0].text
+
+
 def get_retail_ids(tree):
     '''
     each PLCB retail location has a unique store number
@@ -90,8 +99,7 @@ def dict_builder(url):
     tree = treeify(url)
     # will give us a quick output string, just so we have an idea we've
     # hit the right thing
-    num_stores_selector = CSSSelector('span.collectionText_SL')
-    print num_stores_selector(tree)[0].text
+    how_many_stores(tree)
 
     retail_store_ids = get_retail_ids(tree)
     hours = get_retail_hours(tree)
@@ -115,13 +123,13 @@ def write_json_to_file(data):
     '''
     print 'writing json ....'
     j = json.dumps(data, indent=4)
-    with open('new_retail_location_data.json', 'w') as f:
+    with open('retail_location_data.json', 'w') as f:
         print >> f, j
 
 
 def start_scrape():
     '''
-    runs the functions to do the damn thang
+    runs the main functions to do the damn thang
     '''
     data = dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize=700&category=&city=&zip_code=&county=All+Stores&storeNO=%')
     write_json_to_file(data)
