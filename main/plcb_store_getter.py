@@ -22,8 +22,6 @@ def parse_html(unparsed_html):
     the initial parse of the html
     '''
     return lxml.html.fromstring(unparsed_html)
-    # parser = etree.HTMLParser()
-    # return etree.parse(StringIO.StringIO(html), parser)
 
 
 def treeify(url):
@@ -42,7 +40,6 @@ def get_retail_ids(tree):
     store_id_selectors = CSSSelector('span.boldMaroonText')
     store_ids = store_id_selectors(tree)
     return [store_id.text.strip() for store_id in store_ids]
-    # xpath: return [num.strip() for num in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[2]/span[2]/text()')]
 
 
 def get_retail_hours(tree):
@@ -54,13 +51,10 @@ def get_retail_hours(tree):
     # grabbing days and hours separately
     retail_store_days_selectors = CSSSelector('div.weekDayParent')
     retail_store_hours_selectors = CSSSelector('div.timeSpanParent')
-
     # pairing DOM elements containing days and hours
     retail_store_hours_elements = zip(retail_store_days_selectors(tree), retail_store_hours_selectors(tree))
-
     # unpacking elements
     retail_store_hours = [(day.text, hours_range.text) for (day, hours_range) in retail_store_hours_elements]
-
     # chunking (days, hours) tuples out into weeks
     return [retail_store_hours[x:x + 7] for x in xrange(0, len(retail_store_hours), 7)]
 
@@ -87,7 +81,7 @@ def dict_builder(url):
     assembles our objects into serializable form
     '''
     tree = treeify(url)
-    # will give us an output string, just so we have an idea we've
+    # will give us a quick output string, just so we have an idea we've
     # hit the right thing
     num_stores_selector = CSSSelector('span.collectionText_SL')
     print num_stores_selector(tree)[0].text
@@ -97,7 +91,7 @@ def dict_builder(url):
     longitudes, latitudes, addresses, phone_numbers = unpack_lat_long_address_phone(tree)
 
     print "building JSON-able data sets ...."
-    # creates a list of dictionaries for serializing into json
+    # creates dictionaries for serializing into json
     return [{"id": store,
              "hours": hours[i],
              "longitude": longitudes[i],
