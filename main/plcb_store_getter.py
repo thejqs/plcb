@@ -42,6 +42,13 @@ def get_retail_ids(tree):
     return [store_id.text.strip() for store_id in store_ids]
 
 
+def get_store_types(tree):
+    print "finding store types ...."
+    store_type_selectors = CSSSelector('div#storetype.columnTypeOfStore')
+    store_type_elements = store_type_selectors(tree)
+    return [store_type.text.strip() for store_type in store_type_elements]
+
+
 def get_retail_hours(tree):
     '''
     hours of operation come off the page a little funky, so days and hours
@@ -88,6 +95,7 @@ def dict_builder(url):
 
     retail_store_ids = get_retail_ids(tree)
     hours = get_retail_hours(tree)
+    store_types = get_store_types(tree)
     longitudes, latitudes, addresses, phone_numbers = unpack_lat_long_address_phone(tree)
 
     print "building JSON-able data sets ...."
@@ -97,15 +105,8 @@ def dict_builder(url):
              "longitude": longitudes[i],
              "latitude": latitudes[i],
              "address": addresses[i],
-             "phone": phone_numbers[i]} for i, store in enumerate(retail_store_ids)]
-
-    # print "finding store types ...."
-    # need to investigate why this is giving me a weird number of values --
-    # I'll want this, but not worth slowing down working on everything else.
-    # they're mostly blank, but we should ID premium collection stores
-    # retail_store_type_list = [elem.strip() for elem in tree.xpath('/html/body/div[1]/div/div[3]/div[4]/div/div[3]/text()')]
-
-    # print "there are {} things in the type_list".format(len(retail_store_type_list))
+             "phone": phone_numbers[i],
+             "store_type": store_types[i] if len(store_types[i]) > 1 else "Regular-ass store"} for i, store in enumerate(retail_store_ids)]
 
 
 def write_json_to_file(data):
