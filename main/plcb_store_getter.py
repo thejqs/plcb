@@ -78,14 +78,16 @@ def get_retail_hours(tree):
 
 def unpack_lat_long_address_phone(tree):
     '''
-    the cleanest place on the page to collect these and separate them
-    into their own discrete lists for later use
+    a hidden form element is the cleanest place on the page to collect these.
+    they come off together, so we need to format and separate them
+    into their own lists.
     comes in as:
     [0]longitude
     [1]latitude
     [2]address
     [3]phone
     [4]duplicate (and messy) address field, which we don't need
+    repeat
     '''
     print "demystifying store location data ...."
     elements = CSSSelector('.columnDistance form input')(tree)
