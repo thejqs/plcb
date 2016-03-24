@@ -25,7 +25,8 @@ def open_url(url):
     '''
     collects our response object
     '''
-    r = requests.get(url)
+    headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
+    r = requests.get(url, headers=headers)
     if r.status_code == 200:
         return r.text  # r.content if we need binary
     else:
@@ -65,8 +66,20 @@ def get_product_codes(tree):
     collects the product codes that will complete our product-page URLs
     so we can check each for unicorns
     '''
+    # import ipdb; ipdb.set_trace()
     codes_elements = CSSSelector('td a b font')(tree)
     return [code.text for code in codes_elements if code.text.isdigit()]
+
+
+def make_search_urls(pages):
+    '''
+    a generator to help us iterate through the main search pages one at a time.
+    the number series the URL structure supports begins with the numeral 2
+    '''
+    # We've already captured data from one -- our initial -- URL by this point
+    for page in xrange(2, pages + 1):
+        search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}&selTyp=&selTypS=&selTypW=&selTypA=&searchCode=&searchPhrase=&CostRange=&selSale=&strFilter=&prevSortby=BrndNme&sortBy=BrndNme&sortDir=ASC'.format(page)
+        yield search_url
 
 
 def make_product_urls(all_product_codes):
@@ -78,29 +91,19 @@ def make_product_urls(all_product_codes):
         yield product_url
 
 
-def make_search_urls(pages):
-    '''
-    a generator to help us iterate through the main search pages one at a time.
-    the number series the URL structure supports begins with the numeral 2
-    '''
-    # We've already captured data from one -- our initial -- URL by this point
-    for page in xrange(2, pages + 1):
-        search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}'.format(page)
-        yield search_url
-
-
 def parse_search_page(pages):
     '''
     pulls product codes matching our needs from each search page
     '''
-    codes = []
-    for url in make_search_urls(pages):
-        tree = treeify(url)
-        num_codes = len(codes)
-        codes.extend(get_product_codes(tree))
-        print 'found {} more product codes'.format(len(codes) - num_codes)
+    for search_url in make_search_urls(pages):
+        print search_url
+        search_tree = treeify(search_url)
+        print search_tree
+        codes = get_product_codes(search_tree)
+        print codes  # 'collected {} total product codes'.format(len(codes))
 
-    return codes
+    yield codes
+
 
 def check_for_unicorn(tree):
     '''
@@ -161,15 +164,15 @@ def unicorn_scrape(product_urls):
     a list of dicts, each of which contains a unicorn
     '''
     unicorns = []
-    for url in product_urls:
-        tree = treeify(url)
+    for product_url in product_urls:
+        tree = treeify(product_url)
         is_unicorn = check_for_unicorn(tree)
         if not is_unicorn:
             return 'Not a unicorn'
         else:
             unicorn = assemble_unicorn(tree)
             unicorn['on_sale'] = on_sale(tree)
-            unicorns.extend(unicorn)
+            unicorns += (unicorn)
             print 'FOUND A UNICORN:', unicorn
 
     return unicorns
@@ -189,7 +192,7 @@ def prepare_unicorn_search(url):
     page_product_codes = get_product_codes(tree)
     print 'found {} product codes'.format(len(page_product_codes))
     more_page_product_codes = parse_search_page(pages)
-    page_product_codes.extend(more_page_product_codes)
+    page_product_codes += [code for code in more_page_product_codes]
 
     return page_product_codes
 
@@ -198,7 +201,12 @@ def hunt_unicorns(url):
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
+    Note:
+    when the search-page servers go down, the product pages stay up.
+    so for now, traversing the search pages first to collect the ids we need
+    in case anything happens to those servers while we're searching products
     '''
+    p = Pool(4)
     all_product_codes = prepare_unicorn_search(url)
     print 'narrowed it down to {} in-store products ....'.format(len(all_product_codes))
     product_urls = p.map(make_product_urls, all_product_codes)
@@ -223,8 +231,7 @@ def start_scrape():
     runs the main functions to do the damn thang
     '''
     url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
-    headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
-    data = hunt_unicorns(url, headers=headers)
+    data = hunt_unicorns(url)
     write_json_to_file(data)
 
 
