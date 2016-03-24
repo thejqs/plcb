@@ -12,7 +12,7 @@ def open_url(url):
     '''
     r = requests.get(url)
     if r.status_code == 200:
-        return r.text # r.content if we need binary
+        return r.text  # r.content if we need binary
     else:
         raise Exception('You are an idiot. Bad link.')
 
@@ -47,14 +47,12 @@ def get_retail_ids(tree):
     '''
     print "collecting IDs like a bouncer ..."
     store_ids_elements = CSSSelector('span.boldMaroonText')(tree)
-    # store_ids_elements = store_id_selectors(tree)
     return [store_id.text.strip() for store_id in store_ids_elements]
 
 
 def get_store_types(tree):
     print "finding store types ...."
     store_type_elements = CSSSelector('div#storetype.columnTypeOfStore')(tree)
-    # store_type_elements = store_type_selectors(tree)
     return [store_type.text.strip() for store_type in store_type_elements]
 
 
@@ -68,12 +66,15 @@ def get_retail_hours(tree):
     retail_store_days_elements = CSSSelector('div.weekDayParent')(tree)
     retail_store_hours_elements = CSSSelector('div.timeSpanParent')(tree)
     # pairing DOM elements containing days and hours
-    retail_store_hours_zipped = zip(retail_store_days_elements, retail_store_hours_elements)
+    retail_store_hours_zipped = zip(retail_store_days_elements,
+                                    retail_store_hours_elements)
     # unpacking elements
-    retail_store_hours = [(day.text, hours_range.text) for (day, hours_range) in retail_store_hours_zipped]
+    retail_store_hours = [(day.text, hours_range.text)
+                          for (day, hours_range) in retail_store_hours_zipped]
     # chunking (days, hours) tuples out into weeks
     weeks_offset = 7
-    return [retail_store_hours[x:x + weeks_offset] for x in xrange(0, len(retail_store_hours), weeks_offset)]
+    return [retail_store_hours[x:x + weeks_offset]
+            for x in xrange(0, len(retail_store_hours), weeks_offset)]
 
 
 def unpack_lat_long_address_phone(tree):
@@ -98,10 +99,14 @@ def unpack_lat_long_address_phone(tree):
     phone_offset = 3
     len_input_fields = 5
 
-    longitudes = [float(elements[x].value) for x in xrange(longitude_offset, len(elements), len_input_fields)]
-    latitudes = [float(elements[x].value) for x in xrange(latitude_offset, len(elements), len_input_fields)]
-    addresses = [elements[x].value for x in xrange(address_offset, len(elements), len_input_fields)]
-    phone_numbers = [elements[x].value for x in xrange(phone_offset, len(elements), len_input_fields)]
+    longitudes = [float(elements[x].value)
+                  for x in xrange(longitude_offset, len(elements), len_input_fields)]
+    latitudes = [float(elements[x].value)
+                 for x in xrange(latitude_offset, len(elements), len_input_fields)]
+    addresses = [elements[x].value
+                 for x in xrange(address_offset, len(elements), len_input_fields)]
+    phone_numbers = [elements[x].value
+                     for x in xrange(phone_offset, len(elements), len_input_fields)]
 
     return longitudes, latitudes, addresses, phone_numbers
 
@@ -118,7 +123,11 @@ def dict_builder(url):
     retail_store_ids = get_retail_ids(tree)
     hours = get_retail_hours(tree)
     store_types = get_store_types(tree)
-    longitudes, latitudes, addresses, phone_numbers = unpack_lat_long_address_phone(tree)
+
+    longitudes,
+    latitudes,
+    addresses,
+    phone_numbers = unpack_lat_long_address_phone(tree)
 
     print "building JSON-able data sets ...."
     # creates dictionaries for serializing into json
@@ -128,7 +137,9 @@ def dict_builder(url):
              "latitude": latitudes[i],
              "address": addresses[i],
              "phone": phone_numbers[i],
-             "store_type": store_types[i] if len(store_types[i]) > 1 else "Regular-ass store"} for i, store in enumerate(retail_store_ids)]
+             "store_type": store_types[i] if len(store_types[i]) > 1
+             else "Regular-ass store"}
+            for i, store in enumerate(retail_store_ids)]
 
 
 def write_json_to_file(data):
@@ -147,9 +158,9 @@ def start_scrape():
     '''
     # a note about the URL: the site supports my manually adding a large(r)
     # number to the listSize attribute here even though it's not a page option.
-    # the call to .format() here is simply to make that more explicit
+    # the call to .format() is simply to make that more explicit
     # for future me or anyone who has to read this
-    data = dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize={}&category=&city=&zip_code=&county=All+Stores&storeNO=%'.format(700))
+    data = dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize={0}&category=&city=&zip_code=&county=All+Stores&storeNO=%'.format(700))
     write_json_to_file(data)
     print "done."
 
