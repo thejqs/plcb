@@ -4,17 +4,19 @@ Pennsylvania is a control state when it comes to adult beverages. It hires the a
 
 It's generally terrible for consumers. We have to drive to Ohio or Maryland or wherever for even some basics, some staples. **But it works out pretty well when one wants a bunch of data about booze.**
 
-Also terrible: the interface(s) the state puts on the data. No joke. 
+Also terrible: the interface(s) the state puts on the data. No joke.
 
 ![alt text][finewine]
 
 ![alt text][psearch]
 
-I can't search it like I'd want. So I guess I have to go get the data.
+I can't search it like I'd want. To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products. Daily.
+
+So I guess I have to go get the data.
 
 **Good thing I can write code.**
 
-This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. My inspiration for this came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013).
+This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013).
 
 The state's database can do this, but the existing interfaces won't let me. There's no API. **So here we are.**
 
