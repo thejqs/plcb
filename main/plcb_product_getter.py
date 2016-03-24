@@ -4,6 +4,7 @@ import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 import json
+from multiprocessing import Pool
 
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings()
@@ -84,8 +85,7 @@ def parse_search_page(pages):
         tree = treeify(url)
         num_codes = len(codes)
         codes.extend(get_product_codes(tree))
-        num_new_codes = len(codes) - num_codes
-        print 'found {} more product codes'.format(num_new_codes)
+        print 'found {} more product codes'.format(len(codes) - num_codes)
 
     return codes
 
@@ -106,7 +106,7 @@ def assemble_unicorn(tree):
     if a product passes the unicorn test, this gets called to assemble
     our main unicorn object.
     Returns:
-    a dict of our object
+    a dict of our object -- a unicorn dict, if you will
     '''
     unicorn_store_elements = CSSSelector('tr td.table-data')(tree)
     unicorn_store = [i.text.strip() for i in unicorn_store_elements]
@@ -145,7 +145,10 @@ def unicorn_scrape(product_urls):
     '''
     collects product data if the product passes
     the unicorn test
+    Returns:
+    a list of dicts, each of which contains a unicorn
     '''
+    unicorns = []
     for url in product_urls:
         tree = treeify(url)
         is_unicorn = check_for_unicorn(tree)
@@ -154,7 +157,10 @@ def unicorn_scrape(product_urls):
         else:
             unicorn = assemble_unicorn(tree)
             unicorn['on_sale'] = on_sale(tree)
-            return unicorn
+            unicorns.extend(unicorn)
+            print 'FOUND A UNICORN:', unicorn
+
+    return unicorns
 
 
 def prepare_unicorn_search(url):
@@ -181,14 +187,10 @@ def hunt_unicorns(url):
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
     '''
-    unicorns = []
     all_product_codes = prepare_unicorn_search(url)
     print 'narrowed it down to {} in-store products ....'.format(len(all_product_codes))
-    product_urls = make_product_urls(all_product_codes)
-    unicorn = unicorn_scrape(product_urls)
-    if unicorn != 'Not a unicorn':
-        print 'FOUND A UNICORN:', unicorn
-        unicorns.append(unicorn)
+    product_urls = p.map(make_product_urls, all_product_codes)
+    unicorns = p.map(unicorn_scrape, product_urls)
 
     print unicorns
     return unicorns
