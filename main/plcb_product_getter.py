@@ -5,6 +5,9 @@ import lxml.html
 from lxml.cssselect import CSSSelector
 import json
 
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
+
 
 def open_url(url):
     '''
@@ -62,7 +65,7 @@ def make_product_urls(all_product_codes):
         yield product_url
 
 
-def make_search_urls(tree, pages):
+def make_search_urls(pages):
     '''
     a generator to help us iterate through the main search pages one at a time
     '''
@@ -71,14 +74,20 @@ def make_search_urls(tree, pages):
         yield search_url
 
 
-def parse_search_page(search_urls):
+def parse_search_page(pages):
     '''
     pulls product codes matching our needs from each search page
     '''
-    for url in search_urls:
+    codes = []
+    for url in make_search_urls(pages):
+        # print url
         tree = treeify(url)
-        return get_product_codes(tree)
+        num_codes = len(codes)
+        codes.extend(get_product_codes(tree))
+        num_new_codes = len(codes) - num_codes
+        print 'found {} more product codes'.format(num_new_codes)
 
+    return codes
 
 def check_for_unicorn(tree):
     '''
@@ -144,8 +153,7 @@ def unicorn_scrape(product_urls):
             return 'Not a unicorn'
         else:
             unicorn = assemble_unicorn(tree)
-            on_sale = on_sale(tree)
-            unicorn['on_sale'] = on_sale
+            unicorn['on_sale'] = on_sale(tree)
             return unicorn
 
 
@@ -157,16 +165,15 @@ def prepare_unicorn_search(url):
     Returns:
     a list of product ids we need to append to a url stub
     '''
-    all_product_codes = []
     tree = treeify(url)
     pages, products = get_total_numbers(tree)
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
     page_product_codes = get_product_codes(tree)
-    all_product_codes.append(page_product_codes)
-    search_urls = make_search_urls(tree, pages)
-    more_page_product_codes = parse_search_page(search_urls)
-    all_product_codes.append(more_page_product_codes)
-    return all_product_codes
+    print 'found {} product codes'.format(len(page_product_codes))
+    more_page_product_codes = parse_search_page(pages)
+    page_product_codes.extend(more_page_product_codes)
+
+    return page_product_codes
 
 
 def hunt_unicorns(url):
