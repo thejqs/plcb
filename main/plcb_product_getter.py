@@ -1,13 +1,24 @@
 #!usr/bin/env python
 
+'''
+A crawler to search every product in the
+Pennsylvania Liquor Control Board's database, searching for unicorns:
+products available for sale in only one retail store in the entire state.
+The database is updated at the close of business every day.
+Thus every day is a chance for fresh data.
+On any given day, given the structure of the PLCB's
+product search interfaces, we have about 2,400 pages to crawl
+to wade through about 60,000 products, and then we can
+test for unicorns on the pages of products that meet our initial criteria.
+
+Fun, right?
+'''
+
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 import json
 from multiprocessing import Pool
-
-import requests.packages.urllib3
-requests.packages.urllib3.disable_warnings()
 
 
 def open_url(url):
@@ -18,6 +29,7 @@ def open_url(url):
     if r.status_code == 200:
         return r.text  # r.content if we need binary
     else:
+        print 'You got a {0} error from {1}'.format(r.status_code, r.url)
         raise Exception('You are an idiot. Bad link.')
 
 
@@ -30,7 +42,7 @@ def parse_html(unparsed_html):
 
 def treeify(url):
     '''
-    gets the parsed tree to begin the scrape
+    returns the parsed html tree to begin the scrape
     '''
     unparsed_html = open_url(url)
     return parse_html(unparsed_html)
@@ -68,10 +80,12 @@ def make_product_urls(all_product_codes):
 
 def make_search_urls(pages):
     '''
-    a generator to help us iterate through the main search pages one at a time
+    a generator to help us iterate through the main search pages one at a time.
+    the number series the URL structure supports begins with the numeral 2
     '''
-    for page in xrange(2, pages - 2):
-        search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}&selTyp=&selTypS=&selTypW=&selTypA=&searchCode=&searchPhrase=&CostRange=&selSale=&strFilter=&prevSortby=BrndNme&sortBy=BrndNme&sortDir=ASC'.format(page)
+    # We've already captured data from one -- our initial -- URL by this point
+    for page in xrange(2, pages + 1):
+        search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}'.format(page)
         yield search_url
 
 
@@ -81,7 +95,6 @@ def parse_search_page(pages):
     '''
     codes = []
     for url in make_search_urls(pages):
-        # print url
         tree = treeify(url)
         num_codes = len(codes)
         codes.extend(get_product_codes(tree))
@@ -143,8 +156,7 @@ def on_sale(tree):
 
 def unicorn_scrape(product_urls):
     '''
-    collects product data if the product passes
-    the unicorn test
+    collects product data if the product passes the unicorn test
     Returns:
     a list of dicts, each of which contains a unicorn
     '''
@@ -207,7 +219,12 @@ def write_json_to_file(data):
 
 
 def start_scrape():
-    data = hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
+    '''
+    runs the main functions to do the damn thang
+    '''
+    url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
+    headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
+    data = hunt_unicorns(url, headers=headers)
     write_json_to_file(data)
 
 
