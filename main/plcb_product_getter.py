@@ -96,11 +96,9 @@ def parse_search_page(pages):
     pulls product codes matching our needs from each search page
     '''
     for search_url in make_search_urls(pages):
-        print search_url
         search_tree = treeify(search_url)
-        print search_tree
         codes = get_product_codes(search_tree)
-        print codes  # 'collected {} total product codes'.format(len(codes))
+        print codes
 
     yield codes
 
@@ -165,8 +163,8 @@ def unicorn_scrape(product_urls):
     '''
     unicorns = []
     for product_url in product_urls:
-        tree = treeify(product_url)
-        is_unicorn = check_for_unicorn(tree)
+        product_tree = treeify(product_url)
+        is_unicorn = check_for_unicorn(product_tree)
         if not is_unicorn:
             return 'Not a unicorn'
         else:
