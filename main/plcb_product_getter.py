@@ -194,4 +194,19 @@ def hunt_unicorns(url):
     return unicorns
 
 
-hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
+def write_json_to_file(data):
+    '''
+    stores our objects in a pprint format
+    '''
+    print 'writing json ....'
+    j = json.dumps(data, indent=4)
+    with open('unicorns.json', 'w') as f:
+        print >> f, j
+
+
+def start_scrape():
+    data = hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
+    write_json_to_file(data)
+
+
+start_scrape()
