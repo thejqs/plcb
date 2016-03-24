@@ -1,5 +1,10 @@
 #!usr/bin/env python
 
+'''
+A scraper to collect data about every retail store the
+Pennsylvania Liquor Control Board operates. All 597 of them.
+'''
+
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
