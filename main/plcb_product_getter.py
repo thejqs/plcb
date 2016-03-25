@@ -4,12 +4,14 @@
 A crawler to search every product in the
 Pennsylvania Liquor Control Board's database, searching for unicorns:
 products available for sale in only one retail store in the entire state.
+
 The database is updated at the close of business every day.
 Thus every day is a chance for fresh data.
+
 On any given day, given the structure of the PLCB's
 product search interfaces, we have about 2,400 pages to crawl
 to wade through about 60,000 products to see which are in stores, and then
-we can test for unicorns among products that meet initial criteria.
+we can test for unicorns.
 
 Fun, right?
 '''
@@ -163,19 +165,20 @@ def unicorn_scrape(product_urls):
     Returns:
     a list of dicts, each of which contains a unicorn
     '''
-    unicorns = []
+    # unicorns = []
     for product_url in product_urls:
         product_tree = treeify(product_url)
         is_unicorn = check_for_unicorn(product_tree)
         if not is_unicorn:
-            return 'Not a unicorn'
+            # yield 'Not a unicorn'
+            continue
         else:
             unicorn = assemble_unicorn(product_tree)
             unicorn['on_sale'] = on_sale(product_tree)
-            unicorns += (unicorn)
+            # unicorns += unicorn
             print 'FOUND A UNICORN:', unicorn
-
-    return unicorns
+            yield unicorn
+    # return unicorns
 
 
 def prepare_unicorn_search(url):
@@ -209,7 +212,7 @@ def hunt_unicorns(url):
     all_product_codes = prepare_unicorn_search(url)
     print 'narrowed it down to {} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
-    unicorns = unicorn_scrape(product_urls)
+    unicorns = [unicorn for unicorn in unicorn_scrape(product_urls)]  # if unicorn != 'Not a unicorn'
 
     print 'here you go: {} unicorns'.format(len(unicorns))
     return unicorns
