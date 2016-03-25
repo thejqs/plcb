@@ -8,8 +8,8 @@ The database is updated at the close of business every day.
 Thus every day is a chance for fresh data.
 On any given day, given the structure of the PLCB's
 product search interfaces, we have about 2,400 pages to crawl
-to wade through about 60,000 products, and then we can
-test for unicorns on the pages of products that meet our initial criteria.
+to wade through about 60,000 products to see which are in stores, and then
+we can test for unicorns among products that meet initial criteria.
 
 Fun, right?
 '''
@@ -18,7 +18,7 @@ import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 import json
-from multiprocessing import Pool
+# from multiprocessing import Pool
 
 
 def open_url(url):
@@ -95,12 +95,14 @@ def parse_search_page(pages):
     '''
     pulls product codes matching our needs from each search page
     '''
-    for search_url in make_search_urls(pages):
+    codes = []
+    for i, search_url in enumerate(make_search_urls(pages)):
         search_tree = treeify(search_url)
-        codes = get_product_codes(search_tree)
-        print codes
+        new_codes = get_product_codes(search_tree)
+        codes += new_codes
+        print 'collected {0} total codes from {1} pages'.format(len(codes), i + 2)
 
-    yield codes
+    return codes
 
 
 def check_for_unicorn(tree):
@@ -168,8 +170,8 @@ def unicorn_scrape(product_urls):
         if not is_unicorn:
             return 'Not a unicorn'
         else:
-            unicorn = assemble_unicorn(tree)
-            unicorn['on_sale'] = on_sale(tree)
+            unicorn = assemble_unicorn(product_tree)
+            unicorn['on_sale'] = on_sale(product_tree)
             unicorns += (unicorn)
             print 'FOUND A UNICORN:', unicorn
 
@@ -188,9 +190,9 @@ def prepare_unicorn_search(url):
     pages, products = get_total_numbers(tree)
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
     page_product_codes = get_product_codes(tree)
-    print 'found {} product codes'.format(len(page_product_codes))
-    more_page_product_codes = parse_search_page(pages)
-    page_product_codes += [code for code in more_page_product_codes]
+    print 'found {} initial product codes'.format(len(page_product_codes))
+    more_codes = parse_search_page(pages)
+    page_product_codes += more_codes
 
     return page_product_codes
 
@@ -204,13 +206,12 @@ def hunt_unicorns(url):
     so for now, traversing the search pages first to collect the ids we need
     in case anything happens to those servers while we're searching products
     '''
-    p = Pool(4)
     all_product_codes = prepare_unicorn_search(url)
     print 'narrowed it down to {} in-store products ....'.format(len(all_product_codes))
-    product_urls = p.map(make_product_urls, all_product_codes)
-    unicorns = p.map(unicorn_scrape, product_urls)
+    product_urls = make_product_urls(all_product_codes)
+    unicorns = unicorn_scrape(product_urls)
 
-    print unicorns
+    print 'here you go: {} unicorns'.format(len(unicorns))
     return unicorns
 
 
