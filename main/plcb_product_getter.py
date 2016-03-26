@@ -51,6 +51,21 @@ def treeify(url):
     return parse_html(unparsed_html)
 
 
+def write_unicorn_json_to_file(data):
+    '''
+    stores our objects in a pprint format
+    '''
+    print 'writing json ....'
+    j = json.dumps(data, indent=4)
+    with open('unicorns.json', 'a') as f:
+        print >> f, j
+
+
+def write_codes_to_file(data):
+    with open('product_codes.txt', 'a') as f:
+        print >> f, data
+
+
 def get_total_numbers(tree):
     '''
     collects the total number of pages and products we have to crawl.
@@ -68,7 +83,6 @@ def get_product_codes(tree):
     collects the product codes that will complete our product-page URLs
     so we can check each for unicorns
     '''
-    # import ipdb; ipdb.set_trace()
     codes_elements = CSSSelector('td a b font')(tree)
     return [code.text for code in codes_elements if code.text.isdigit()]
 
@@ -87,6 +101,9 @@ def make_search_urls(pages):
 def make_product_urls(all_product_codes):
     '''
     a generator to hand off each product-page URL as it gets built
+
+    Args:
+    all product ids as generator elements
     '''
     for code in all_product_codes:
         product_url = 'http://www.lcbapps.lcb.state.pa.us/webapp/product_management/psi_ProductInventory_Inter.asp?cdeNo={0}'.format(code)
@@ -96,13 +113,18 @@ def make_product_urls(all_product_codes):
 def parse_search_page(pages):
     '''
     pulls product codes matching our needs from each search page
+
+    Args:
+    the number of total pages to search for product ids
     '''
     codes = []
     for i, search_url in enumerate(make_search_urls(pages)):
         search_tree = treeify(search_url)
         new_codes = get_product_codes(search_tree)
         codes += new_codes
-        print 'collected {0} total codes from {1} pages'.format(len(codes), i + 2)
+        for code in new_codes:
+            write_codes_to_file(code)
+        print 'collected {0} total new codes from {1} pages'.format(len(codes), i + 2)
 
     return codes
 
@@ -111,11 +133,15 @@ def check_for_unicorn(tree):
     '''
     gives us a quick thumbs-up or thumbs-down on whether each product page
     contains a unicorn
+
+    Args:
+    the parsed tree element of a product page
     '''
-    check_unicorn = CSSSelector('html body table tr td table tr td font')(tree)
+    check_unicorn = CSSSelector('body table tr td table tr td font')(tree)
     is_unicorn = False
     if 'one' in check_unicorn[0].text:
         is_unicorn = True
+
     return is_unicorn
 
 
@@ -123,27 +149,35 @@ def assemble_unicorn(tree):
     '''
     if a product passes the unicorn test, this gets called to assemble
     our main unicorn object.
+
+    Args:
+    the parsed tree element of a product page
+
     Returns:
     a dict of our object -- a unicorn dict, if you will
     '''
     unicorn_store_elements = CSSSelector('tr td.table-data')(tree)
     unicorn_store = [i.text.strip() for i in unicorn_store_elements]
     unicorn_store_id = unicorn_store[0]
-    num_unicorn_bottles = unicorn_store[2]
+    num_unicorn_bottles = unicorn_store[2][:1]
 
-    unicorn_product_info_elements = CSSSelector('ul li.newsFont b')(tree)
-    unicorn_product = [i.text.strip() for i in unicorn_product_info_elements]
-    unicorn_code = unicorn_product[0]
-    unicorn_name = unicorn_product[1]
-    unicorn_bottle_size = unicorn_product[2]
-    unicorn_price = unicorn_product[3]
+    try:
+        unicorn_product_elements = CSSSelector('ul li.newsFont b')(tree)
+        unicorn_product = [i.text.strip() for i in unicorn_product_elements]
+        unicorn_code = unicorn_product[0]
+        unicorn_name = unicorn_product[1]
+        unicorn_bottle_size = unicorn_product[2]
+        unicorn_price = unicorn_product[3]
 
-    return {'store_id': unicorn_store_id,
-            'name': unicorn_name,
-            'price': unicorn_price,
-            'bottles': num_unicorn_bottles,
-            'product_code': unicorn_code,
-            'bottle_size': unicorn_bottle_size}
+        return {'store_id': unicorn_store_id,
+                'name': unicorn_name,
+                'price': unicorn_price,
+                'bottles': num_unicorn_bottles,
+                'product_code': unicorn_code,
+                'bottle_size': unicorn_bottle_size}
+
+    except IndexError:
+        return {'unicorn_store': unicorn_store}
 
 
 def on_sale(tree):
@@ -151,6 +185,13 @@ def on_sale(tree):
     a separate element, when present. this data gets updated daily,
     so could change. and if we're collecting price, it would be incomplete
     of us not to check this
+
+    Args:
+    the parsed tree element of a product page
+
+    Returns:
+    a string for whether each unicorn item was on sale for addition to
+    each unicorn dict
     '''
     sale_element = CSSSelector('ul li.newsFont b font')(tree)
     if len(sale_element) > 0:
@@ -162,23 +203,24 @@ def on_sale(tree):
 def unicorn_scrape(product_urls):
     '''
     collects product data if the product passes the unicorn test
+
     Returns:
-    a list of dicts, each of which contains a unicorn
+    a generator element representing a dict, each of which contains a unicorn
     '''
-    # unicorns = []
+    unicorns = []
     for product_url in product_urls:
         product_tree = treeify(product_url)
         is_unicorn = check_for_unicorn(product_tree)
         if not is_unicorn:
-            # yield 'Not a unicorn'
             continue
         else:
             unicorn = assemble_unicorn(product_tree)
             unicorn['on_sale'] = on_sale(product_tree)
-            # unicorns += unicorn
+            unicorns += unicorn
+            write_unicorn_json_to_file(unicorn)
             print 'FOUND A UNICORN:', unicorn
-            yield unicorn
-    # return unicorns
+
+    return unicorns
 
 
 def prepare_unicorn_search(url):
@@ -186,6 +228,7 @@ def prepare_unicorn_search(url):
     assembles everything we need to perform the search,
     getting the heavy lifting of walking all the search pages
     out of the way so we can focus on what we care about.
+
     Returns:
     a list of product ids we need to append to a url stub
     '''
@@ -193,9 +236,15 @@ def prepare_unicorn_search(url):
     pages, products = get_total_numbers(tree)
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
     page_product_codes = get_product_codes(tree)
-    print 'found {} initial product codes'.format(len(page_product_codes))
-    more_codes = parse_search_page(pages)
-    page_product_codes += more_codes
+
+    # a convenience for now to not have to scrape again for these if
+    # the script breaks after we collect these. should that happen (cries),
+    # we can just start again from here
+    for code in page_product_codes:
+        write_codes_to_file(code)
+    print 'found {0} initial product codes'.format(len(page_product_codes))
+    page_product_codes += parse_search_page(pages)
+    # print 'collected {0} total codes'.format(len(page_product_codes))
 
     return page_product_codes
 
@@ -204,37 +253,34 @@ def hunt_unicorns(url):
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
+
+    Args:
+    a url on which to begin running these functions
+
+    Returns:
+    a JSON-serializable list of unicorn dicts
+
     Note:
     when the search-page servers go down, the product pages stay up.
     so for now, traversing the search pages first to collect the ids we need
     in case anything happens to those servers while we're searching products
     '''
+    # p = Pool(4)
+    unicorns = []
     all_product_codes = prepare_unicorn_search(url)
-    print 'narrowed it down to {} in-store products ....'.format(len(all_product_codes))
+    print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
-    unicorns = [unicorn for unicorn in unicorn_scrape(product_urls)]  # if unicorn != 'Not a unicorn'
+    unicorns += unicorn_scrape(product_urls)
 
-    print 'here you go: {} unicorns'.format(len(unicorns))
+    print 'here you go: {0} unicorns'.format(len(unicorns))
     return unicorns
-
-
-def write_json_to_file(data):
-    '''
-    stores our objects in a pprint format
-    '''
-    print 'writing json ....'
-    j = json.dumps(data, indent=4)
-    with open('unicorns.json', 'w') as f:
-        print >> f, j
 
 
 def start_scrape():
     '''
     runs the main functions to do the damn thang
     '''
-    url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
-    data = hunt_unicorns(url)
-    write_json_to_file(data)
+    data = hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
 
 
 start_scrape()
