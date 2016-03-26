@@ -40,7 +40,7 @@ def treeify(url):
 def how_many_stores(tree):
     '''
     not strictly necessary, but it will give us a value to check our
-    data-container counts against if we need it plus a little quick output
+    data-container counts against if we need it, also a little quick output
     '''
     num_stores_selector = CSSSelector('span.collectionText_SL')
     print num_stores_selector(tree)[0].text
@@ -48,7 +48,7 @@ def how_many_stores(tree):
 
 def get_retail_ids(tree):
     '''
-    each PLCB retail location has a unique store number
+    each PLCB retail location has a unique store number -- praise be
     '''
     print "collecting IDs like a bouncer ..."
     store_ids_elements = CSSSelector('span.boldMaroonText')(tree)
@@ -56,6 +56,11 @@ def get_retail_ids(tree):
 
 
 def get_store_types(tree):
+    '''
+    often a store won't have a type attached, but in the case of
+    a special store, such as one designated 'Premium Collection,'
+    we should know about it.
+    '''
     print "finding store types ...."
     store_type_elements = CSSSelector('div#storetype.columnTypeOfStore')(tree)
     return [store_type.text.strip() for store_type in store_type_elements]
