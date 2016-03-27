@@ -176,7 +176,8 @@ def assemble_unicorn(tree):
         unicorn_code = unicorn_product[0]
         unicorn_name = unicorn_product[1]
         unicorn_bottle_size = unicorn_product[2]
-        unicorn_price = unicorn_product[3][1:]
+        # prices over $1000 have a comma in them
+        unicorn_price = unicorn_product[3][1:].replace(',', '')
 
         # need a mutable data structure here to extend by assignment later
         return {'store_id': unicorn_store_id,
@@ -231,7 +232,7 @@ def unicorn_scrape(product_urls):
             # it's either this or a ternary operator, so ....
             try:
                 unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
-            except ValueError:
+            except (ValueError, AttributeError) as e:
                 unicorn['on_sale'] = False
             unicorns += unicorn
             print 'FOUND A UNICORN:', unicorn
