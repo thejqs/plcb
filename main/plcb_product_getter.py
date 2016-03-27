@@ -92,6 +92,9 @@ def make_search_urls(pages):
     '''
     a generator to help us iterate through the main search pages one at a time.
     the number series the URL structure supports begins with the numeral 2
+
+    Args:
+    the total number of pages to search
     '''
     # We've already captured data from one -- our initial -- URL by this point
     for page in xrange(2, pages + 1):
@@ -225,7 +228,11 @@ def unicorn_scrape(product_urls):
         else:
             unicorn = assemble_unicorn(product_tree)
             sale_price = on_sale(product_tree)
-            unicorn['on_sale'] = float(sale_price[0].replace('Sale Price: $', ''))
+            # it's either this or a ternary operator, so ....
+            try:
+                unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
+            except ValueError:
+                unicorn['on_sale'] = False
             unicorns += unicorn
             print 'FOUND A UNICORN:', unicorn
 
@@ -250,15 +257,15 @@ def prepare_unicorn_search(url):
     # a convenience for now to not have to scrape again for these if
     # the script breaks after we collect these. should that happen (cries),
     # we can just start again from here
-    for code in page_product_codes:
-        write_codes_to_file(code)
+    # for code in page_product_codes:
+    #     write_codes_to_file(code)
     print 'found {0} initial product codes'.format(len(page_product_codes))
     page_product_codes += parse_search_page(pages)
 
     return page_product_codes
 
 
-def hunt_unicorns(url):
+def hunt_unicorns():  # need to reset parameter to url to run full script
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
@@ -274,12 +281,15 @@ def hunt_unicorns(url):
     so for now, traversing the search pages first to collect the ids we need
     in case anything happens to those servers while we're searching products
     '''
-    all_product_codes = prepare_unicorn_search(url)
+    # all_product_codes = prepare_unicorn_search(url)
+    with open('product_codes-2016-03-27.txt', 'r') as f:
+        all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     unicorns = unicorn_scrape(product_urls)
 
-    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
+    for unicorn in unicorns:
+        write_unicorn_json_to_file(unicorn)
 
 
 def start_scrape():
@@ -288,4 +298,10 @@ def start_scrape():
     '''
     hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
 
-start_scrape()
+
+# start_scrape()
+hunt_unicorns()
+
+
+if __name__ == '__main__':
+    url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
