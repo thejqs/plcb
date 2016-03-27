@@ -9,6 +9,7 @@ import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 import json
+import datetime
 
 
 def open_url(url):
@@ -134,10 +135,7 @@ def dict_builder(url):
     hours = get_retail_hours(tree)
     store_types = get_store_types(tree)
 
-    longitudes,
-    latitudes,
-    addresses,
-    phone_numbers = unpack_lat_long_address_phone(tree)
+    longitudes, latitudes, addresses, phone_numbers = unpack_lat_long_address_phone(tree)
 
     print "building JSON-able data sets ...."
     # creates dictionaries for serializing into json
@@ -157,8 +155,8 @@ def write_json_to_file(data):
     stores our objects in a pprint format
     '''
     print 'writing json ....'
-    j = json.dumps(data, indent=4)
-    with open('retail_location_data.json', 'w') as f:
+    j = json.dumps(data, sort_keys=True, indent=4)
+    with open('retail_stores-{}.json'.format(datetime.date.today()), 'w') as f:
         print >> f, j
 
 
