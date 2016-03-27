@@ -57,7 +57,7 @@ def write_unicorn_json_to_file(data):
     stores our objects in a pprint format
     '''
     print 'writing json ....'
-    j = json.dumps(data, indent=4)
+    j = json.dumps(data, sort_keys=True, indent=4)
     with open('unicorns-{}.json'.format(datetime.date.today()), 'a') as f:
         print >> f, j
 
@@ -178,6 +178,7 @@ def assemble_unicorn(tree):
         # need a mutable data structure here to extend by assignment later
         return {'store_id': unicorn_store_id,
                 'name': unicorn_name,
+                # we'll want these two de-stringified for value comparisons
                 'price': float(unicorn_price),
                 'bottles': int(num_unicorn_bottles),
                 'product_code': unicorn_code,
@@ -227,8 +228,8 @@ def unicorn_scrape(product_urls):
             unicorn['on_sale'] = float(sale_price[0].replace('Sale Price: $', ''))
             unicorns += unicorn
             print 'FOUND A UNICORN:', unicorn
-            write_unicorn_json_to_file(unicorn)
 
+    print 'here you go: {0} unicorns'.format(len(unicorns))
     return unicorns
 
 
@@ -269,25 +270,22 @@ def hunt_unicorns(url):
     a JSON-serializable list of unicorn dicts
 
     Note:
-    when the search-page servers go down, the product pages stay up.
+    when the search-page server goes down, the product pages stay up.
     so for now, traversing the search pages first to collect the ids we need
     in case anything happens to those servers while we're searching products
     '''
-    unicorns = []
     all_product_codes = prepare_unicorn_search(url)
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
-    unicorns += unicorn_scrape(product_urls)
+    unicorns = unicorn_scrape(product_urls)
 
-    print 'here you go: {0} unicorns'.format(len(unicorns))
-    return unicorns
+    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
 
 
 def start_scrape():
     '''
     runs the main function to do the damn thang
     '''
-    data = hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
-
+    hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
 
 start_scrape()
