@@ -10,9 +10,9 @@ Also terrible: the interface(s) the state puts on the data. No joke.
 
 ![alt text][psearch]
 
-I can't search it like I'd want. To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products. Daily.
+I can't search it like I'd want. To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products just to find the 14,000 or so that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store. Daily.
 
-So I guess I have to go get the data.
+So I guess I have to make a computer do it.
 
 **Good thing I can write code.**
 
