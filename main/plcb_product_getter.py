@@ -181,8 +181,10 @@ def assemble_unicorn(tree):
 
         # need a mutable data structure here to extend by assignment later
         return {'store_id': unicorn_store_id,
-                'name': unicorn_name,
-                # we'll want these two de-stringified for value comparisons
+                # handling a case where some names have extra spaces not caught
+                # by the earlier .strip()
+                'name': unicorn_name.replace('  ', ''),
+                # we'll want these two de-stringified for value comparisons:
                 'price': float(unicorn_price),
                 'bottles': int(num_unicorn_bottles),
                 'product_code': unicorn_code,
@@ -288,17 +290,16 @@ def hunt_unicorns(url):  # include parameter only to run full script
     in case anything happens to those servers while we're searching products
     '''
     all_product_codes = prepare_unicorn_search(url)
-    # if it breaks but we have all the codes already,
+    # if it breaks but we have all the day's product codes already,
     # comment out the line above, remove the url parameter from
-    # the function definition, and comment the next two lines back in
-    # with open('product_codes-2016-03-27.txt', 'r') as f:
+    # the function definition, and comment the next two lines back in:
+    # with open('product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
     #     all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     unicorns = unicorn_scrape(product_urls)
 
-    for unicorn in unicorns:
-        write_unicorn_json_to_file(unicorn)
+    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
 
 
 def start_scrape():
