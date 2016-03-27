@@ -202,8 +202,8 @@ def on_sale(tree):
     the parsed tree element of a product page
 
     Returns:
-    a list-encased string for whether each unicorn item was on sale
-    for addition to each unicorn dict
+    if on sale: a string containing the sale prices
+    else: False
     '''
     sale_element = CSSSelector('ul li.newsFont b font')(tree)
     if len(sale_element) > 0:
@@ -216,8 +216,12 @@ def unicorn_scrape(product_urls):
     '''
     collects product data if the product passes the unicorn test
 
+    Args:
+    all of the product URLs to which we will apply the unicorn test,
+    gathering data if it passes
+
     Returns:
-    a generator element representing a dict, each of which contains a unicorn
+    a list of dicts, each of which contains a unicorn
     '''
     unicorns = []
     for product_url in product_urls:
@@ -234,7 +238,8 @@ def unicorn_scrape(product_urls):
                 unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
             except (ValueError, AttributeError) as e:
                 unicorn['on_sale'] = False
-            unicorns += unicorn
+            # .append() because it expects an object
+            unicorns.append(unicorn)
             print 'FOUND A UNICORN:', unicorn
 
     print 'here you go: {0} unicorns'.format(len(unicorns))
@@ -248,7 +253,7 @@ def prepare_unicorn_search(url):
     out of the way so we can focus on what we care about.
 
     Returns:
-    a list of product ids we need to append to a url stub
+    a list of product ids we need to append to a URL stub
     '''
     tree = treeify(url)
     pages, products = get_total_numbers(tree)
@@ -266,7 +271,7 @@ def prepare_unicorn_search(url):
     return page_product_codes
 
 
-def hunt_unicorns():  # need to reset parameter to url to run full script
+def hunt_unicorns(url):  # include parameter only to run full script
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
@@ -282,9 +287,12 @@ def hunt_unicorns():  # need to reset parameter to url to run full script
     so for now, traversing the search pages first to collect the ids we need
     in case anything happens to those servers while we're searching products
     '''
-    # all_product_codes = prepare_unicorn_search(url)
-    with open('product_codes-2016-03-27.txt', 'r') as f:
-        all_product_codes = [line.strip() for line in f.readlines()]
+    all_product_codes = prepare_unicorn_search(url)
+    # if it breaks but we have all the codes already,
+    # comment out the line above, remove the url parameter from
+    # the function definition, and comment the next two lines back in
+    # with open('product_codes-2016-03-27.txt', 'r') as f:
+    #     all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     unicorns = unicorn_scrape(product_urls)
@@ -300,8 +308,8 @@ def start_scrape():
     hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
 
 
-# start_scrape()
-hunt_unicorns()
+start_scrape()
+# hunt_unicorns()
 
 
 if __name__ == '__main__':
