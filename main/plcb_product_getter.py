@@ -126,6 +126,8 @@ def parse_search_page(pages):
         search_tree = treeify(search_url)
         new_codes = get_product_codes(search_tree)
         codes += new_codes
+        # writing there to a file in case our script breaks --
+        # wouldn't want to have to re-run the whole thing
         for code in new_codes:
             write_codes_to_file(code)
         print 'collected {0} total new codes from {1} pages'.format(len(codes), i + 2)
@@ -166,7 +168,7 @@ def assemble_unicorn(tree):
     # there can be as many as three digits at the beginning of each
     # number-of-units string for sure and theoretically more, followed by
     # a space: 'x units'
-    # hence this regex to handle the pattern and the string variations
+    # hence this regex to handle the string variations
     num_unicorn_bottles_pattern = '(^\d+(?!\S))'
     num_unicorn_bottles = re.match(num_unicorn_bottles_pattern, unicorn_store[2]).group()
 
@@ -176,14 +178,14 @@ def assemble_unicorn(tree):
         unicorn_code = unicorn_product[0]
         unicorn_name = unicorn_product[1]
         unicorn_bottle_size = unicorn_product[2]
-        # prices over $1000 have a comma in them
+        # prices over $1000 -- and there are at least a few -- carry a comma
         unicorn_price = unicorn_product[3][1:].replace(',', '')
 
         # need a mutable data structure here to extend by assignment later
         return {'store_id': unicorn_store_id,
                 # handling a case where some names have extra spaces not caught
                 # by the earlier .strip()
-                'name': unicorn_name.replace('  ', ''),
+                'name': unicorn_name.replace('  ', ' '),
                 # we'll want these two de-stringified for value comparisons:
                 'price': float(unicorn_price),
                 'bottles': int(num_unicorn_bottles),
@@ -261,12 +263,6 @@ def prepare_unicorn_search(url):
     pages, products = get_total_numbers(tree)
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
     page_product_codes = get_product_codes(tree)
-
-    # a convenience for now to not have to scrape again for these if
-    # the script breaks after we collect these. should that happen (cries),
-    # we can just start again from here
-    # for code in page_product_codes:
-    #     write_codes_to_file(code)
     print 'found {0} initial product codes'.format(len(page_product_codes))
     page_product_codes += parse_search_page(pages)
 
