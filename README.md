@@ -14,7 +14,7 @@ I can't search it like I'd want. *Do they let me load all search results in one 
 
 Oy.
 
-To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products just to find the 14,000 or so that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store. Daily.
+To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store. So somewhere on the order of 17,000 pages to inspect. Daily.
 
 So I guess I have to make a computer do it.
 
