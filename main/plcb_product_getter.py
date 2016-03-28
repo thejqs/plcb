@@ -166,8 +166,8 @@ def assemble_unicorn(tree):
     unicorn_store = [i.text.strip() for i in unicorn_store_elements]
     unicorn_store_id = unicorn_store[0]
     # there can be as many as three digits at the beginning of each
-    # number-of-units string for sure and theoretically more, followed by
-    # a space: 'x units'
+    # number-of-units string for sure and theoretically more,
+    # followed by a space: 'x units'
     # hence this regex to handle the string variations
     num_unicorn_bottles_pattern = '(^\d+(?!\S))'
     num_unicorn_bottles = re.match(num_unicorn_bottles_pattern, unicorn_store[2]).group()
@@ -206,8 +206,7 @@ def on_sale(tree):
     the parsed tree element of a product page
 
     Returns:
-    if on sale: a string containing the sale prices
-    else: False
+    if on sale: a string containing the sale price
     '''
     sale_element = CSSSelector('ul li.newsFont b font')(tree)
     if len(sale_element) > 0:
@@ -228,9 +227,9 @@ def unicorn_scrape(product_urls):
     a list of dicts, each of which contains a unicorn
     '''
     unicorns = []
-    for product_url in product_urls:
+    for i, product_url in enumerate(product_urls):
         product_tree = treeify(product_url)
-        print "searching ...."
+        print "{0} searching ....".format(i)
         is_unicorn = check_for_unicorn(product_tree)
         if not is_unicorn:
             continue
@@ -305,9 +304,7 @@ def start_scrape():
     hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
 
 
-start_scrape()
-# hunt_unicorns()
-
-
 if __name__ == '__main__':
     url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
+    start_scrape()
+    # hunt_unicorns()
