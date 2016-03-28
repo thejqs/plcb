@@ -126,7 +126,7 @@ def parse_search_page(pages):
         search_tree = treeify(search_url)
         new_codes = get_product_codes(search_tree)
         codes += new_codes
-        # writing there to a file in case our script breaks --
+        # writing these to a file in case our script breaks --
         # wouldn't want to have to re-run the whole thing
         for code in new_codes:
             write_codes_to_file(code)
