@@ -75,7 +75,6 @@ def get_total_numbers(tree):
     nums = CSSSelector('form table tr td')(tree)
     num_pages = int(''.join(n for n in nums[0].text[10:].split(',')))
     num_products = int(''.join(n for n in nums[1].text[25:].split(',')))
-
     return (num_pages, num_products)
 
 
@@ -131,7 +130,6 @@ def parse_search_page(pages):
         for code in new_codes:
             write_codes_to_file(code)
         print 'collected {0} total new codes from {1} pages'.format(len(codes), i + 2)
-
     return codes
 
 
@@ -147,7 +145,6 @@ def check_for_unicorn(tree):
     is_unicorn = False
     if ' one ' in check_unicorn[0].text:
         is_unicorn = True
-
     return is_unicorn
 
 
@@ -172,28 +169,26 @@ def assemble_unicorn(tree):
     num_unicorn_bottles_pattern = '(^\d+(?!\S))'
     num_unicorn_bottles = re.match(num_unicorn_bottles_pattern, unicorn_store[2]).group()
 
-    try:
-        unicorn_product_elements = CSSSelector('ul li.newsFont b')(tree)
-        unicorn_product = [i.text.strip() for i in unicorn_product_elements]
-        unicorn_code = unicorn_product[0]
-        unicorn_name = unicorn_product[1]
-        unicorn_bottle_size = unicorn_product[2]
-        # prices over $1000 -- and there are at least a few -- carry a comma
-        unicorn_price = unicorn_product[3][1:].replace(',', '')
+    # would wrap this in a try-except but it only breaks if the target
+    # data is being updated -- which is a good time to break
+    unicorn_product_elements = CSSSelector('ul li.newsFont b')(tree)
+    unicorn_product = [i.text.strip() for i in unicorn_product_elements]
+    unicorn_code = unicorn_product[0]
+    unicorn_name = unicorn_product[1]
+    unicorn_bottle_size = unicorn_product[2]
+    # prices over $1000 -- and there are at least a few -- carry a comma
+    unicorn_price = unicorn_product[3][1:].replace(',', '')
 
-        # need a mutable data structure here to extend by assignment later
-        return {'store_id': unicorn_store_id,
-                # handling a case where some names have extra spaces not caught
-                # by the earlier .strip()
-                'name': unicorn_name.replace('  ', ' '),
-                # we'll want these two de-stringified for value comparisons:
-                'price': float(unicorn_price),
-                'bottles': int(num_unicorn_bottles),
-                'product_code': unicorn_code,
-                'bottle_size': unicorn_bottle_size}
-
-    except IndexError:
-        return {'unicorn_store': unicorn_store}
+    # need a mutable data structure here to extend by assignment later
+    return {'store_id': unicorn_store_id,
+            # handling a case where some names have extra spaces not caught
+            # by the earlier .strip()
+            'name': unicorn_name.replace('  ', ' '),
+            # we'll want these two de-stringified for value comparisons:
+            'price': float(unicorn_price),
+            'bottles': int(num_unicorn_bottles),
+            'product_code': unicorn_code,
+            'bottle_size': unicorn_bottle_size}
 
 
 def on_sale(tree):
@@ -264,7 +259,6 @@ def prepare_unicorn_search(url):
     page_product_codes = get_product_codes(tree)
     print 'found {0} initial product codes'.format(len(page_product_codes))
     page_product_codes += parse_search_page(pages)
-
     return page_product_codes
 
 
@@ -293,18 +287,8 @@ def hunt_unicorns(url):  # include parameter only to run full script
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     unicorns = unicorn_scrape(product_urls)
-
     [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
 
 
-def start_scrape():
-    '''
-    runs the main function to do the damn thang
-    '''
-    hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
-
-
 if __name__ == '__main__':
-    url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'
-    start_scrape()
-    # hunt_unicorns()
+    hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
