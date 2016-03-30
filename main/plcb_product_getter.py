@@ -1,17 +1,20 @@
 #!usr/bin/env python
 
 '''
-A crawler to search every product in the
+A synchronous crawler to search every product in the
 Pennsylvania Liquor Control Board's database, searching for unicorns:
 products available for sale in only one retail store in the entire state.
+It takes a really, really, really long time to run.
 
-The database is updated at the close of business every day.
-Thus every day is a chance for fresh data.
+The PLCB claims the database is updated at the close of business every day,
+but it's more like 5 a.m. the following day. Nonetheless, that's still before
+stores open for the day. Every day is a chance for fresh data.
 
 On any given day, given the structure of the PLCB's
 product search interfaces, we have about 2,400 pages to crawl
-to wade through about 60,000 products to see which are in stores, and then
-we can test for unicorns.
+to wade through about 60,000 products to see the 13,000 or 14,000
+which are in stores, and then we can test for unicorns,
+which usually number about 2,000.
 
 Fun, right?
 '''
@@ -188,7 +191,8 @@ def assemble_unicorn(tree):
             'price': float(unicorn_price),
             'bottles': int(num_unicorn_bottles),
             'product_code': unicorn_code,
-            'bottle_size': unicorn_bottle_size}
+            'bottle_size': unicorn_bottle_size,
+            'scrape_date': datetime.date.today()}
 
 
 def on_sale(tree):
@@ -252,6 +256,12 @@ def prepare_unicorn_search(url):
 
     Returns:
     a list of product ids we need to append to a URL stub
+
+    Note:
+    when the search-page server goes down, the product pages stay up.
+    so for now, makes sense to traverse the search pages first
+    to collect the ids we need in case anything happens to those servers
+    while we're searching products
     '''
     tree = treeify(url)
     pages, products = get_total_numbers(tree)
@@ -262,7 +272,7 @@ def prepare_unicorn_search(url):
     return page_product_codes
 
 
-def hunt_unicorns(url):  # include parameter only to run full script
+def hunt_unicorns(url=None):
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
@@ -272,18 +282,15 @@ def hunt_unicorns(url):  # include parameter only to run full script
 
     Returns:
     a JSON-serializable list of unicorn dicts
-
-    Note:
-    when the search-page server goes down, the product pages stay up.
-    so for now, traversing the search pages first to collect the ids we need
-    in case anything happens to those servers while we're searching products
     '''
-    all_product_codes = prepare_unicorn_search(url)
-    # if it breaks but we have all the day's product codes already,
-    # comment out the line above, remove the url parameter from
-    # the function definition, and comment the next two lines back in:
-    # with open('product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
-    #     all_product_codes = [line.strip() for line in f.readlines()]
+    if url:
+        all_product_codes = prepare_unicorn_search(url, p)
+    else:
+        # if it breaks but we have all the codes in a file already,
+        # or if we just happen to have all the codes in a file already,
+        # we no longer need a function parameter. can run this way instead:
+        with open('product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+            all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     unicorns = unicorn_scrape(product_urls)
@@ -291,4 +298,5 @@ def hunt_unicorns(url):  # include parameter only to run full script
 
 
 if __name__ == '__main__':
-    hunt_unicorns('https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search')
+    url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+    hunt_unicorns(**url)
