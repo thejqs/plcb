@@ -3,6 +3,8 @@
 '''
 A scraper to collect data about every retail store the
 Pennsylvania Liquor Control Board operates. All 597 of them.
+
+Needs to run only infrequently, as there is only infrequently a new store
 '''
 
 import requests
