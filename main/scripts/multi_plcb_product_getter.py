@@ -29,6 +29,7 @@ import collections
 import json
 import datetime
 import re
+import time
 from multiprocessing import Pool
 
 
@@ -65,7 +66,7 @@ def write_unicorn_json_to_file(data):
     stores our objects in a pprint format
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('unicorns/unicorns_multi-{}.json'.format(datetime.date.today()), 'a') as f:
+    with open('../unicorns/unicorns_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -73,8 +74,10 @@ def write_codes_to_file(data):
     '''
     a function to store our product ids as we go in case of breakage
     '''
-    with open('product_codes/product_codes_multi-{}-12.txt'.format(datetime.date.today()), 'a') as f:
-        print >> f, data
+    with open('../product_codes/product_codes-?????-{}.txt'.format(datetime.date.today()), 'a+') as f:
+        # don't want the result to be a list, just lines of text
+        for code in data:
+            print >> f, code
 
 
 def get_total_numbers(tree):
@@ -82,6 +85,7 @@ def get_total_numbers(tree):
     collects the total number of pages and products we have to crawl.
     they come in as strings with extra words and a comma we have to handle
     '''
+    time.sleep(1)
     nums = CSSSelector('form table tr td')(tree)
     num_pages = int(''.join(n for n in nums[0].text[10:].split(',')))
     num_products = int(''.join(n for n in nums[1].text[25:].split(',')))
@@ -95,11 +99,22 @@ def get_product_codes(url):
     our product-page URLs so we can check each for unicorns
     '''
     codes_elements = happy_little_search_trees(url)
-    for code in codes_elements:
-        if code.text.isdigit():
-            write_codes_to_file(code.text)
-    codes = [code.text for code in codes_elements if code.text.isdigit()]
-    print 'wrote {0} codes'.format(len(codes))
+    if len(codes_elements) > 0:
+        codes = [code.text for code in codes_elements if code.text.isdigit()]
+        write_codes_to_file(codes)
+    else:
+        tries = 0
+        while tries < 15:
+            time.sleep(60)
+            codes_elements = happy_little_search_trees(url)
+            if len(codes_elements) == 0:
+                tries += 1
+            else:
+                codes = [code.text for code in codes_elements if code.text.isdigit()]
+                write_codes_to_file(codes)
+                tries = 16
+
+    print 'wrote {0} codes from: \n{1}'.format(len(codes), url)
     return codes
 
 
@@ -265,7 +280,10 @@ def search_first_page(url):
     except IndexError as e:
         print e
         print 'uh-oh. is the page down? we should check: '
-        print requests.get(url).status_code
+        r = requests.get(url)
+        print r.text
+        print r.status_code
+
 
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
     page_product_codes = get_product_codes(url)
@@ -273,7 +291,7 @@ def search_first_page(url):
     return pages, page_product_codes
 
 
-def prepare_unicorn_search(url, p):
+def prepare_unicorn_search(url):
     '''
     assembles everything we need to perform the search,
     getting the heavy lifting of walking all the search pages
@@ -288,12 +306,17 @@ def prepare_unicorn_search(url, p):
     start = datetime.datetime.now()
     print start
 
+    # p = Pool(12)
     pages, page_product_codes = search_first_page(url)
     search_urls = make_search_urls(pages)
     print 'num_search_urls: {}'.format(len(search_urls))
     print 'extracting product codes ....'
-    new_codes = p.map(get_product_codes, search_urls, chunksize=1)
-    page_product_codes += new_codes
+    new_codes = [code for code in p.map(get_product_codes, search_urls)]
+    print new_codes
+    p.close()
+    p.join()
+    page_product_codes += [code for code in new_codes]
+    print page_product_codes
 
     print datetime.datetime.now()
     print datetime.datetime.now() - start
@@ -322,30 +345,30 @@ def hunt_unicorns(url=None):
     start = datetime.datetime.now()
     print start
 
-    p = Pool(12)
+    # p = Pool(12)
     if url:
-        all_product_codes = prepare_unicorn_search(url, p)
+        all_product_codes = prepare_unicorn_search(url)
     else:
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
-        with open('product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
     print 'getting urls and making DOM trees ... happy little DOM trees ....'
-    product_trees = p.map(treeify, product_urls, chunksize=1)
+    product_trees = p.map(treeify, product_urls)
     print 'hunting unicorns ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees, chunksize=1)]
-    print 'done hunting'
+    [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees)]
+    print 'done hunting.'
     end = datetime.datetime.now()
-    p.close()
-    p.join()
-    print end
     print end - start
-
+    clean_up = datetime.datetime.now()
+    print date.datetime.now() - clean_up
+    print 'all cleaned up. long day. tacos?'
 
 if __name__ == '__main__':
-    # p = Pool(25)
-    url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-    hunt_unicorns(**url)
+    p = Pool(15)
+    # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+    # hunt_unicorns(**url)
+    hunt_unicorns()
