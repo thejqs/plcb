@@ -333,14 +333,13 @@ def hunt_unicorns(url=None):
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
-    print 'making DOM trees ... happy little DOM trees ....'
-    # can't be a generator because p.map expects a true iterable
+    print 'getting urls and making DOM trees ... happy little DOM trees ....'
     product_trees = p.map(treeify, product_urls, chunksize=1)
     print 'hunting unicorns ....'
-    # unicorns =
     [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees, chunksize=1)]
-    print datetime.datetime.now()
-    print datetime.datetime.now() - start
+    end = datetime.datetime.now()
+    print end
+    print end - start
 
 
 if __name__ == '__main__':
