@@ -106,8 +106,8 @@ def unpack_lat_long_address_phone(tree):
     print "demystifying store location data ...."
     elements = CSSSelector('.columnDistance form input')(tree)
     # lat_long_address_phone_elements = lat_long_address_phone_selectors(tree)
-    longitude_offset = 0
-    latitude_offset = 1
+    latitude_offset = 0
+    longitude_offset = 1
     address_offset = 2
     phone_offset = 3
     len_input_fields = 5
