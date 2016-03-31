@@ -337,7 +337,10 @@ def hunt_unicorns(url=None):
     product_trees = p.map(treeify, product_urls, chunksize=1)
     print 'hunting unicorns ....'
     [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees, chunksize=1)]
+    print 'done hunting'
     end = datetime.datetime.now()
+    p.close()
+    p.join()
     print end
     print end - start
 
