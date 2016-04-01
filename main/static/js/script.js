@@ -5,23 +5,23 @@ map.addLayer(layer);
 
 var uniques = new Set()
 
-for (var num = 0; num < unicorns.length; num++) {
-  var unicorn = unicorns[num];
+for (var i = 0; i < unicorns.length; i++) {
+  var unicorn = unicorns[i];
   var unicorn_name = unicorn['name'];
   var unicorn_bottles = unicorn['bottles'];
   var unicorn_price = unicorn['price'];
   var unicorn_store_id = unicorn['store_id'];
 
-  storeAdded = false
+  storeAdded = false;
   if (!(unicorn_store_id in uniques) && storeAdded === false) {
-    storeAdded = true
+    storeAdded = true;
     uniques.add(unicorn_store_id);
   }
 };
 
 uniques.forEach(function (id) {
     for (i = 0; i < stores.length; i++) {
-      store = stores[i]
+      var store = stores[i]
       if (id === store['id']) {
       store_address = store['address'];
       storeLong = store['longitude'];
@@ -38,5 +38,6 @@ uniques.forEach(function (id) {
       popupHtml += '<div>' + unicorn_price + '</div>';
 
       marker.bindPopup(popupHtml);
-  }}
+    }
+  }
 });
