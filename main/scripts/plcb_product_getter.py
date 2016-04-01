@@ -61,12 +61,12 @@ def write_unicorn_json_to_file(data):
     '''
     print 'writing json ....'
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('unicorns-{}.json'.format(datetime.date.today()), 'a') as f:
+    with open('unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
 def write_codes_to_file(data):
-    with open('product_codes-{}.txt'.format(datetime.date.today()), 'a') as f:
+    with open('backup-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         print >> f, data
 
 
@@ -290,7 +290,7 @@ def hunt_unicorns(url=None):
         all_product_codes = prepare_unicorn_search(url)
     else:
         # if it breaks but we have all the codes in a file already,
-        # or if we just happen to have all the codes in a file already,
+        # or if we just happen to have all the codes in a file,
         # we no longer need a function parameter. can run this way instead:
         with open('product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
@@ -303,3 +303,4 @@ def hunt_unicorns(url=None):
 if __name__ == '__main__':
     url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
     hunt_unicorns(**url)
+    # hunt_unicorns()
