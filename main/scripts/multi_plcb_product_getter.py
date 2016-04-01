@@ -30,7 +30,7 @@ import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 # import collections
-import itertools
+# import itertools
 import json
 import datetime
 import re
@@ -76,7 +76,7 @@ def write_unicorn_json_to_file(data):
     stores our objects in a pprint format
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns/unicorns_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns/unicorns_5_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -262,7 +262,7 @@ def unicorn_scrape(tree):
     Returns:
     a list of unicorn dicts, each of which contains a unicorn
     '''
-    print "searching ...."
+    # print "searching ...."
     is_unicorn = check_for_unicorn(tree)
     if is_unicorn:
         unicorn = assemble_unicorn(tree)
@@ -317,7 +317,6 @@ def prepare_unicorn_search(url):
     start = datetime.datetime.now()
     print start
 
-    # p = Pool(12)
     pages, page_product_codes = search_first_page(url)
     search_urls = make_search_urls(pages)
     print 'num_search_urls: {}'.format(len(search_urls))
@@ -353,29 +352,32 @@ def hunt_unicorns(url=None):
     start = datetime.datetime.now()
     print start
 
-    # p = Pool(12)
     if url:
         all_product_codes = prepare_unicorn_search(url)
     else:
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
-        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today() - datetime.timedelta(days=1)), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
     print 'getting urls ....'
+    # p.map can't handle lxml DOM tree elements. so granularly we go
     rs = [u for u in p.imap_unordered(open_url, product_urls)]
     print 'making DOM trees ... happy little DOM trees ....'
-    trees = [tree for tree in itertools.imap(parse_html, rs)]
+    # returns a list
+    trees = map(parse_html, rs)
     print 'hunting unicorns ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees, chunksize=1)]
+    unicorns = p.map_unordered(unicorn_scrape, trees, chunksize=1)
+    print 'writing json ....'
+    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
     print 'done hunting.'
     print datetime.datetime.now() - start
     print 'all cleaned up. long day. tacos?'
 
 if __name__ == '__main__':
-    p = Pool(15)
+    p = Pool(8)
     # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
     # hunt_unicorns(**url)
     hunt_unicorns()
