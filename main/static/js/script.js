@@ -7,9 +7,6 @@ var uniques = new Set()
 
 for (var i = 0; i < unicorns.length; i++) {
   var unicorn = unicorns[i];
-  var unicorn_name = unicorn['name'];
-  var unicorn_bottles = unicorn['bottles'];
-  var unicorn_price = unicorn['price'];
   var unicorn_store_id = unicorn['store_id'];
 
   storeAdded = false;
@@ -30,14 +27,25 @@ uniques.forEach(function (id) {
       store_type = store['store_type'];
 
       var marker = L.marker([storeLat, storeLong]).addTo(map);
-      var popupHtml = '<h3>' + store_address + '</h3>';
-      popupHtml += '<h5>' + store_type + '</h5>';
-      popupHtml += '<div>' + store_phone + '</div>';
-      popupHtml += '<div>' + unicorn_name + '</div>';
-      popupHtml += '<div>' + unicorn_bottles + '</div>';
-      popupHtml += '<div>' + unicorn_price + '</div>';
+      var popupHtml = '<h2>' + store_address + '</h2>';
+      popupHtml += '<h4>' + store_type + ', ' + store_phone + '</h4>';
+    //   popupHtml += '<div>'  + '</div>';
 
+      for (i = 0; i < unicorns.length; i++) {
+        var unicorn = unicorns[i];
+        if (unicorn['store_id'] === id) {
+          var unicorn_name = unicorn['name'];
+          var unicorn_bottles = unicorn['bottles'];
+          var unicorn_price = unicorn['price'];
+          var on_sale = unicorn['on_sale']
+
+          popupHtml += '<div>' + unicorn_name + ': ' + unicorn_bottles + ' // ' + unicorn_price + ' // ' + on_sale  + '</div>';
+        //   popupHtml += '<div>' + unicorn_bottles + ' // ' + unicorn_price + ' // ' + on_sale + '</div>';
+        //   popupHtml += '<div>' + unicorn_price + '</div>';
+        //   popupHtml += '<div>' + on_sale + '</div>'
+      }
       marker.bindPopup(popupHtml);
     }
   }
+}
 });
