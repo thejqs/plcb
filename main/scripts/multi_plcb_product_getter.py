@@ -19,7 +19,7 @@ how we hit it.
 
 On any given day, given the structure of the PLCB's
 product search interfaces, we have about 2,400 pages to crawl
-to wade through about 60,000 products to see the 13,000 or 14,000
+to wade through about 60,000 products to see the 14,000 or so
 which are in stores, and then we can test for unicorns,
 which usually number about 2,000.
 
@@ -43,7 +43,7 @@ def open_url(url):
     collects our response object
     '''
     try:
-        # read_timeout = 5.0
+        # read_timeout = 5.0 // tried this but the servers are too damn slow to respond
         headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
         r = requests.get(url, headers=headers)  # timeout=(10.0, read_timeout)
         if r.status_code == 200:
@@ -76,7 +76,7 @@ def write_unicorn_json_to_file(data):
     stores our objects in a pprint format
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns/unicorns_5_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns/unicorns_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -84,10 +84,13 @@ def write_codes_to_file(data):
     '''
     a function to store our product ids as we go in case of breakage
     '''
-    with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
-        # don't want the result to be a list, just lines of text
-        for code in data:
-            print >> f, code
+    for code in data:
+        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+            if code not in list(f):
+                f.close()
+                with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as outfile:
+                # don't want the result to be a list, just lines of text
+                    print >> outfile, code
 
 
 def get_total_numbers(tree):
@@ -233,7 +236,7 @@ def assemble_unicorn(tree):
             'bottles': int(num_unicorn_bottles),
             'product_code': unicorn_code,
             'bottle_size': unicorn_bottle_size,
-            'scrape_date': datetime.date.today()}
+            'scrape_date': '{0}'.format(datetime.date.today())}
 
 
 def on_sale(tree):
@@ -254,7 +257,7 @@ def on_sale(tree):
         return False
 
 
-def unicorn_scrape(tree):
+def unicorn_scrape(trees):
     '''
     collects product data if the product passes the unicorn test.
     operates on a product-page DOM tree
@@ -263,17 +266,20 @@ def unicorn_scrape(tree):
     a list of unicorn dicts, each of which contains a unicorn
     '''
     # print "searching ...."
-    is_unicorn = check_for_unicorn(tree)
-    if is_unicorn:
-        unicorn = assemble_unicorn(tree)
-        sale_price = on_sale(tree)
-        # it's either this or a ternary operator, so ....
-        try:
-            unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
-        except (ValueError, AttributeError) as e:
-            unicorn['on_sale'] = False
-        print 'FOUND A UNICORN:', unicorn
-    return unicorn
+    unicorns = []
+    for tree in trees:
+        is_unicorn = check_for_unicorn(tree)
+        if is_unicorn:
+            unicorn = assemble_unicorn(tree)
+            sale_price = on_sale(tree)
+            # it's either this or a ternary operator, so ....
+            try:
+                unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
+            except (ValueError, AttributeError) as e:
+                unicorn['on_sale'] = False
+                unicorns.append(unicorn)
+            print 'FOUND A UNICORN:', unicorn
+    return unicorns
 
 
 def search_first_page(url):
@@ -322,8 +328,7 @@ def prepare_unicorn_search(url):
     print 'num_search_urls: {}'.format(len(search_urls))
     print 'extracting product codes ....'
     new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
-    page_product_codes += [code for code in new_codes]
-    print page_product_codes
+    page_product_codes += new_codes
 
     print datetime.datetime.now()
     print datetime.datetime.now() - start
@@ -357,7 +362,8 @@ def hunt_unicorns(url=None):
     else:
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
-        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today() - datetime.timedelta(days=1)), 'r') as f:
+        # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
+        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
@@ -366,12 +372,9 @@ def hunt_unicorns(url=None):
     # p.map can't handle lxml DOM tree elements. so granularly we go
     rs = [u for u in p.imap_unordered(open_url, product_urls)]
     print 'making DOM trees ... happy little DOM trees ....'
-    # returns a list
-    trees = map(parse_html, rs)
+    trees = (parse_html(r) for r in rs)
     print 'hunting unicorns ....'
-    unicorns = p.map_unordered(unicorn_scrape, trees, chunksize=1)
-    print 'writing json ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
+    [write_unicorn_json_to_file(unicorn) for unicorn in unicorn_scrape(trees)]
     print 'done hunting.'
     print datetime.datetime.now() - start
     print 'all cleaned up. long day. tacos?'
