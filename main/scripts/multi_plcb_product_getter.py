@@ -13,6 +13,10 @@ The PLCB claims the database is updated at the close of business every day,
 but it's more like 5 a.m. the following day. Nonetheless, that's still before
 stores open for the day. Every day is a chance for fresh data.
 
+The site is pretty brittle. It doesn't take that many concurrent requests
+for it to get unreliable. So we have to be more than a little careful
+how we hit it.
+
 On any given day, given the structure of the PLCB's
 product search interfaces, we have about 2,400 pages to crawl
 to wade through about 60,000 products to see the 13,000 or 14,000
@@ -25,7 +29,8 @@ Fun, right?
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
-import collections
+# import collections
+import itertools
 import json
 import datetime
 import re
@@ -37,13 +42,18 @@ def open_url(url):
     '''
     collects our response object
     '''
-    headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
-    r = requests.get(url, headers=headers)
-    if r.status_code == 200:
-        return r.text
-    else:
-        print 'You got a {0} error from {1}'.format(r.status_code, r.url)
-        raise Exception('You are an idiot. Bad link.')
+    try:
+        # read_timeout = 5.0
+        headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
+        r = requests.get(url, headers=headers)  # timeout=(10.0, read_timeout)
+        if r.status_code == 200:
+            return r.text
+        else:
+            print 'You got a {0} error from {1}'.format(r.status_code, r.url)
+            raise Exception('You are an idiot. Bad link.')
+    except requests.exceptions.ReadTimeout as e:
+        print e
+        print 'no delicious bytes to eat getting {0}'.format(url)
 
 
 def parse_html(unparsed_html):
@@ -74,7 +84,7 @@ def write_codes_to_file(data):
     '''
     a function to store our product ids as we go in case of breakage
     '''
-    with open('../product_codes/product_codes-?????-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for code in data:
             print >> f, code
@@ -103,18 +113,19 @@ def get_product_codes(url):
         codes = [code.text for code in codes_elements if code.text.isdigit()]
         write_codes_to_file(codes)
     else:
-        tries = 0
-        while tries < 15:
-            time.sleep(60)
-            codes_elements = happy_little_search_trees(url)
-            if len(codes_elements) == 0:
-                tries += 1
-            else:
-                codes = [code.text for code in codes_elements if code.text.isdigit()]
-                write_codes_to_file(codes)
-                tries = 16
+        codes = []
+        # tries = 0
+        # while tries < 15:
+        #     time.sleep(60)
+        #     codes_elements = happy_little_search_trees(url)
+        #     if len(codes_elements) == 0:
+        #         tries += 1
+        #     else:
+        #         codes = [code.text for code in codes_elements if code.text.isdigit()]
+        #         write_codes_to_file(codes)
+        #         tries = 16
 
-    print 'wrote {0} codes from: \n{1}'.format(len(codes), url)
+    print 'wrote {0} codes'.format(len(codes))
     return codes
 
 
@@ -311,10 +322,7 @@ def prepare_unicorn_search(url):
     search_urls = make_search_urls(pages)
     print 'num_search_urls: {}'.format(len(search_urls))
     print 'extracting product codes ....'
-    new_codes = [code for code in p.map(get_product_codes, search_urls)]
-    print new_codes
-    p.close()
-    p.join()
+    new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
     page_product_codes += [code for code in new_codes]
     print page_product_codes
 
@@ -356,15 +364,14 @@ def hunt_unicorns(url=None):
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
-    print 'getting urls and making DOM trees ... happy little DOM trees ....'
-    product_trees = p.map(treeify, product_urls)
+    print 'getting urls ....'
+    rs = [u for u in p.imap_unordered(open_url, product_urls)]
+    print 'making DOM trees ... happy little DOM trees ....'
+    trees = [tree for tree in itertools.imap(parse_html, rs)]
     print 'hunting unicorns ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees)]
+    [write_unicorn_json_to_file(unicorn) for unicorn in p.map(unicorn_scrape, product_trees, chunksize=1)]
     print 'done hunting.'
-    end = datetime.datetime.now()
-    print end - start
-    clean_up = datetime.datetime.now()
-    print date.datetime.now() - clean_up
+    print datetime.datetime.now() - start
     print 'all cleaned up. long day. tacos?'
 
 if __name__ == '__main__':
