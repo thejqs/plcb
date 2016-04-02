@@ -84,13 +84,9 @@ def write_codes_to_file(data):
     '''
     a function to store our product ids as we go in case of breakage
     '''
-    for code in data:
-        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
-            if code not in list(f):
-                f.close()
-                with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as outfile:
-                # don't want the result to be a list, just lines of text
-                    print >> outfile, code
+    with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as outfile:
+        # don't want the result to be a list, just lines of text
+        print >> outfile, code
 
 
 def get_total_numbers(tree):
@@ -111,24 +107,12 @@ def get_product_codes(url):
     mapped to a list of DOM trees, collects the product codes that will complete
     our product-page URLs so we can check each for unicorns
     '''
+    codes = []
     codes_elements = happy_little_search_trees(url)
-    if len(codes_elements) > 0:
-        codes = [code.text for code in codes_elements if code.text.isdigit()]
-        write_codes_to_file(codes)
-    else:
-        codes = []
-        # tries = 0
-        # while tries < 15:
-        #     time.sleep(60)
-        #     codes_elements = happy_little_search_trees(url)
-        #     if len(codes_elements) == 0:
-        #         tries += 1
-        #     else:
-        #         codes = [code.text for code in codes_elements if code.text.isdigit()]
-        #         write_codes_to_file(codes)
-        #         tries = 16
+    codes += [code.text for code in codes_elements if code.text.isdigit()]
+    write_codes_to_file(codes)
 
-    print 'wrote {0} codes'.format(len(codes))
+    print 'wrote {0} codes'.format(len(codes_elements))
     return codes
 
 
@@ -168,18 +152,6 @@ def happy_little_search_trees(url):
     '''
     tree = treeify(url)
     return CSSSelector('td a b font')(tree)
-#
-#
-# def happy_little_product_trees(url):
-#     tree = treeify(url)
-#     Element = collections.namedtuple('Element', 'unicorn_store_elements sale_element unicorn_product_elements')
-#     elements = Element(unicorn_store_elements=CSSSelector('tr td.table-data')(tree),
-#                        sale_element=CSSSelector('ul li.newsFont b font')(tree),
-#                        unicorn_product_elements=CSSSelector('ul li.newsFont b')(tree))
-#
-#     return elements([e.unicorn_store_elements for e in elements],
-#                      [e.sale_element for e in elements],
-#                      [e.unicorn_product_elements for e in elements])
 
 
 def check_for_unicorn(tree):
@@ -267,7 +239,7 @@ def unicorn_scrape(trees):
     '''
     # print "searching ...."
     unicorns = []
-    for tree in trees:
+    for i, tree in enumerate(trees):
         is_unicorn = check_for_unicorn(tree)
         if is_unicorn:
             unicorn = assemble_unicorn(tree)
@@ -277,8 +249,9 @@ def unicorn_scrape(trees):
                 unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
             except (ValueError, AttributeError) as e:
                 unicorn['on_sale'] = False
-                unicorns.append(unicorn)
-            print 'FOUND A UNICORN:', unicorn
+            unicorns.append(unicorn)
+            write_unicorn_json_to_file(unicorn)
+            print i, 'FOUND A UNICORN:', unicorn
     return unicorns
 
 
@@ -328,7 +301,7 @@ def prepare_unicorn_search(url):
     print 'num_search_urls: {}'.format(len(search_urls))
     print 'extracting product codes ....'
     new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
-    page_product_codes += new_codes
+    page_product_codes += [code for code in new_codes]
 
     print datetime.datetime.now()
     print datetime.datetime.now() - start
@@ -363,7 +336,7 @@ def hunt_unicorns(url=None):
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/extra-product_codes-2-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
@@ -374,7 +347,8 @@ def hunt_unicorns(url=None):
     print 'making DOM trees ... happy little DOM trees ....'
     trees = (parse_html(r) for r in rs)
     print 'hunting unicorns ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in unicorn_scrape(trees)]
+    unicorns = unicorn_scrape(trees)
+    print unicorns
     print 'done hunting.'
     print datetime.datetime.now() - start
     print 'all cleaned up. long day. tacos?'
