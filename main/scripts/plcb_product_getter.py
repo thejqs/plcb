@@ -61,12 +61,12 @@ def write_unicorn_json_to_file(data):
     '''
     print 'writing json ....'
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
 def write_codes_to_file(data):
-    with open('backup-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         print >> f, data
 
 
