@@ -29,8 +29,6 @@ Fun, right?
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
-# import collections
-# import itertools
 import json
 import datetime
 import re
@@ -76,17 +74,21 @@ def write_unicorn_json_to_file(data):
     stores our objects in a pprint format
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns/unicorns_multi-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
 def write_codes_to_file(data):
     '''
-    a function to store our product ids as we go in case of breakage
+    a function to store our product codes as we go in case of script breakage
+
+    Args:
+    expects an iterable
     '''
-    with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'a+') as outfile:
-        # don't want the result to be a list, just lines of text
-        print >> outfile, code
+    with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+        for datum in data:
+            # don't want the result to be a list, just lines of text
+            print >> f, datum
 
 
 def get_total_numbers(tree):
@@ -102,17 +104,17 @@ def get_total_numbers(tree):
     return (num_pages, num_products)
 
 
-def get_product_codes(url):
+def get_product_codes(tree):
     '''
     mapped to a list of DOM trees, collects the product codes that will complete
     our product-page URLs so we can check each for unicorns
     '''
-    codes = []
-    codes_elements = happy_little_search_trees(url)
-    codes += [code.text for code in codes_elements if code.text.isdigit()]
+    codes_elements = CSSSelector('td a b font')(tree)  # happy_little_search_trees(url)
+    # we have to ignore a 'New Search' string that comes in here
+    codes = [code.text for code in codes_elements if code.text.isdigit()]
     write_codes_to_file(codes)
 
-    print 'wrote {0} codes'.format(len(codes_elements))
+    print 'wrote {0} codes'.format(len(codes_elements) - 1)
     return codes
 
 
@@ -145,13 +147,13 @@ def make_product_urls(codes):
     return product_urls
 
 
-def happy_little_search_trees(url):
-    '''
-    an unpacker for DOM elements into parseable lists
-    of the text from those elements
-    '''
-    tree = treeify(url)
-    return CSSSelector('td a b font')(tree)
+# def happy_little_search_trees(url):
+#     '''
+#     an unpacker for DOM elements into parseable lists
+#     of the text from those elements
+#     '''
+#     tree = treeify(url)
+#     return CSSSelector('td a b font')(tree)
 
 
 def check_for_unicorn(tree):
@@ -162,7 +164,7 @@ def check_for_unicorn(tree):
     '''
     check_unicorn = CSSSelector('body table tr td table tr td font')(tree)
     is_unicorn = False
-    if ' one ' in check_unicorn[0].text:
+    if 'one Location' in check_unicorn[0].text:
         is_unicorn = True
     return is_unicorn
 
@@ -183,8 +185,8 @@ def assemble_unicorn(tree):
     unicorn_store_id = unicorn_store[0]
     # there can be as many as three digits at the beginning of each
     # number-of-units string for sure and theoretically more.
-    # hence the regex to handle the variations in number of digits
-    # preceded by the .replace() on the off chance inventory is >1000
+    # hence the regex to handle the variations in number of digits.
+    # preceded by the .replace() on the off-chance inventory is >1000
     # as strings of four-digit numbers on this site all carry commas
     num_unicorn_bottles = unicorn_store[2].replace(',', '')
     num_unicorn_bottles_pattern = '(^\d+(?!\S))'
@@ -239,9 +241,11 @@ def unicorn_scrape(trees):
     '''
     # print "searching ...."
     unicorns = []
-    for i, tree in enumerate(trees):
+    for tree in trees:
         is_unicorn = check_for_unicorn(tree)
-        if is_unicorn:
+        if not is_unicorn:
+            continue
+        else:
             unicorn = assemble_unicorn(tree)
             sale_price = on_sale(tree)
             # it's either this or a ternary operator, so ....
@@ -250,8 +254,8 @@ def unicorn_scrape(trees):
             except (ValueError, AttributeError) as e:
                 unicorn['on_sale'] = False
             unicorns.append(unicorn)
-            write_unicorn_json_to_file(unicorn)
-            print i, 'FOUND A UNICORN:', unicorn
+            # print i, 'FOUND A UNICORN:', unicorn
+    print 'found {0} unicorns ....'.format(len(unicorns))
     return unicorns
 
 
@@ -274,9 +278,8 @@ def search_first_page(url):
         print r.text
         print r.status_code
 
-
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
-    page_product_codes = get_product_codes(url)
+    page_product_codes = get_product_codes(tree)
     print 'found {0} initial product codes'.format(len(page_product_codes))
     return pages, page_product_codes
 
@@ -293,18 +296,23 @@ def prepare_unicorn_search(url):
     Returns:
     a list of product ids we need to append to a url stub
     '''
-    start = datetime.datetime.now()
-    print start
+    start_search = datetime.datetime.now()
+    print start_search
 
     pages, page_product_codes = search_first_page(url)
     search_urls = make_search_urls(pages)
     print 'num_search_urls: {}'.format(len(search_urls))
-    print 'extracting product codes ....'
-    new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
-    page_product_codes += [code for code in new_codes]
+    # does our search gets in one go
+    print 'getting search urls'
+    rs = (u for u in p.imap_unordered(open_url, search_urls))
+    print 'making DOM trees ... happy little DOM trees ....'
+    trees = (parse_html(r) for r in rs)
+    new_codes = (code for code in p.imap_unordered(get_product_codes, trees))
+    page_product_codes += [c for code in new_codes for c in code if len(c) > 1]
 
-    print datetime.datetime.now()
-    print datetime.datetime.now() - start
+    end_search = datetime.datetime.now()
+    print end_search
+    print end_search - start_search
     return page_product_codes
 
 
@@ -327,8 +335,8 @@ def hunt_unicorns(url=None):
     to collect the ids we need in case anything goes wonky with those servers
     while we're searching products
     '''
-    start = datetime.datetime.now()
-    print start
+    start_products = datetime.datetime.now()
+    print start_products
 
     if url:
         all_product_codes = prepare_unicorn_search(url)
@@ -336,25 +344,29 @@ def hunt_unicorns(url=None):
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/extra-product_codes-2-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
-    print 'getting urls ....'
-    # p.map can't handle lxml DOM tree elements. so granularly we go
-    rs = [u for u in p.imap_unordered(open_url, product_urls)]
+    print 'getting product urls ....'
+    # multiprocessing can't handle lxml DOM tree elements.
+    # so granularly we go
+    rs = (u for u in p.imap_unordered(open_url, product_urls))
     print 'making DOM trees ... happy little DOM trees ....'
     trees = (parse_html(r) for r in rs)
     print 'hunting unicorns ....'
     unicorns = unicorn_scrape(trees)
-    print unicorns
+    print 'writing unicorns to json ....'
+    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
     print 'done hunting.'
-    print datetime.datetime.now() - start
+    end_products = datetime.datetime.now()
+    print end_products - start_products
     print 'all cleaned up. long day. tacos?'
+
 
 if __name__ == '__main__':
     p = Pool(8)
-    # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-    # hunt_unicorns(**url)
-    hunt_unicorns()
+    url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+    hunt_unicorns(**url)
+    # hunt_unicorns()
