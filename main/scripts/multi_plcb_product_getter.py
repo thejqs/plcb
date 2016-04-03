@@ -104,17 +104,17 @@ def get_total_numbers(tree):
     return (num_pages, num_products)
 
 
-def get_product_codes(tree):
+def get_product_codes(url):
     '''
     mapped to a list of DOM trees, collects the product codes that will complete
     our product-page URLs so we can check each for unicorns
     '''
-    codes_elements = CSSSelector('td a b font')(tree)  # happy_little_search_trees(url)
+    codes_elements = happy_little_search_trees(url)  # CSSSelector('td a b font')(tree)
     # we have to ignore a 'New Search' string that comes in here
     codes = [code.text for code in codes_elements if code.text.isdigit()]
     write_codes_to_file(codes)
 
-    print 'wrote {0} codes'.format(len(codes_elements) - 1)
+    # print 'wrote {0} codes'.format(len(codes))
     return codes
 
 
@@ -147,13 +147,13 @@ def make_product_urls(codes):
     return product_urls
 
 
-# def happy_little_search_trees(url):
-#     '''
-#     an unpacker for DOM elements into parseable lists
-#     of the text from those elements
-#     '''
-#     tree = treeify(url)
-#     return CSSSelector('td a b font')(tree)
+def happy_little_search_trees(url):
+    '''
+    an unpacker for DOM elements into parseable lists
+    of the text from those elements
+    '''
+    tree = treeify(url)
+    return CSSSelector('td a b font')(tree)
 
 
 def check_for_unicorn(tree):
@@ -279,7 +279,7 @@ def search_first_page(url):
         print r.status_code
 
     print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
-    page_product_codes = get_product_codes(tree)
+    page_product_codes = get_product_codes(url)
     print 'found {0} initial product codes'.format(len(page_product_codes))
     return pages, page_product_codes
 
@@ -302,15 +302,12 @@ def prepare_unicorn_search(url):
     pages, page_product_codes = search_first_page(url)
     search_urls = make_search_urls(pages)
     print 'num_search_urls: {}'.format(len(search_urls))
-    # does our search gets in one go
-    print 'getting search urls'
-    rs = (u for u in p.imap_unordered(open_url, search_urls))
-    print 'making DOM trees ... happy little DOM trees ....'
-    trees = (parse_html(r) for r in rs)
-    new_codes = (code for code in p.imap_unordered(get_product_codes, trees))
+    print 'getting codes ....'
+    new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
     page_product_codes += [c for code in new_codes for c in code if len(c) > 1]
 
     end_search = datetime.datetime.now()
+    print 'found {0} product codes ....'.format(len(page_product_codes))
     print end_search
     print end_search - start_search
     return page_product_codes
