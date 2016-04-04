@@ -224,7 +224,8 @@ def assemble_unicorn(tree):
 
     try:
         # this next bit only breaks if the target data is being updated and
-        # changed on the server end -- which is a good time to break
+        # changed on the server end or we have a bad DOM tree --
+        # which are good times to break
         unicorn_store_id = unicorn_store[0]
         # there can be as many as three digits at the beginning of each
         # number-of-units string for sure and theoretically more.
@@ -257,7 +258,8 @@ def assemble_unicorn(tree):
 
     except IndexError as e:
         print e
-        print 'looks like time for a server update. breathe. we can try again.'
+        print unicorn_store
+        raise Exception('looks like time for a server update or a bad URL. breathe. we can try again.')
 
 
 def on_sale(tree):
