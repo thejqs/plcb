@@ -389,7 +389,7 @@ def hunt_unicorns(url=None):
 
 
 if __name__ == '__main__':
-    p = Pool(5)
+    p = Pool(8)
     url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
     hunt_unicorns(**url)
     # hunt_unicorns()
