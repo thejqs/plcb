@@ -98,8 +98,8 @@ def write_codes_to_file(data):
     expects an iterable of product codes
     '''
     with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'a+') as f:
+        # don't want the result to be a list, just lines of text
         for datum in data:
-            # don't want the result to be a list, just lines of text
             print >> f, datum
 
 
@@ -369,11 +369,10 @@ def hunt_unicorns(url=None):
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
         with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
-    print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
     print 'getting product urls ....'
-    # multiprocessing module can't handle lxml DOM tree elements.
+    # multiprocessing module can't handle lxml DOM tree elements, apparently.
     # so granularly we go
     rs = (u for u in p.imap_unordered(open_url, product_urls))
     print 'making DOM trees ... happy little DOM trees ....'
