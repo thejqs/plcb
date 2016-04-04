@@ -32,7 +32,9 @@ Maybe that's not a lot of data if you're one of those millions-of-rows people, b
 
 This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't have the skills to create this project.
 
-The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.  **So here we are.**
+The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.  
+
+**So here we are.**
 
 The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
 
