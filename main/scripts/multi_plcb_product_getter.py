@@ -304,6 +304,9 @@ def prepare_unicorn_search(url):
     print 'num_search_urls: {}'.format(len(search_urls))
     print 'getting codes ....'
     new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
+    # should redo some of this, as we're unpacking (sometimes) nested lists
+    # when we could unpack as we go and only have one list to deal with here.
+    # meantime, bless the double list comprehension
     page_product_codes += [c for code in new_codes for c in code if len(c) > 1]
 
     end_search = datetime.datetime.now()
@@ -341,7 +344,7 @@ def hunt_unicorns(url=None):
         # if it breaks but we have all the codes already,
         # we no longer need a parameter. can also run this way instead:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/extra-product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
@@ -355,7 +358,7 @@ def hunt_unicorns(url=None):
     print 'hunting unicorns ....'
     unicorns = unicorn_scrape(trees)
     print 'writing unicorns to json ....'
-    [write_unicorn_json_to_file(unicorn) for unicorn in unicorns]
+    [write_unicorn_json_to_file(unicorns) for unicorn in unicorns]
     print 'done hunting.'
     end_products = datetime.datetime.now()
     print end_products - start_products
