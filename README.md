@@ -46,6 +46,6 @@ Until then: *On Python!* *On JavaScript!*
 
 **Let's do this.**
 
-[leaflet]: https://github.com/thejqs/plcb/blob/master/leaflet_screenshot.png
+[leaflet]: https://github.com/thejqs/plcb/blob/master/leaflet_screenshot1.png
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.45.05.png
 [psearch]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
