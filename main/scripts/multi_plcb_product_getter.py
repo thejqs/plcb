@@ -337,8 +337,8 @@ def prepare_unicorn_search(url):
     new_codes = (code for code in p.imap_unordered(get_product_codes, search_urls))
     # should redo some of this, as we're unpacking (sometimes) nested lists
     # when we could unpack as we go and only have one list to deal with here.
-    # meantime, bless the double list comprehension
-    page_product_codes += [c for code in new_codes for c in code if len(c) > 1]
+    # meantime, bless double list comprehensions. not that I feel good about it
+    page_product_codes += [c for code in new_codes for c in code]
 
     end_search = datetime.datetime.now()
     print 'found {0} product codes ....'.format(len(page_product_codes))
@@ -389,6 +389,6 @@ def hunt_unicorns(url=None):
 
 if __name__ == '__main__':
     p = Pool(8)
-    url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-    hunt_unicorns(**url)
-    # hunt_unicorns()
+    # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+    # hunt_unicorns(**url)
+    hunt_unicorns()
