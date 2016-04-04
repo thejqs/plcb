@@ -1,4 +1,4 @@
-PLCB unicorns
+Boozicorns
 =============
 Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions.
 
