@@ -258,12 +258,6 @@ def assemble_unicorn(tree):
     except IndexError as e:
         print e
         print 'looks like time for a server update. breathe. we can try again.'
-        time.sleep(1800)
-        try:
-            assemble_unicorn(tree)
-        except IndexError:
-            print e
-            raise Exception('second time this failed. probably have a look.')
 
 
 def on_sale(tree):
