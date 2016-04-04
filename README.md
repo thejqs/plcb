@@ -36,11 +36,16 @@ The state's database can do this for us, but the existing interfaces won't allow
 
 **So here we are.**
 
+Isn't that better?
+
+![alt text][leaflet]
+
 The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
 
 Until then: *On Python!* *On JavaScript!*
 
 **Let's do this.**
 
+[leaflet]: https://github.com/thejqs/plcb/blob/master/leaflet_screenshot.png
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.45.05.png
 [psearch]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
