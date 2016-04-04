@@ -59,16 +59,16 @@ uniques.forEach(function (id) {
           product_info += '<div><strong>' +
             unicorn_name +
             '</strong>: ' +
-            unicorn_bottles + (unicorn_bottles > 1 ? ' units'  : ' unit') +
+            unicorn_bottles + (unicorn_bottles > 1 ? ' units' : ' unit') +
             ' // ' +
             unicorn_size +
             ' // ' +
             unicorn_price +
             ' // ' +
             on_sale + '</div>'
-      }
+        }
       marker.bindPopup(popupHtml + product_info)
+      }
     }
   }
-}
 });
