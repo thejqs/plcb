@@ -85,7 +85,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns_json/unicorns_2-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -97,7 +97,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for datum in data:
             print >> f, datum
@@ -367,7 +367,7 @@ def hunt_unicorns(url=None):
         all_product_codes = prepare_unicorn_search(url)
     else:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
