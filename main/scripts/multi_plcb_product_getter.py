@@ -85,7 +85,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../unicorns_json/unicorns_2-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -97,7 +97,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'a+') as f:
         for datum in data:
             # don't want the result to be a list, just lines of text
             print >> f, datum
@@ -367,7 +367,7 @@ def hunt_unicorns(url=None):
         all_product_codes = prepare_unicorn_search(url)
     else:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../product_codes/product_codes_2-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f.readlines()]
     print 'narrowed it down to {0} in-store products ....'.format(len(all_product_codes))
     product_urls = make_product_urls(all_product_codes)
@@ -381,7 +381,7 @@ def hunt_unicorns(url=None):
     print 'hunting unicorns ....'
     unicorns = unicorn_scrape(trees)
     print 'writing unicorns to json ....'
-    [write_unicorn_json_to_file(unicorns) for unicorn in unicorns]
+    write_unicorn_json_to_file(unicorns)
     print 'done hunting.'
     end_products = datetime.datetime.now()
     print end_products - start_products
@@ -389,7 +389,7 @@ def hunt_unicorns(url=None):
 
 
 if __name__ == '__main__':
-    p = Pool(8)
+    p = Pool(5)
     url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
     hunt_unicorns(**url)
     # hunt_unicorns()
