@@ -46,7 +46,7 @@ def open_url(url):
     a raw string of html
     '''
     try:
-        headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 // Jacob Quinn Sanders, War Streets Media: jacob@warstreetsmedia.com"}
+        headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.8"}
         r = requests.get(url, headers=headers)
         if r.status_code == 200:
             return r.text
@@ -103,6 +103,33 @@ def write_codes_to_file(data):
             print >> f, datum
 
 
+def get_total_numbers(tree):
+    '''
+    collects from the first page we touch the total numbers of pages
+    and products we have to crawl. they come in as strings with extra words
+    and a comma we have to handle
+    '''
+    time.sleep(1)
+    nums = CSSSelector('form table tr td')(tree)
+    num_pages = int(''.join(n for n in nums[0].text[10:].split(',')))
+    num_products = int(''.join(n for n in nums[1].text[25:].split(',')))
+    return (num_pages, num_products)
+
+
+def get_product_codes(url):
+    '''
+    mapped to a list of search urls, collects the product codes that will complete
+    our product-page URLs so we can check each for unicorns
+    '''
+    codes_elements = happy_little_search_trees(url)
+    # have to ignore a 'New Search' string that comes in with the yummy data
+    codes = [code.text for code in codes_elements if code.text.isdigit()]
+    write_codes_to_file(codes)
+
+    # print 'wrote {0} codes'.format(len(codes))
+    return codes
+
+
 def search_first_page(url):
     '''
     collects data from the very first search page, which doesn't quite
@@ -128,19 +155,6 @@ def search_first_page(url):
     return pages, page_product_codes
 
 
-def get_total_numbers(tree):
-    '''
-    collects from the first page we touch the total numbers of pages
-    and products we have to crawl. they come in as strings with extra words
-    and a comma we have to handle
-    '''
-    time.sleep(1)
-    nums = CSSSelector('form table tr td')(tree)
-    num_pages = int(''.join(n for n in nums[0].text[10:].split(',')))
-    num_products = int(''.join(n for n in nums[1].text[25:].split(',')))
-    return (num_pages, num_products)
-
-
 def make_search_urls(pages):
     '''
     creates a list of urls so we can iterate over the main search pages.
@@ -156,20 +170,6 @@ def make_search_urls(pages):
         search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}&selTyp=&selTypS=&selTypW=&selTypA=&searchCode=&searchPhrase=&CostRange=&selSale=&strFilter=&prevSortby=BrndNme&sortBy=BrndNme&sortDir=ASC'.format(page)
         search_urls.append(search_url)
     return search_urls
-
-
-def get_product_codes(url):
-    '''
-    mapped to a list of search urls, collects the product codes that will complete
-    our product-page URLs so we can check each for unicorns
-    '''
-    codes_elements = happy_little_search_trees(url)
-    # have to ignore a 'New Search' string that comes in with the yummy data
-    codes = [code.text for code in codes_elements if code.text.isdigit()]
-    write_codes_to_file(codes)
-
-    # print 'wrote {0} codes'.format(len(codes))
-    return codes
 
 
 def happy_little_search_trees(url):
@@ -203,9 +203,14 @@ def check_for_unicorn(tree):
     '''
     check_unicorn = CSSSelector('body table tr td table tr td font')(tree)
     is_unicorn = False
-    if 'one Location' in check_unicorn[0].text:
-        is_unicorn = True
-    return is_unicorn
+    try:
+        if 'one Location' in check_unicorn[0].text:
+            is_unicorn = True
+        return is_unicorn
+    except IndexError:
+        print 'no text to check here. weird.'
+        print tree
+        return 'this one needs to be checked'
 
 
 def assemble_unicorn(tree):
