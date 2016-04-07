@@ -116,6 +116,15 @@ def get_total_numbers(tree):
     return (num_pages, num_products)
 
 
+def happy_little_search_trees(url):
+    '''
+    a little unpacker for search-page DOM elements into lists
+    of the text from those elements
+    '''
+    tree = treeify(url)
+    return CSSSelector('td a b font')(tree)
+
+
 def get_product_codes(url):
     '''
     mapped to a list of search urls, collects the product codes that will complete
@@ -170,15 +179,6 @@ def make_search_urls(pages):
         search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}&selTyp=&selTypS=&selTypW=&selTypA=&searchCode=&searchPhrase=&CostRange=&selSale=&strFilter=&prevSortby=BrndNme&sortBy=BrndNme&sortDir=ASC'.format(page)
         search_urls.append(search_url)
     return search_urls
-
-
-def happy_little_search_trees(url):
-    '''
-    a little unpacker for search-page DOM elements into lists
-    of the text from those elements
-    '''
-    tree = treeify(url)
-    return CSSSelector('td a b font')(tree)
 
 
 def make_product_urls(codes):
@@ -390,6 +390,6 @@ def hunt_unicorns(url=None):
 
 if __name__ == '__main__':
     p = Pool(8)
-    # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-    # hunt_unicorns(**url)
-    hunt_unicorns()
+    url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+    hunt_unicorns(**url)
+    # hunt_unicorns()
