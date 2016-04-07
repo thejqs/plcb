@@ -1,5 +1,38 @@
 #!usr/bin/env python
 
+'''
+A crawler to search every product in the
+Pennsylvania Liquor Control Board's database, searching for unicorns:
+products available for sale in only one retail store in the entire state.
+
+Configured to use Python's multiprocessing module -- thus I can't
+use generators everywhere I'd like. Life is just hard sometimes. Boo. Also hoo.
+
+The PLCB claims the database is updated at the close of business every day,
+but it's more like 5 a.m. the following day. Nonetheless, that's still before
+stores open for the day.
+
+Every day is a chance for fresh data.
+
+The target site to collect product ids is the PLCB's main site.
+The checking of individual products to see which stores they're in happns on
+a secondary site. The main reason there is that the search interface on
+the secondary site is brittle and not easy to reconfigure. It has to serve
+too many pages for us to get all thr product ids. So we have to be more
+than a little careful how we hit it.
+
+On any given day, given the structure of the PLCB's
+product-search interface on the secondary site, we would have about 2,400 pages
+to crawl in order to wade through about 60,000 products to see the 14,000 or so
+in stores. This way we hit about dozen pages -- but some of the
+product codes are missing. Still investigating.
+
+Once we have product codes, we can test for unicorns, which usually number
+about 2,000.
+
+Fun, right?
+'''
+
 import requests
 import StringIO
 from lxml import etree
@@ -119,7 +152,8 @@ def assemble_categories():
 
 def make_search_urls(booze_categories):
     '''
-    expects a dictionary from which we can withdraw the values we need to complete the urls
+    expects a dictionary from which we can withdraw the values we need to complete the urls. wine categories
+    and those for spirits have slightly different url structures
     '''
     for key in booze_categories.keys():
         for value in booze_categories[key]:
@@ -155,29 +189,35 @@ def get_total_numbers(tree):
 
 def get_product_codes(tree, wine=None):
     '''
-    mapped to a list of search urls, collects the product codes that will complete
+    collects the product codes that will complete
     our product-page URLs so we can check each for unicorns
 
     Args:
-    a DOM tree
+    a DOM tree and a boolean for whether the page contains
+    wine products or not, which need to be extracted
+    a little differently.
 
     Returns:
-    a list of product codes with extra leading zeroes
+    a list of product codes
     '''
     labels = tree.xpath('//div[@class="textTop"]/div/span/text()')
-    # for some reason the text values here require the granularity of xpath.
-    # css selectors, for whatever reason, miss it
+    # for some reason the text values we want here require the granularity
+    # of xpath. css selectors miss them
     if wine:
         codes_only = wine_codes(tree, labels)
     else:
         codes_only = booze_codes(tree)
     # killing leading zeroes -- there are sometimes none, sometimes four,
-    # sometimes five, and theoretically could be more -- to prepare for our next magic trick
+    # sometimes five, and possibly more -- to append them to a url stub
     code_anti_pattern = '^([0]+)'
     return [re.sub(code_anti_pattern, '', code) for code in codes_only]
 
 
 def wine_codes(tree, labels):
+    '''
+    to extract ids for wine products, we have to parse
+    product vintage, unit size and the code itself.
+    '''
     vintage_size_code = tree.xpath('//div[@class="textTop"]/div/text()')
     zipped = zip(labels, vintage_size_code)
     # making sure they're strings and not unicode
@@ -185,11 +225,17 @@ def wine_codes(tree, labels):
 
 
 def booze_codes(tree):
+    '''
+    non-wine products don't have a vintage, thus need to
+    be handled a little differently.
+    '''
     return [str(e.strip()) for e in tree.xpath('//div[@class="textTop"]/div/text()') if not ' ' in e]
 
 
 def make_product_urls(codes):
     '''
+    creates the urls we need to check for unicorns
+
     Args:
     a list of all product ids, usually between 14,000 and 16,000
     '''
@@ -319,6 +365,10 @@ def unicorn_scrape(trees):
 
 
 def collect_codes():
+    '''
+    combs each search url for product ids to hand off
+    to a unicorn-hunter
+    '''
     start_search = datetime.datetime.now()
     print start_search
 
@@ -349,6 +399,10 @@ def collect_codes():
 
 
 def hunt_unicorns():
+    '''
+    once our product ids are in hand, we can search each product page
+    in earnest to ask it whether it is that rarest of beasts
+    '''
     codes = collect_codes()
     start_products = datetime.datetime.now()
     print start_products

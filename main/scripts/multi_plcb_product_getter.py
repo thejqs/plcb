@@ -15,15 +15,14 @@ stores open for the day.
 
 Every day is a chance for fresh data.
 
-The site is pretty brittle. It doesn't take that many concurrent requests
-for it to get unreliable. So we have to be more than a little careful
-how we hit it.
+The target site is a secondary site. It's pretty brittle. It doesn't take
+that many requests for it to get unreliable. So we have to be more than
+a little careful how we hit it.
 
 On any given day, given the structure of the PLCB's
-product search interfaces, we have about 2,400 pages to crawl
-to wade through about 60,000 products to see the 14,000 or so
-which are in stores. And then we can test for unicorns,
-which usually number about 2,000.
+product-search interface on the secondary site, we have about 2,400 pages
+to crawl in order to wade through about 60,000 products to see the 14,000 or so
+in stores. And then we can test for unicorns, which usually number about 2,000.
 
 Fun, right?
 '''
@@ -46,7 +45,7 @@ def open_url(url):
     a raw string of html
     '''
     try:
-        headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.8"}
+        headers = {'user-agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.8 // Jacob Quinn Sanders, War Streets Media/jacob@warstreetsmedia.com"}
         r = requests.get(url, headers=headers)
         if r.status_code == 200:
             return r.text
@@ -108,6 +107,9 @@ def get_total_numbers(tree):
     collects from the first page we touch the total numbers of pages
     and products we have to crawl. they come in as strings with extra words
     and a comma we have to handle
+
+    Args:
+    a DOM tree
     '''
     time.sleep(1)
     nums = CSSSelector('form table tr td')(tree)
