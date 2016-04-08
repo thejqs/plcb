@@ -4,5 +4,5 @@ admin.autodiscover()
 
 
 urlpatterns = [
-    url(r'^$', 'main.views.XXXXX', name='XXXXX'),
+    url(r'^$', 'main.views.unicorns', name='unicorns'),
 ]

@@ -23,7 +23,7 @@ class Unicorns(models.Model):
     num_bottles = models.IntegerField()
     bottle_size = models.CharField(max_length=10, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
-    on_sale = models.BooleanField(null=True, blank=True)
+    on_sale = models.NullBooleanField(null=True, blank=True)
     on_sale_price = models.FloatField(null=True, blank=True)
     scrape_date = models.DateField()
     store_id = models.ForeignKey(Stores)

@@ -54,7 +54,7 @@ uniques.forEach(function (id) {
           var unicorn_bottles = unicorn['bottles']
           var unicorn_size = unicorn['bottle_size']
           var unicorn_price = '$' + unicorn['price']
-          var on_sale = unicorn['on_sale'] ? 'Sale price: $' + unicorn['on_sale'] : 'Not on sale'
+          var on_sale = unicorn['on_sale'] ? 'Sale price: $' + unicorn['on_sale'] : 'Not marked down'
 
           product_info += '<div><strong>' +
             unicorn_name +
