@@ -14,7 +14,7 @@
 
 var layer = new L.StamenTileLayer('toner-background')
 
-var map = new L.Map('map').setView([41, -77.5], 8)
+var map = new L.Map('map').setView([41, -77.5], 7)
 map.addLayer(layer)
 
 var uniques = new Set()
