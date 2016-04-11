@@ -36,6 +36,10 @@ The state's database can do this for us, but the existing interfaces won't allow
 
 That doesn't mean we can't be nice about it. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
 
+And it's not like the PLCB is actively discouraging this sort of thing.
+
+![alt text][permissions]
+
 So here we are.
 
 **Isn't that better?**
@@ -50,4 +54,5 @@ Until then: *On Python!* *On JavaScript!*
 
 [leaflet]: https://github.com/thejqs/plcb/blob/master/leaflet_screenshot1.png
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.45.05.png
-[psearch]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
+[psearch]: https://github.com/thejqs/plcb/blob/master/interface.png
+[permissions]: https://github.com/thejqs/plcb/blob/master/permissions.png
