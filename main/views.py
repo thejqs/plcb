@@ -47,7 +47,7 @@ def unicorns(request):
 
     top_store = max(count_stores, key=itemgetter(1))
 
-    with open('main/static/json/stores.json', 'r') as f:
+    with open('main/static/json/retail_stores-2016-04-10.json', 'r') as f:
         stores_json = json.load(f)
         store_data = None
         for store in stores_json:
