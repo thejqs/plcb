@@ -1,6 +1,6 @@
 body {
     background-color: #FDF5E6;
-    background-size: 225vh;
+    background-size: 500vh;
     background-repeat: no-repeat;
     background-position: center;
     z-index: -2;
@@ -28,8 +28,8 @@ body {
 }
 
 .intro-text {
-    font-family: 'Tenor Sans', Helvetica, sans-serif;
-    font-size: 4vw;
+    font-family: 'Quattrocento', 'Tenor Sans', Helvetica, sans-serif;
+    font-size: 3vw;
     margin-top: 5vh;
     margin-bottom: 7vh;
     text-align: center;
@@ -53,9 +53,9 @@ body {
 }
 
 .date {
-    font-family: 'Tenor Sans', Helvetica, sans-serif;
+    font-family: 'Quattrocento', Helvetica, sans-serif;
     color: #000000;
-    font-size: 5vw;
+    font-size: 6vw;
     display: block;
     text-align: center;
     margin-bottom: 15vh;
@@ -78,15 +78,16 @@ body {
 }
 
 .summary {
-    font-size: 7vh;
-    font-family: 'Tenor Sans', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
+    font-size: 6.5vh;
+    font-family: 'Quattrocento', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
     text-align: center;
     margin-bottom: 1%;
     display: block;
 }
 
 .summary-num {
-    font-family: 'Rye';
+    font-family: 'Quattrocento';
+    font-weight: bold;
     font-size: 10vw;
     margin-bottom: 0;
 }
@@ -97,7 +98,7 @@ body {
 }
 
 .summary-context {
-    font-size: 4vw;
+    font-size: 2vw;
     text-align: center;
     margin-top: 0;
     margin-bottom: 10vh;
@@ -108,7 +109,7 @@ body {
 }
 
 #about {
-    font-family: 'Rye';
+    font-family: 'Quattrocento';
     font-size: 3vh;
     color: #582335;
     text-align: center;
@@ -135,9 +136,72 @@ a {
     text-decoration: none;
 }
 
+.asterisk {
+    color: #000000;
+}
+
+.fa-caret-up {
+    color: #000000;
+}
+
+#caveats {
+    font-family: 'Quattrocento', serif;
+    font-size: 1.5vw;
+    border: 1px dotted;
+    width: 80vw;
+    padding: 1%;
+    display: block;
+    margin-left: 10vw;
+    margin-bottom: 5vh;
+}
+
+#caveats p strong {
+    font-family: 'Rye';
+}
 
 @media only screen and (max-width: 320px) {
+    body {
+        background-position: center;
+        background-size: 250vh;
+    }
+
     #map {
         display: none;
+    }
+
+    .intro-text {
+        font-size: 5vw;
+    }
+
+    .date {
+        font-size: 7vw;
+    }
+
+    .summary {
+        font-size: 6vh;
+        font-family: 'Quattrocento', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
+        text-align: center;
+        margin-bottom: 1%;
+        display: block;
+    }
+
+    .summary-num {
+        font-family: 'Quattrocento';
+        font-weight: bold;
+        font-size: 15vw;
+        margin-bottom: 0;
+    }
+
+    .summary-context {
+        font-size: 4.5vw;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 10vh;
+    }
+
+    #caveats {
+        width: 90vw;
+        margin-left: 1.5vw;
+        font-size: 4vw;
     }
 }
