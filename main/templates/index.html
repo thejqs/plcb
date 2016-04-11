@@ -11,6 +11,7 @@
 	<meta http-equiv="cleartype" content="on">
     <link href='https://fonts.googleapis.com/css?family=Rye' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Tenor+Sans' rel='stylesheet' type='text/css' />
+    <link href='https://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/lib/leaflet-0.75.css' %}" />
 	<link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -25,9 +26,10 @@
         </p>
         <p>
             The PLCB's sites make them almost impossible to find.
+            <div id="back-to-top"></div>
         </p>
         <p>
-            So we did it for you.
+            So we did it for you.<a class="asterisk" href="#caveats">*</a>
         </p>
         <p>
             These are the unicorns. These are the boozicorns.
@@ -36,12 +38,9 @@
     <div class="glass"><span class="fa fa-glass"></span></div>
     <div id="unicorns">
         <div class="date">
-            <p class="boozicorns">
-                boozicorns
-            </p>
-            <p>
+            <h4>
                 {% now "jS F Y" %}
-            </p>
+            </h4>
         </div>
         <div class="summary">
             <p>
@@ -96,6 +95,14 @@
             </div>
         </div>
 	<div id="map"></div>
+    <div id="caveats">
+        <p>
+            <strong>A few notes:</strong><em> This data is only as good -- and only as available -- on any given day as the PLCB's database and servers. They're brittle. Thus imperfect. And sometimes the script that populates this site breaks. Which, um, isn't always their fault. We do the best we can to respect them and you at the same time, liberating information from terrible interfaces that also helps you make informed buying decisions.
+        </p>
+        <p>
+            Well. In theory. Some of this stuff is awful. <a href="#back-to-top"><span class="fa fa-caret-up"></span></a></em>
+        </p>
+    </div>
     <div id="about">
         <p>
             Go inside the Boozicorns project on <a target="_blank" href="https://github.com/thejqs/plcb">GitHub</a>
