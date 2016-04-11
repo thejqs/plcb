@@ -39,9 +39,9 @@ def unicorns(request):
             most_bottles = num_bottles
             bottles_name = name
 
-    unicorns_dict['min'] = (min_name, '${}'.format(min_price))
-    unicorns_dict['max'] = (max_name, '${}'.format(max_price))
-    unicorns_dict['bottles'] = (bottles_name, most_bottles)
+    unicorns_dict['min'] = (min_name.lower(), '${}'.format(min_price))
+    unicorns_dict['max'] = (max_name.lower(), '${}'.format(max_price))
+    unicorns_dict['bottles'] = (bottles_name.lower(), most_bottles)
 
     count_stores = [(x, stores.count(x)) for x in stores]
 
@@ -53,7 +53,7 @@ def unicorns(request):
         for store in stores_json:
             if top_store[0] == store['id']:
                 store_data = store['address']
-        unicorns_dict['store'] = (store_data, top_store[1])
+        unicorns_dict['store'] = (store_data.lower(), top_store[1])
 
     context['unicorns'] = unicorns_dict
     return render(request, 'index.html', context)
