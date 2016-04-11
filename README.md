@@ -48,7 +48,11 @@ So here we are.
 
 The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
 
-Until then: *On Python!* *On JavaScript!*
+And the data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
+
+Guess there's really only one way to find out.
+
+Thus: *On Python!* *On JavaScript!*
 
 **Let's do this.**
 
