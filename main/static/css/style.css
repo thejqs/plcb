@@ -1,17 +1,143 @@
+body {
+    background-color: #FDF5E6;
+    background-size: 225vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: -2;
+    background-image: url('../js/lib/images/bottle2.svg')
+}
+
 #map {
-    width: 100%;
-    height: 650px;
+    width: 80vw;
+    height: 400px;
+    margin-top: 5%;
+    margin-left: 10vw;
+    margin-bottom: 5vh;
 }
 
-.min-max-bottles {
-    width: 55%;
-    font-size: 150%;
-    font-family: Helvetica;
+#header {
+    color: #582335;
+    font-family: 'Rye', Helvetica, sans-serif;
+    font-size: 7vw;
+    text-align: center;
 }
 
-.store {
-    width: 70%;
-    font-size: 125%;
-    font-family: Helvetica;
-    color: #808080;
+#header h1 {
+    margin-top: 2vh;
+    margin-bottom: 5vh;
+}
+
+.intro-text {
+    font-family: 'Tenor Sans', Helvetica, sans-serif;
+    font-size: 4.5vw;
+    margin-top: 5vh;
+    margin-bottom: 7vh;
+    text-align: center;
+    width: 75vw;
+    display: block;
+    text-align: center;
+    margin-left: 7.5%;
+    border-left: 2px dotted;
+    border-right: 2px dotted;
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+#header span {
+    color: #000000;
+}
+
+.num {
+    color: #000000;
+    font-weight: bold;
+}
+
+.date {
+    font-family: 'Tenor Sans', Helvetica, sans-serif;
+    color: #000000;
+    font-size: 5vw;
+    display: block;
+    text-align: center;
+    margin-bottom: 15vh;
+}
+
+.boozicorns {
+    color: #000000;
+    font-family: 'Rye', Helvetica, sans-serif;
+    font-size: 7vw;
+    margin-bottom: 0;
+}
+
+.date p {
+    color: #000000;
+    margin-top: 0;
+}
+
+.date p:nth-child(2) {
+    font-size: 4vw;
+}
+
+.summary {
+    font-size: 7vh;
+    font-family: 'Tenor Sans', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
+    text-align: center;
+    margin-bottom: 1%;
+    display: block;
+}
+
+.summary-num {
+    font-family: 'Rye';
+    font-size: 10vw;
+    margin-bottom: 0;
+}
+
+.summary p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.summary-context {
+    font-size: 4vw;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10vh;
+}
+
+.summary-context p {
+    margin-top: 0;
+}
+
+#about {
+    font-family: 'Rye';
+    font-size: 3vh;
+    color: #582335;
+    text-align: center;
+    margin-bottom: 5%;
+}
+
+#about a {
+    color: #000000;
+}
+
+.glass {
+    margin-bottom: 8vh;
+    margin-top: 8vh;
+}
+
+.fa-glass {
+    text-align: center;
+    color: #000000;
+    font-size: 8vh;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+@media only screen and (max-width: 320px) {
+    #map {
+        display: none;
+    }
 }
