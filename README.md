@@ -10,7 +10,7 @@ Also terrible: the interface(s) the state puts on the data. No joke.
 
 ![alt text][psearch]
 
-I can't search it like I'd want:
+I can't search like I'd want:
 
 - *Do they let me load all search results in one page?* **No.**
 
