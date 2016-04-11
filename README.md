@@ -34,13 +34,15 @@ This project exists to collect and illuminate all of the products available for 
 
 The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.
 
-**So here we are.**
+That doesn't mean we can't be nice about it. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
 
-Isn't that better?
+So here we are.
+
+**Isn't that better?**
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
 
 Until then: *On Python!* *On JavaScript!*
 
