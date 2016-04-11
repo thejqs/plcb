@@ -81,10 +81,10 @@ def get_retail_hours(tree):
     # pairing DOM elements containing days and hours
     retail_store_hours_zipped = zip(retail_store_days_elements,
                                     retail_store_hours_elements)
-    # unpacking elements
-    retail_store_hours = [(day.text, hours_range.text)
+    # unpacking elements into a list of dictionaries
+    retail_store_hours = [{day.text: hours_range.text}
                           for (day, hours_range) in retail_store_hours_zipped]
-    # chunking (days, hours) tuples out into weeks
+    # slicing dictionaries of days into weeks
     weeks_offset = 7
     return [retail_store_hours[x:x + weeks_offset]
             for x in xrange(0, len(retail_store_hours), weeks_offset)]
