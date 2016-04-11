@@ -52,8 +52,10 @@ def open_url(url):
         else:
             print 'You got a {0} error from {1}'.format(r.status_code, r.url)
             raise Exception('You are an idiot. Bad link.')
-    except requests.exceptions.ReadTimeout as e:
+    except requests.exceptions.ConnectionError as e:
+        print datetime.datetime.now()
         print e
+        print url
         print 'no delicious bytes to eat getting {0}'.format(url)
 
 
@@ -64,7 +66,12 @@ def parse_html(unparsed_html):
     Returns:
     a DOM tree
     '''
-    return lxml.html.fromstring(unparsed_html)
+    try:
+        return lxml.html.fromstring(unparsed_html)
+    except TypeError as e:
+        print datetime.datetime.now()
+        print e
+        print unparsed_html
 
 
 def treeify(url):
@@ -84,7 +91,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../static/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -96,7 +103,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for datum in data:
             print >> f, datum
@@ -371,7 +378,7 @@ def hunt_unicorns(url=None):
     else:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
         with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
-            all_product_codes = [line.strip() for line in f.readlines()]
+            all_product_codes = [line.strip() for line in f]
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
     print 'getting product urls ....'
