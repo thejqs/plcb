@@ -50,24 +50,18 @@ def get_pdf_codes():
     layout and attempts to slurp up the yummy data thingies.
     '''
     pdf = pdfquery.PDFQuery('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()))
+    # should be 600-plus
     pages = pdf.doc.catalog['Pages'].resolve()['Count']
     d = datetime.date.today()
-    start_load = datetime.datetime.now()
     print 'loading pdf ....'
-    print start_load
+    # this, um, this takes a while. about 10 minutes
     pdf.load()
-    end_load = datetime.datetime.now()
-    print end_load
-    print end_load - start_load
-
     print 'getting codes ....'
-    start_codes = datetime.datetime.now()
-    print start_codes
-
     codes = []
+    # there is no page zero
     for page in xrange(1, pages + 1):
         if page > 1:
-            first_code_element = pdf.pq('LTPage[pageid=\'{}\'] LTTextBoxHorizontal:overlaps_bbox("{},{},{},{}")'.format(page, 61.45, 551.767, 68, 563.527))[0]
+            first_code_element = pdf.pq('LTPage[pageid=\'{0}\'] LTTextBoxHorizontal:overlaps_bbox("{1},{2},{3},{4}")'.format(page, 61.45, 551.767, 68, 563.527))[0]
             y_minus = 550
         elif page == 1:
             first_code_element = pdf.pq('LTPage[pageid=\'1\'] LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(61.45, 445.267, 68, 457.027))[0]
@@ -91,17 +85,12 @@ def get_pdf_codes():
         codes += set(new_codes)
         write_codes_to_file(set(new_codes))
 
-    end_codes = datetime.datetime.now()
-    print end_codes
-    print 'found {} codes in {}'.format(len(codes), end_codes - start_codes)
     return codes
 
 
 def collect():
     print 'copying the pdf ....'
     copy_pdf(pdf_url)
-    # print 'starting pdf load ....'
-    # pdf = load_pdf()
     codes = get_pdf_codes()
     print 'done with the pdf'
     return codes
