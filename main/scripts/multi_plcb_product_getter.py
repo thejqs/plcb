@@ -5,13 +5,13 @@ A crawler to search every product in the
 Pennsylvania Liquor Control Board's database, searching for unicorns:
 products available for sale in only one retail store in the entire state.
 
-Configured to use Python's multiprocessing module --
-thus I can't use generators everywhere I'd like.
+Configured to use Python's multiprocessing module -- thus I can't use
+generators everywhere I'd like, plus a few other compromises.
 Life is just hard sometimes. Boo. Also hoo.
 
 The PLCB claims the database is updated at the close of business every day,
-but it's more like 5 a.m. the following day. Nonetheless, that's still before
-stores open for the day.
+but it's more like 5 a.m. or 7 a.m. the following day. Nonetheless, that's
+still before stores open for the day.
 
 Every day is a chance for fresh data.
 
@@ -19,10 +19,10 @@ The target site is a secondary site. It's pretty brittle. It doesn't take
 that many requests for it to get unreliable. So we have to be more than
 a little careful how we hit it.
 
-On any given day, given the structure of the PLCB's
-product-search interface on the secondary site, we have about 2,400 pages
-to crawl in order to wade through about 60,000 products to see the 14,000 or so
-in stores. And then we can test for unicorns, which usually number about 2,000.
+On any given day, given the structure of the PLCB's product-search interface
+on its secondary site, we have about 2,400 pages to crawl in order to
+wade through about 60,000 products to see the 14,000 or so in stores.
+And then we can test for unicorns, which usually number about 2,000.
 
 Fun, right?
 '''
@@ -377,7 +377,7 @@ def hunt_unicorns(url=None):
         all_product_codes = prepare_unicorn_search(url)
     else:
         # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        with open('../product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
             all_product_codes = [line.strip() for line in f]
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
