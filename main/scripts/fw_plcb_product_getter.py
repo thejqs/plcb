@@ -15,17 +15,19 @@ stores open for the day.
 Every day is a chance for fresh data.
 
 The target site to collect product ids is the PLCB's main site.
-The checking of individual products to see which stores they're in happns on
-a secondary site. The main reason there is that the search interface on
+The checking of individual products to see which stores they're in happens on
+a secondary site. The main reason for that is that the search interface on
 the secondary site is brittle and not easy to reconfigure. It has to serve
-too many pages for us to get all thr product ids. So we have to be more
-than a little careful how we hit it.
+too many pages for us to get all the product ids. So we have to be more
+than a little careful how we hit it. The product search on the secondary site,
+however, is more robust and uses less -- read: zero -- JavaScript to inject
+things we care about into its pages.
 
 On any given day, given the structure of the PLCB's
 product-search interface on the secondary site, we would have about 2,400 pages
 to crawl in order to wade through about 60,000 products to see the 14,000 or so
-in stores. This way we hit about dozen pages -- but some of the
-product codes are missing. Still investigating.
+in stores. This way we hit about dozen pages -- but a few thousand product
+codes are missing. Still investigating.
 
 Once we have product codes, we can test for unicorns, which usually number
 about 2,000.
@@ -159,10 +161,8 @@ def make_search_urls(booze_categories):
         for value in booze_categories[key]:
             if key == 'Spirits':
                 search_url = 'http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/SpiritsCatalogSearchResultView?tabSel=2&sortBy=&sortDir=&storeId=10051&catalogId=258552&langId=-1&parent_category_rn={0}&newsearchlist=no&resetValue=2&searchType={0}&minSize=&maxSize=&promotions=&rating=&vintage=&specificType=&price=&maxPrice=0&varitalCatIf=&region=&country=&varietal=&listSize=10000&searchKey=&pageNum=1&totPages=1&level0={0}&level1={1}&level2=&level3=&keyWordNew=false&VId=&TId=&CId=&RId=&PRc=&FPId=&TRId=&ProId=&isKeySearch=&SearchKeyWord=Name+or+Code'.format(key, value)
-
             else:
                 search_url = 'http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/CatalogSearchResultView?tabSel=2&sortBy=&sortDir=&storeId=10051&catalogId=258552&langId=-1&parent_category_rn=Wines+by+Variety&newsearchlist=no&resetValue=2&searchType=WINE&minSize=&maxSize=&promotions=&rating=&vintage=&specificType=&price=0&maxPrice=0&varitalCatIf=&region=&country=&varietal=&listSize=10000&searchKey=&pageNum=1&totPages=1&level0={0}&level1={1}&level2=&level3=&keyWordNew=false&VId=&TId=&CId=&RId=&PRc=&FPId=&TRId=&ProId=&isKeySearch=&SearchKeyWord=Name+or+Code'.format(key, value)
-
             yield search_url
 
 
@@ -185,6 +185,25 @@ def get_total_numbers(tree):
     num_pattern = '((?<=\()\d+(?=\)))'
     num_products = re.search(num_pattern, num_products_string).group()
     return num_products
+
+
+def wine_codes(tree, labels):
+    '''
+    to extract ids for wine products, we have to parse
+    product vintage, unit size and the code itself.
+    '''
+    vintage_size_code = tree.xpath('//div[@class="textTop"]/div/text()')
+    zipped = zip(labels, vintage_size_code)
+    # making sure they're strings and not unicode
+    return [str(c[1].strip()) for c in zipped if 'Code' in c[0]]
+
+
+def booze_codes(tree):
+    '''
+    non-wine products don't have a vintage, thus need to
+    be handled a little differently.
+    '''
+    return [str(e.strip()) for e in tree.xpath('//div[@class="textTop"]/div/text()') if not ' ' in e]
 
 
 def get_product_codes(tree, wine=None):
@@ -211,25 +230,6 @@ def get_product_codes(tree, wine=None):
     # sometimes five, and possibly more -- to append them to a url stub
     code_anti_pattern = '^([0]+)'
     return [re.sub(code_anti_pattern, '', code) for code in codes_only]
-
-
-def wine_codes(tree, labels):
-    '''
-    to extract ids for wine products, we have to parse
-    product vintage, unit size and the code itself.
-    '''
-    vintage_size_code = tree.xpath('//div[@class="textTop"]/div/text()')
-    zipped = zip(labels, vintage_size_code)
-    # making sure they're strings and not unicode
-    return [str(c[1].strip()) for c in zipped if 'Code' in c[0]]
-
-
-def booze_codes(tree):
-    '''
-    non-wine products don't have a vintage, thus need to
-    be handled a little differently.
-    '''
-    return [str(e.strip()) for e in tree.xpath('//div[@class="textTop"]/div/text()') if not ' ' in e]
 
 
 def make_product_urls(codes):
