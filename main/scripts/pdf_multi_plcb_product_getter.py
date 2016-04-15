@@ -99,113 +99,6 @@ def write_unicorn_json_to_file(data):
         print >> f, j
 
 
-# def write_codes_to_file(data):
-#     '''
-#     stores our product codes as we go in case of script breakage.
-#     starting over from scratch sucks and is awful. yes, both of those things
-#
-#     Args:
-#     expects an iterable of product codes
-#     '''
-#     with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
-#         # don't want the result to be a list, just lines of text
-#         for datum in data:
-#             print >> f, datum
-
-
-def get_total_numbers(tree):
-    '''
-    collects from the first page we touch the total numbers of pages
-    and products we have to crawl. they come in as strings with extra words
-    and a comma we have to handle
-
-    Args:
-    a DOM tree
-    '''
-    time.sleep(1)
-    nums = CSSSelector('form table tr td')(tree)
-    num_pages = int(''.join(n for n in nums[0].text[10:].split(',')))
-    num_products = int(''.join(n for n in nums[1].text[25:].split(',')))
-    return (num_pages, num_products)
-
-
-# def happy_little_search_trees(url):
-#     '''
-#     a little unpacker for search-page DOM elements into lists
-#     of the text from those elements
-#     '''
-#     tree = treeify(url)
-#     return CSSSelector('td a b font')(tree)
-
-
-def get_product_codes(url):
-    '''
-    mapped to a list of search urls, collects the product codes that will complete
-    our product-page URLs so we can check each for unicorns
-    '''
-    tree = treeify(url)
-    codes_elements = CSSSelector('td a b font')(tree)
-    # have to ignore a 'New Search' string that comes in with the yummy data
-    codes = [code.text for code in codes_elements if code.text.isdigit()]
-    # OK. so. type and proof data doesn't exist on the product pages
-    # where we'll ultimately assemble our unicorns. which means we have to
-    # collect this up-front not knowing how much of it we'll need later -- even
-    # as we know we'll throw away most of it. terrible. just terrible. but it's
-    # this or more get requests, and we're traversing these pages already.
-    # BONUS: we have to use xpath to get it as selectors are too general
-    # types = tree.xpath('//*/tr/td[5]/font/text()')
-    # proof = tree.xpath('//*/tr/td[5]/b/font/text()')
-    write_codes_to_file(codes)
-
-    # print 'wrote {0} codes'.format(len(codes))
-    return codes  # , types, proof
-
-
-def search_first_page(url):
-    '''
-    collects data from the very first search page, which doesn't quite
-    fit the URL structure for the rest of the search pages. gotta
-    start somewhere.
-
-    Returns:
-    the total pages we will have to search and our first product codes
-    '''
-    tree = treeify(url)
-    try:
-        pages, products = get_total_numbers(tree)
-    except IndexError as e:
-        print e
-        print 'uh-oh. is the page down? we should check: '
-        r = requests.get(url)
-        print r.text
-        print r.status_code
-
-    print 'searching {0} pages and {1} products for unicorns ....'.format(pages, products)
-    page_product_codes = get_product_codes(url)  # , types, proof
-    print 'found {0} initial product codes'.format(len(page_product_codes))
-    # associating these for later object assembly but keeping a separate copy
-    # of just the codes to more easily make urls we'll need
-    zipped = itertools.izip_longest(page_product_codes, types, proof)
-    return pages, page_product_codes  # , zipped
-
-
-def make_search_urls(pages):
-    '''
-    creates a list of urls so we can iterate over the main search pages.
-    the number series the URL structure supports begins with the numeral 2.
-    we have already collected data off the initial search page by this point
-
-    Args:
-    the total number of pages to search, usually about 2,400
-    '''
-    search_urls = []
-    # We've already captured data from one -- our initial -- URL by this point
-    for page in xrange(2, pages + 1):
-        search_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?strPageNum={0}&selTyp=&selTypS=&selTypW=&selTypA=&searchCode=&searchPhrase=&CostRange=&selSale=&strFilter=&prevSortby=BrndNme&sortBy=BrndNme&sortDir=ASC'.format(page)
-        search_urls.append(search_url)
-    return search_urls
-
-
 def make_product_urls(codes):
     '''
     Args:
@@ -337,50 +230,6 @@ def unicorn_scrape(trees):
     return unicorns
 
 
-def prepare_unicorn_search(url):
-    '''
-    assembles everything we need to hunt for unicorns,
-    doing the heavy lifting of walking all the search pages.
-
-    Args:
-    an initial URL on which to begin
-
-    Returns:
-    a list of product ids we need to format onto a url stub
-
-    Note:
-    when the search-page servers go down, the product pages generally stay up.
-    so for now, traversing the search pages first and separately
-    to collect the ids we need to get those out of the way.
-    '''
-    start_search = datetime.datetime.now()
-    print start_search
-
-    pages, page_product_codes, zipped_codes = search_first_page(url)
-    search_urls = make_search_urls(pages)
-    print 'num_search_urls: {}'.format(len(search_urls))
-    print 'getting codes ....'
-    new_codes, types, proof = (code for code in p.imap_unordered(get_product_codes, search_urls))
-    # should redo some of this, as we're unpacking (sometimes) nested lists
-    # when we could unpack as we go and only have one list to deal with here.
-    # meantime, bless double list comprehensions. not that I feel good about it
-    unpacked_codes = [c for code in new_codes for c in code]
-    # unpacked_types = [t for tp in types for t in tp]
-    # unpacked_proof = [p for pr in proof for p in pr]
-
-    unpacked_codes += page_product_codes
-
-    # making tuples of our
-    # zipped = zip(unpacked_codes, unpacked_types, unpacked_proof)
-    # zipped += zipped_codes
-
-    end_search = datetime.datetime.now()
-    print 'found {0} product codes ....'.format(len(page_product_codes))
-    print end_search
-    print end_search - start_search
-    return unpacked_codes  # , zipped
-
-
 def hunt_unicorns(url=None):
     '''
     once our product ids are in hand, we can search each product page
@@ -397,12 +246,11 @@ def hunt_unicorns(url=None):
     start_products = datetime.datetime.now()
     print start_products
 
-    # if url:
-    all_product_codes = pdf_parser.collect()  # prepare_unicorn_search(url)
-    # else:
-        # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-        # with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
-            # all_product_codes = [line.strip() for line in f]
+    all_product_codes = pdf_parser.collect()
+    # should things fall apart after this point, can simply read in the product codes from a file:
+    # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
+    # with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+        # all_product_codes = [line.strip() for line in f]
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))
     print 'getting product urls ....'
@@ -413,16 +261,6 @@ def hunt_unicorns(url=None):
     trees = (parse_html(r) for r in rs)
     print 'hunting unicorns ....'
     unicorns = unicorn_scrape(trees)
-    # finally -- FINALLY -- we get to use the type and proof data
-    # to update our unicorns
-    # print 'adding type and proof to unicorns ...'
-    # for unicorn in unicorns:
-    #     for data in metadata:
-    #         if unicorn['product_code'] != data[0]:
-    #             continue
-    #         else:
-    #             unicorn['type'] = data[1]
-    #             unicorn['proof'] = data[2]
 
     print 'writing unicorns to json ....'
     write_unicorn_json_to_file(unicorns)
