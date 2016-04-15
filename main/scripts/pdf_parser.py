@@ -5,6 +5,7 @@ from pdfquery.cache import FileCache
 import requests
 import datetime
 import time
+import os
 
 
 def copy_pdf():
@@ -14,19 +15,23 @@ def copy_pdf():
     later, this step can go away and we can operate on the document tree
     given us by the original file
     '''
-    # first getting just the headers to make sure we want to continue
-    pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
-    req = requests.head(pdf_url)
-    d = datetime.date.today()
-    # checking the headers to make sure it's from the right date
-    if d.strftime('%d %b %Y') in req.headers['last-modified']:  # also check type? req.headers['content-type'] == 'application/pdf'
-        r = requests.get(pdf_url)
-        with open('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
-            f.write(r.content)
+    # making sure we don't have a file for today
+    if not os.path.isfile('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()):
+        # getting just the headers to make sure we want to continue
+        pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
+        req = requests.head(pdf_url)
+        d = datetime.date.today()
+        # checking the headers to make sure it's from the right date
+        if d.strftime('%d %b %Y') in req.headers['last-modified']:  # also check type? req.headers['content-type'] == 'application/pdf'
+            r = requests.get(pdf_url)
+            with open('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
+                f.write(r.content)
+        else:
+            print "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
+            time.sleep(600)
+            copy_pdf(url)
     else:
-        print "it's the same file as yesterday, hoss. gimme a couple minutes."
-        time.sleep(600)
-        copy_pdf(url)
+        return
 
 
 def write_codes_to_file(data):
