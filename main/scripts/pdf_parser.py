@@ -1,7 +1,16 @@
 #!usr/bin/env python
 
+'''
+A parser for the daily PDF of the Pennsylvania Liquor Control Board's
+retail database.
+
+From this we extract all the ids of products available for sale in one of 597
+stores on a given day -- 14,000, give or take -- so we can hand them off to
+the main scraper which must check each to discover its boolean boozicorn
+status: Is it available in only one store in the state that day?
+'''
+
 import pdfquery
-from pdfquery.cache import FileCache
 import requests
 import datetime
 import time
@@ -15,7 +24,7 @@ def copy_pdf():
     later, this step can go away and we can operate on the document tree
     given us by the original file
     '''
-    # making sure we don't have a file for today
+    # making sure we don't already have a file for today
     if not os.path.isfile('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
         # getting just the headers to make sure we want to continue
         pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
@@ -28,8 +37,13 @@ def copy_pdf():
                 f.write(r.content)
         else:
             print "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
-            time.sleep(600)
-            copy_pdf(url)
+            # will try again for an hour and a half, every 10 minutes, to see
+            # the file is updated for the current day
+            tries = 0
+            while tries < 10:
+                time.sleep(600)
+                copy_pdf(url)
+                tries += 1
     else:
         return
 
@@ -59,30 +73,39 @@ def get_pdf_codes():
     pages = pdf.doc.catalog['Pages'].resolve()['Count']
     d = datetime.date.today()
     print 'loading pdf ....'
-    # this, um, this takes a while. about 10 minutes
+    # this, um, this takes a while. about 10 minutes. thanks, pdfminer
     pdf.load()
     print 'getting codes ....'
     codes = []
     # there is no page zero
     for page in xrange(1, pages + 1):
         if page > 1:
-            first_code_element = pdf.pq('LTPage[pageid=\'{0}\'] LTTextBoxHorizontal:overlaps_bbox("{1},{2},{3},{4}")'.format(page, 61.45, 551.767, 68, 563.527))[0]
-            y_minus = 550
+            # there is no true header row here to help guide us, not in the
+            # structure of the page, but we can calculate this based on the
+            # first element containing our data.
+            try:
+                first_code_element = pdf.pq('LTPage[pageid=\'{0}\'] LTTextBoxHorizontal:overlaps_bbox("{1},{2},{3},{4}")'.format(page, 61.45, 551.767, 71, 563.527))[0]
+                y_minus = 550
+            except IndexError as e:
+                print '{} at page {}'.format(e, page)
+                print first_code_element
         elif page == 1:
-            first_code_element = pdf.pq('LTPage[pageid=\'1\'] LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(61.45, 445.267, 68, 457.027))[0]
+            first_code_element = pdf.pq('LTPage[pageid=\'1\'] LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(61.45, 445.267, 71, 457.027))[0]
             y_minus = 440
 
         first_code = first_code_element.text.strip()
 
         x = float(first_code_element.get('x0'))
         y = float(first_code_element.get('y0'))
-        x_plus = 20
+        # much narrower than this and we miss about 500 of 14,000 product codes
+        x_plus = 30
 
         cells = pdf.extract([('with_formatter', 'text'), ('with_parent', 'LTPage[pageid=\'{0}\']'.format(page)), ('cells', 'LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(x, y - y_minus, x + x_plus, y))])
         new_codes = [c.strip() for c in cells['cells'].split(' ') if c.isdigit() and len(c) >= 3]
+        # handles cases where overlaps_bbox grabs, y'know, 'APRICOT' or ''
         if first_code.isdigit():
             new_codes.append(first_code)
-        # cleaning up a handful of recent years that come in with the codes.
+        # cleans up a handful of recent years that come in with the codes.
         # seems no matter the x-axis positions, we'll always get a few when
         # they're at the tops of pages and the names of wines are short.
         # something to explore later
@@ -95,7 +118,7 @@ def get_pdf_codes():
 
 def collect():
     print 'copying the pdf ....'
-    copy_pdf(pdf_url)
+    copy_pdf()
     codes = get_pdf_codes()
     print 'done with the pdf'
     return codes

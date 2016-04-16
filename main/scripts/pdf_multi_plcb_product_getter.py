@@ -5,24 +5,23 @@ A crawler to search every product in the
 Pennsylvania Liquor Control Board's database, searching for unicorns:
 products available for sale in only one retail store in the entire state.
 
-Configured to use Python's multiprocessing module --
-thus I can't use generators everywhere I'd like.
-Life is just hard sometimes. Boo. Also hoo.
+Configured to use Python's multiprocessing module -- thus I can't use
+generators everywhere I'd like. Life is just hard sometimes. Boo. Also hoo.
 
 The PLCB claims the database is updated at the close of business every day,
-but it's more like 5 or 6 a.m. the following day at the earliest. Nonetheless,
+but it's more like 5 or 7 a.m. the following day at the earliest. Nonetheless,
 that's still before stores open for the day.
 
 Every day is a chance for fresh data.
 
-The target site is a secondary site. It's pretty brittle. It doesn't take
-that many requests for it to get unreliable. So we have to be more than
-a little careful how we hit it.
+This script parses a PDF of the PLCB database published every day about 8 a.m.
+in order to collect product ids needed to run the main scraper.
+Doing it that way saves us about 2,400 get requests a day to a brittle
+search site which doesn't take too many requests for it to get unreliable.
+Also saves about two hours of runtime. So, y'know, that's good.
 
-On any given day, given the structure of the PLCB's
-product-search interface on the secondary site, we have about 2,400 pages
-to crawl in order to wade through about 60,000 products to see the 14,000 or so
-in stores. And then we can test for unicorns, which usually number about 2,000.
+On any given day, there are about 14,000 or so products in PLCB stores.
+Those we can test for unicorns, which usually number about 2,000.
 
 Fun, right?
 '''
@@ -30,12 +29,9 @@ Fun, right?
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
-from lxml import etree
-import itertools
 import json
 import datetime
 import re
-import time
 from multiprocessing import Pool
 
 import pdf_parser
@@ -156,6 +152,8 @@ def assemble_unicorn(tree):
         # preceded by the .replace() on the off-chance inventory is >1000
         # as strings of four-digit numbers on this site all carry commas
         num_unicorn_bottles = unicorn_store[2].replace(',', '')
+        # perhaps a little overwrought -- \d+ would accomplish much the same --
+        # but just being careful
         num_unicorn_bottles_pattern = '(^\d+(?!\S))'
         num_unicorn_bottles = re.match(num_unicorn_bottles_pattern, num_unicorn_bottles).group()
 
