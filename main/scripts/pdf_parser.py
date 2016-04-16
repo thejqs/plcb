@@ -56,7 +56,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../static/pdfs/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for datum in data:
             print >> f, datum

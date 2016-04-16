@@ -22,6 +22,7 @@ Also saves about two hours of runtime. So, y'know, that's good.
 
 On any given day, there are about 14,000 or so products in PLCB stores.
 Those we can test for unicorns, which usually number about 2,000.
+Total time: about an hour and 15 minutes.
 
 Fun, right?
 '''
@@ -69,9 +70,7 @@ def parse_html(unparsed_html):
     try:
         return lxml.html.fromstring(unparsed_html)
     except TypeError as e:
-        print datetime.datetime.now()
-        print e
-        print unparsed_html
+        print '{0}\n{1}\n{2}\n'.format(datetime.datetime.now(), e, unparsed_html)
 
 
 def treeify(url):
@@ -91,7 +90,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../static/unicorns_json/updated-unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../static/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -178,8 +177,7 @@ def assemble_unicorn(tree):
                 'scrape_date': '{0}'.format(datetime.date.today())}
 
     except IndexError as e:
-        print e
-        print unicorn_store
+        print '{0}\n{1}\n'.format(e, unicorn_store)
         raise Exception('looks like time for a server update or a bad URL. breathe. we can try again.')
 
 
@@ -228,7 +226,7 @@ def unicorn_scrape(trees):
     return unicorns
 
 
-def hunt_unicorns(url=None):
+def hunt_unicorns():
     '''
     once our product ids are in hand, we can search each product page
     in earnest to ask it whether it is that rarest of beasts
@@ -245,6 +243,10 @@ def hunt_unicorns(url=None):
     print start_products
 
     all_product_codes = pdf_parser.collect()
+
+    end_products = datetime.datetime.now()
+    print end_products - start_products
+
     # should things fall apart after this point, can simply read in the product codes from a file:
     # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
     # with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
@@ -263,14 +265,12 @@ def hunt_unicorns(url=None):
     print 'writing unicorns to json ....'
     write_unicorn_json_to_file(unicorns)
     print 'done hunting.'
-    end_products = datetime.datetime.now()
-    print end_products - start_products
+
+    end_unicorns = datetime.datetime.now()
+    print end_unicorns - start_products
     print 'all cleaned up. long day. tacos?'
 
 
 if __name__ == '__main__':
     p = Pool(8)
-    # pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
-    # url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-    # hunt_unicorns(**url)
     hunt_unicorns()
