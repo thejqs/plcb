@@ -16,7 +16,7 @@ def copy_pdf():
     given us by the original file
     '''
     # making sure we don't have a file for today
-    if not os.path.isfile('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()):
+    if not os.path.isfile('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
         # getting just the headers to make sure we want to continue
         pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
         req = requests.head(pdf_url)
@@ -76,7 +76,7 @@ def get_pdf_codes():
 
         x = float(first_code_element.get('x0'))
         y = float(first_code_element.get('y0'))
-        x_plus = 15
+        x_plus = 20
 
         cells = pdf.extract([('with_formatter', 'text'), ('with_parent', 'LTPage[pageid=\'{0}\']'.format(page)), ('cells', 'LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(x, y - y_minus, x + x_plus, y))])
         new_codes = [c.strip() for c in cells['cells'].split(' ') if c.isdigit() and len(c) >= 3]
