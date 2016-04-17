@@ -90,7 +90,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../static/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
+    with open('../data/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
         print >> f, j
 
 
@@ -249,7 +249,7 @@ def hunt_unicorns():
 
     # should things fall apart after this point, can simply read in the product codes from a file:
     # for yesterday: datetime.date.today() - datetime.timedelta(days=1)
-    # with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
+    # with open('../data/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'r') as f:
         # all_product_codes = [line.strip() for line in f]
     product_urls = make_product_urls(all_product_codes)
     print 'made {0} urls ....'.format(len(product_urls))

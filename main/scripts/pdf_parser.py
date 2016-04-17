@@ -25,7 +25,7 @@ def copy_pdf():
     given us by the original file
     '''
     # making sure we don't already have a file for today
-    if not os.path.isfile('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
+    if not os.path.isfile('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
         # getting just the headers to make sure we want to continue
         pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
         req = requests.head(pdf_url)
@@ -33,7 +33,7 @@ def copy_pdf():
         # checking the headers to make sure it's from the right date
         if d.strftime('%d %b %Y') in req.headers['last-modified']:  # also check type? req.headers['content-type'] == 'application/pdf'
             r = requests.get(pdf_url)
-            with open('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
+            with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
                 f.write(r.content)
         else:
             print "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
@@ -56,7 +56,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../static/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('../data/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for datum in data:
             print >> f, datum
@@ -68,7 +68,7 @@ def get_pdf_codes():
     containing all the codes given a starting point determined from the page
     layout and attempts to slurp up the yummy data thingies.
     '''
-    pdf = pdfquery.PDFQuery('../static/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()))
+    pdf = pdfquery.PDFQuery('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()))
     # should be 600-plus
     pages = pdf.doc.catalog['Pages'].resolve()['Count']
     d = datetime.date.today()

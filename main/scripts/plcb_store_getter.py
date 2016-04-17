@@ -158,7 +158,7 @@ def write_json_to_file(data):
     '''
     print 'writing json ....'
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('retail_stores-{}.json'.format(datetime.date.today()), 'w') as f:
+    with open('../data/stores/retail_stores-{}.json'.format(datetime.date.today()), 'w') as f:
         print >> f, j
 
 

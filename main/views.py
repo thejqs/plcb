@@ -16,9 +16,9 @@ def unicorns(request):
     # if today's data file doesn't exist, we'll use yesterday's.
     # will help for those cases after midnight and before we havce fresh data
     try:
-        f = open(os.path.join(settings.BASE_DIR, 'main/static/unicorns_json/unicorns-{}.json'.format(d)), 'r')
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(d)), 'r')
     except IOError:
-        f = open(os.path.join(settings.BASE_DIR, 'main/static/unicorns_json/unicorns-{}.json'.format(d - datetime.timedelta(days=1))), 'r')
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(d - datetime.timedelta(days=1))), 'r')
     j = json.load(f)
     unicorns_dict = {}
     if d.strftime('%Y-%m-%d') in f.name:
@@ -92,7 +92,7 @@ def unicorns(request):
     top_store = max(count_stores, key=itemgetter(1))
     top_store_contents = [unicorn['name'].lower() for unicorn in j if unicorn['store_id'] == top_store[0]]
 
-    with open('main/static/json/retail_stores-2016-04-10.json', 'r') as f:
+    with open('main/data/stores/retail_stores-2016-04-10.json', 'r') as f:
         stores_json = json.load(f)
         store_data = None
         for store in stores_json:
