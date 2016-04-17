@@ -14,7 +14,11 @@
 
 var layer = new L.StamenTileLayer('toner-background')
 
-var map = new L.Map('map').setView([41, -77.5], 7)
+var southWest = L.latLng(39, -81)
+var northEast = L.latLng(44, -74)
+var bounds = L.latLngBounds(southWest, northEast)
+
+var map = new L.Map('map', {maxBounds: bounds, minZoom: 7}).setView([41, -77.5], 7).locate({setView: true, maxZoom: 7})
 map.addLayer(layer)
 
 var uniques = new Set()
@@ -67,7 +71,7 @@ uniques.forEach(function (id) {
             ' // ' +
             on_sale + '</div>'
         }
-      marker.bindPopup(popupHtml + product_info)
+      marker.bindPopup(popupHtml + product_info, {maxWidth: 300, maxHeight: 250})
       }
     }
   }
