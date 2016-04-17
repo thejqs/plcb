@@ -8,10 +8,10 @@ body {
 }
 
 #map {
-    width: 80vw;
-    height: 400px;
-    margin-top: 5%;
-    margin-left: 10vw;
+    width: 90vw;
+    height: 650px;
+    margin-top: 7vh;
+    margin-left: 5vw;
     margin-bottom: 5vh;
 }
 
@@ -28,7 +28,7 @@ body {
 }
 
 .intro-text {
-    font-family: 'Quattrocento', 'Tenor Sans', Helvetica, sans-serif;
+    font-family: 'Quattrocento', serif;
     font-size: 3vw;
     margin-top: 5vh;
     margin-bottom: 7vh;
@@ -53,7 +53,7 @@ body {
 }
 
 .date {
-    font-family: 'Quattrocento', Helvetica, sans-serif;
+    font-family: 'Quattrocento', serif;
     color: #000000;
     font-size: 6vw;
     display: block;
@@ -79,15 +79,15 @@ body {
 
 .summary {
     font-size: 6.5vh;
-    font-family: 'Quattrocento', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
+    font-family: 'Quattrocento', serif;
     text-align: center;
     margin-bottom: 1%;
     display: block;
 }
 
 .summary-num {
-    font-family: 'Quattrocento';
-    font-weight: bold;
+    font-family: 'Quattrocento', serif;
+    weight: bold;
     font-size: 10vw;
     margin-bottom: 0;
 }
@@ -108,9 +108,14 @@ body {
     margin-top: 0;
 }
 
+.unicorn-dive {
+    font-size: 1.5vw;
+    text-align: left;
+}
+
 #about {
-    font-family: 'Quattrocento';
-    font-size: 3vh;
+    font-family: 'Quattrocento', serif;
+    size: 3vh;
     color: #582335;
     text-align: center;
     margin-bottom: 5%;
@@ -146,12 +151,12 @@ a {
 
 #caveats {
     font-family: 'Quattrocento', serif;
-    font-size: 1.5vw;
+    font-size: 1vw;
     border: 1px dotted;
-    width: 80vw;
+    width: 88vw;
     padding: 1%;
     display: block;
-    margin-left: 10vw;
+    margin-left: 5vw;
     margin-bottom: 5vh;
 }
 
@@ -178,25 +183,29 @@ a {
     }
 
     .summary {
-        font-size: 6vh;
-        font-family: 'Quattrocento', 'Cabin Sketch', 'Sue Ellen Francisco', 'Ribeye', 'Kranky', 'Fredericka the Great';
+        font-size: 7.5vh;
+        font-family: 'Quattrocento', serif;
         text-align: center;
         margin-bottom: 1%;
         display: block;
     }
 
     .summary-num {
-        font-family: 'Quattrocento';
-        font-weight: bold;
-        font-size: 15vw;
+        font-family: 'Quattrocento', serif;
+        weight: bold;
+        font-size: 18vw;
         margin-bottom: 0;
     }
 
     .summary-context {
-        font-size: 4.5vw;
+        font-size: 6vw;
         text-align: center;
         margin-top: 0;
         margin-bottom: 10vh;
+    }
+
+    .unicorn-dive {
+        font-size: 4vw;
     }
 
     #caveats {

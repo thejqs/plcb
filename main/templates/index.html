@@ -10,7 +10,6 @@
 	<meta name="MobileOptimized" content="320"/>
 	<meta http-equiv="cleartype" content="on">
     <link href='https://fonts.googleapis.com/css?family=Rye' rel='stylesheet' type='text/css'/>
-    <link href='https://fonts.googleapis.com/css?family=Tenor+Sans' rel='stylesheet' type='text/css' />
     <link href='https://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/lib/leaflet-0.75.css' %}" />
@@ -39,8 +38,18 @@
     <div id="unicorns">
         <div class="date">
             <h4>
-                {% now "jS F Y" %}
+                {{ unicorns.data_date }}
             </h4>
+        </div>
+        <div class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.total_unicorns }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    total boozicorns
+                </p>
+            </div>
         </div>
         <div class="summary">
             <p>
@@ -75,9 +84,20 @@
             <p>
                 {{ unicorns.bottles.0 }}
             </p>
+            <p>
+                {{ unicorns.bottles.2 }}
+            </p>
+            {% if unicorns.bottles.3 %}
+                <p>
+                    {{ unicorns.bottles.3 }}
+                </p>
+            {% endif %}
             <div class="summary-context">
                 <p>
                     most bottles
+                </p>
+                <p>
+                    {{ unicorns.bottles.4 }}
                 </p>
             </div>
         </div>
@@ -92,15 +112,100 @@
                 <p>
                     store with the most
                 </p>
+            <div class="unicorn-dive">
+                {% for product in unicorns.store.2 %}
+                    <p>
+                        {{ product }}
+                    </p>
+                {% endfor %}
+            </div>
             </div>
         </div>
+        <div class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.whiskey.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    whiskeys
+                </p>
+                <div class="unicorn-dive">
+                    {% for unicorn in unicorns.whiskey.1 %}
+                        <p>
+                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.gin.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    gins
+                </p>
+                <div class="unicorn-dive">
+                    {% for unicorn in unicorns.gin.1 %}
+                        <p>
+                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.rum.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    rums
+                </p>
+                <div class="unicorn-dive">
+                    {% for unicorn in unicorns.rum.1 %}
+                        <p>
+                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.agave.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    agave
+                </p>
+                <div class="unicorn-dive">
+                    {% for unicorn in unicorns.agave.1 %}
+                        <p>
+                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
 	<div id="map"></div>
     <div id="caveats">
         <p>
-            <strong>A few notes:</strong><em> This data is only as good -- and only as available -- on any given day as the PLCB's database and servers. They're brittle. Thus imperfect. And sometimes the script that populates this site breaks. Which, um, isn't always their fault. We do the best we can to respect them and you at the same time, liberating information from terrible interfaces that also helps you make informed buying decisions.
+            <strong>A few notes:</strong><em> This data is only as good -- and only as available -- on any given day as the PLCB's database and servers. They're imperfect. And so is the script that populates this site. Which, um, isn't always their fault. We do the best we can to respect them and you at the same time, liberating information from terrible interfaces that also helps you make informed buying decisions.
         </p>
         <p>
-            Well. In theory. Some of this stuff is awful. <a href="#back-to-top"><span class="fa fa-caret-up"></span></a></em>
+            Well. In theory. Some of this stuff is awful.
+        </p>
+        <p>
+            Which brings us to the boozicorns themselves. Sometimes a product is unique because of its size. Or maybe because of its vintage. In the PLCB's system, each vintage of a wine is a separate product. A bourbon at 200 ML is a different product than the same bourbon at 750 ML. Or maybe it's a fluke: something terrifically common that for whatever reason is nearly out of stock in all of Pennsylvania that day.
+        </p>
+        <p>
+            There isn't necessarily an inherent specialness in any of these products -- although sometimes there very much is. That's all part of the fun of exploring data like this.
+        </p>
+        <p>
+            So keep all that in mind. And happy hunting. <a href="#back-to-top"><span class="fa fa-caret-up"></span></a></em>
         </p>
     </div>
     <div id="about">
