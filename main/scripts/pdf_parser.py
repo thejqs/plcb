@@ -15,6 +15,7 @@ import requests
 import datetime
 import time
 import os
+import subprocess
 
 
 def copy_pdf():
@@ -36,14 +37,18 @@ def copy_pdf():
             with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
                 f.write(r.content)
         else:
-            print "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
-            # will try again for an hour and a half, every 10 minutes, to see
+
+            print datetime.datetime.now(), "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
+            # will try again for three hours, every 10 minutes, to see
             # the file is updated for the current day
             tries = 0
-            while tries < 10:
+            while tries < 15:
                 time.sleep(600)
-                copy_pdf(url)
+                copy_pdf()
                 tries += 1
+            if tries >= 15:
+                subprocess.call(['python', 'old_scrapers/multi_plcb_product_getter.py'])
+                return
     else:
         return
 
