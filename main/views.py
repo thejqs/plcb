@@ -2,32 +2,44 @@ import os, sys
 from django.shortcuts import render
 from django.views.generic import View
 from django.conf import settings
-from django.http import JsonResponse
 from collections import Counter
 import datetime
-import re
 import json
 from operator import itemgetter
 
 
 # Create your views here.
-def ascii_encode_dict(data):
-    ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
-    return dict(map(ascii_encode, pair) for pair in data.items())
+# def ascii_encode_dict(data):
+#     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
+#     return dict(map(ascii_encode, pair) for pair in data.items())
+def find_median(l):
+    l = sorted(l)
+    len_l = len(l)
+    if len_l < 1:
+        return 'you are a silly person. nothing in this list'
+    idx = (len_l - 1) // 2
+    if len_l % 2:
+        return l[idx]
+    else:
+        return (l[idx] + l[idx + 1]) / 2.0
 
 def unicorns(request):
     context = {}
-    d = datetime.date.today()
+    today = datetime.date.today()
     # if today's data file doesn't exist, we'll use yesterday's.
     # will help for those cases after midnight and before we have fresh data
     try:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(d)), 'r')
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
     except IOError:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(d - datetime.timedelta(days=1))), 'r')
-    unicorns_json = json.load(f, object_hook=ascii_encode_dict)
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
+    unicorns_json = json.load(f)  # , object_hook=ascii_encode_dict
+    unicorns_dict = {}
+    if today.strftime('%Y-%m-%d') in f.name:
+        unicorns_dict['data_date'] = today.strftime('%d %B %Y')
+    elif (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d') in f.name:
+        unicorns_dict['data_date'] = (today - datetime.timedelta(days=1)).strftime('%d %B %Y')
     # don't need an open file no mo'
     f.close()
-    unicorns_dict = {}
     max_price = None
     min_price = None
     min_name = None
@@ -42,13 +54,11 @@ def unicorns(request):
     rum = []
     agave = []
     gin = []
+    fancy = []
 
-    # sorted_prices = sorted([u['price'] for u in unicorns_json])
-    # sorted_prices.reverse()
-    # max_price = sorted_prices[0]
-    # min_price = sorted_prices[-1]
-
-    most_common_price = Counter([u['price'] for u in unicorns_json]).most_common()[0]
+    all_prices = [u['price'] for u in unicorns_json]
+    most_common_price = Counter(all_prices).most_common()[0]
+    median_price = find_median(all_prices)
 
     # capturing our various summary data in one loop through the JSON objects
     for unicorn in unicorns_json:
@@ -57,6 +67,9 @@ def unicorns(request):
         price = float(unicorn['price'])
         on_sale = unicorn['on_sale']
         stores.append(unicorn['store_id'])
+
+        if price > 100:
+            fancy.append(unicorn)
 
         if 'Whiskey' in name and unicorn not in whiskey:
             whiskey.append(unicorn)
@@ -89,12 +102,8 @@ def unicorns(request):
     count_stores = [(x, stores.count(x)) for x in stores]
     top_store = max(count_stores, key=itemgetter(1))
 
-    if d.strftime('%Y-%m-%d') in f.name:
-        unicorns_dict['data_date'] = d.strftime('%d %B %Y')
-    elif (d - datetime.timedelta(days=1)).strftime('%Y-%m-%d') in f:
-        unicorns_dict['data-date'] = (d - datetime.timedelta(days=1)).strftime('%d %B %Y')
-    unicorns_dict['total_unicorns'] = len(unicorns_json)
     unicorns_dict['mode'] = most_common_price
+    unicorns_dict['median'] = median_price
     unicorns_dict['min'] = [min_name.lower(), '${}'.format(min_price)]
     unicorns_dict['max'] = [max_name.lower(), '${}'.format(max_price)]
     unicorns_dict['bottles'] = [most_bottles_name.lower(), most_bottles, '${}'.format(most_bottles_price), most_bottles_on_sale]
@@ -102,10 +111,12 @@ def unicorns(request):
     unicorns_dict['rum'] = [len(rum), rum]
     unicorns_dict['agave'] = [len(agave), agave]
     unicorns_dict['gin'] = [len(gin), gin]
+    unicorns_dict['fancy'] = [len(fancy), sorted(fancy, key=lambda k: k['price'], reverse=True)]
+
     top_store_contents = [unicorn['name'].lower() for unicorn in unicorns_json if unicorn['store_id'] == top_store[0]]
 
     with open('main/data/stores/retail_stores-2016-04-10.json', 'r') as f:
-        stores_json = json.load(f, object_hook=ascii_encode_dict)
+        stores_json = json.load(f)  # , object_hook=ascii_encode_dict
         store_data = None
         for store in stores_json:
             if top_store[0] == store['id']:
