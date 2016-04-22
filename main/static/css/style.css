@@ -11,9 +11,16 @@ body {
     width: 90vw;
     height: 650px;
     margin-top: 7vh;
-    margin-left: 5vw;
+    margin-left: 4vw;
     margin-bottom: 5vh;
 }
+
+/*#unicorns {
+    width: 90vw;
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+}*/
 
 #header {
     color: #582335;
@@ -52,7 +59,7 @@ body {
     font-weight: bold;
 }
 
-.date {
+#date {
     font-family: 'Quattrocento', serif;
     color: #000000;
     font-size: 6vw;
@@ -88,7 +95,7 @@ body {
 .summary-num {
     font-family: 'Quattrocento', serif;
     weight: bold;
-    font-size: 10vw;
+    font-size: 20vh;
     margin-bottom: 0;
 }
 
@@ -156,7 +163,7 @@ a {
     width: 88vw;
     padding: 1%;
     display: block;
-    margin-left: 5vw;
+    margin-left: 4vw;
     margin-bottom: 5vh;
 }
 
@@ -178,8 +185,15 @@ a {
         font-size: 5vw;
     }
 
-    .date {
+    #date {
         font-size: 7vw;
+    }
+
+    #unicorns {
+        width: 90vw;
+        -webkit-column-count: 1; /* Chrome, Safari, Opera */
+        -moz-column-count: 1; /* Firefox */
+        column-count: 1;
     }
 
     .summary {
