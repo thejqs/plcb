@@ -122,7 +122,6 @@ def check_for_unicorn(tree):
         return is_unicorn
     except IndexError:
         print 'no text to check here. weird.'
-        print tree
         return 'this one needs to be checked'
 
 
@@ -178,7 +177,8 @@ def assemble_unicorn(tree):
 
     except IndexError as e:
         print '{0}\n{1}\n'.format(e, unicorn_store)
-        raise Exception('looks like time for a server update or a bad URL. breathe. we can try again.')
+        print 'looks like time for a server update or a bad URL. breathe. we can try again.'
+
 
 
 def on_sale(tree):
