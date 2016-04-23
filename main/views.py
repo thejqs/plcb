@@ -23,6 +23,7 @@ def find_median(l):
     else:
         return (l[idx] + l[idx + 1]) / 2.0
 
+
 def unicorns(request):
     context = {}
     today = datetime.date.today()
@@ -128,6 +129,6 @@ def unicorns(request):
         unicorns_dict['store'] = (address.lower(), top_store[1], top_store_contents, phone, store_type)
 
     context['unicorns'] = unicorns_dict
-    context['unicorns_json'] = json.dumps(unicorns_json)
-    context['stores_json'] = json.dumps(stores_json)
+    # context['unicorns_json'] = json.dumps(unicorns_json)
+    # context['stores_json'] = json.dumps(stores_json)
     return render(request, 'index.html', context)
