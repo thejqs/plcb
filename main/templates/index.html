@@ -21,6 +21,8 @@
     <meta property="og:title" content="Boozicorns: A Python scraping project exploring the databases of the Pennsylvania Liquor Control Board.">
     <meta property="og:description" content="Pennsylvania makes it hard to find the rarest wine and spirits for sale each day in the commonwealth. So we decided to collect them for you. These are the PLCB's boozicorns.">
     <meta property="og:image" content="{% static 'TKTKTKTKTK' %}">
+    <link rel="shortcut icon" href="{% static 'media/boozicorn_transparent.png' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'media/boozicorn_transparent.png' %}" type="image/x-icon">
 
     <link href='https://fonts.googleapis.com/css?family=Rye' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
@@ -32,6 +34,7 @@
     <div id="header">
         <h1>boozicorns<span>.</span></h1>
     </div>
+    <div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="" /></div>
     <div class="intro-text">
         <p>
             Every day across Pennsylvania, about <span class="num">14 percent</span> of the <span class="num">14,000</span> alcohol-related products the state's Liquor Control Board sells in its <span id="num-stores" class="num"></span> monopoly retail stores are available in only <span class="num">one</span> of them. That's <span class="num">2,000</span> products, for one reason or another, for sale in just one place in the commonwealth's <span class="num">46,000 square-miles</span>.
