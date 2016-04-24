@@ -20,9 +20,9 @@ I can't search like I'd want:
 
 Oy.
 
-To go through what's provided to me, I'd have to read through roughly 2,500 pages containing about 60,000 products just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
+To go through what's provided to me, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
 
-So somewhere on the order of 17,000 pages to inspect. Daily.
+So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
 Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
 
@@ -46,7 +46,7 @@ So here we are.
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. On Sundays it can be almost 2 p.m. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
 
 And the data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
