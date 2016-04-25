@@ -118,6 +118,7 @@ def unicorns(request):
 
     with open('main/data/stores/retail_stores-2016-04-10.json', 'r') as f:
         stores_json = json.load(f)  # , object_hook=ascii_encode_dict
+        unicorns_dict['num_stores'] = len(stores_json)
         store_data = None
         for store in stores_json:
             if top_store[0] == store['id']:
