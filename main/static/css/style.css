@@ -1,11 +1,14 @@
 body {
     background-color: #FDF5E6;
-    background-size: 500vh;
+    background-size: 800vh;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: -35vw 2vh;
     z-index: -2;
     background-image: url('../js/lib/images/bottle2.svg')
-    position: absolute;
+}
+
+p {
+    margin-bottom: 0;
 }
 
 #map {
@@ -18,15 +21,22 @@ body {
 
 #boozicorn-image img {
     width: 20vw;
-    margin-left: 40vw;
+    margin-left: 39vw;
 }
 
-/*#unicorns {
-    width: 90vw;
-    -webkit-column-count: 3;
-    -moz-column-count: 3;
-    column-count: 3;
-}*/
+#top-price {
+    /*margin-left: 3vw;*/
+    /*border: 2px solid red;*/
+}
+
+#low-price {
+    /*border: 2px solid blue;*/
+}
+
+#fancy {
+    /*float: left;*/
+    /*border: 2px solid green;*/
+}
 
 #header {
     color: #582335;
@@ -71,7 +81,11 @@ body {
     font-size: 6vw;
     display: block;
     text-align: center;
-    margin-bottom: 15vh;
+    margin-bottom: 0;
+}
+
+#date h4 {
+    margin-bottom: 2vh;
 }
 
 .boozicorns {
@@ -90,19 +104,46 @@ body {
     font-size: 4vw;
 }
 
+.aggregated-summary {
+    font-size: 7vh;
+    font-family: 'Quattrocento', serif;
+    text-align: center;
+    margin-bottom: 1%;
+    margin-left: 8vw;
+    display: inline-block;
+    width: 35vw;
+    /*border: 2px solid green;*/
+}
+
 .summary {
     font-size: 6.5vh;
     font-family: 'Quattrocento', serif;
     text-align: center;
-    margin-bottom: 1%;
-    display: block;
+    width: 20vw;
+    height: 40vh;
+    padding-bottom: 15vh;
+    margin-bottom: 5vh;
+    margin-left: 3.5vw;
+    float: left;
+    border-left: 1px dotted;
+    /*border: 2px solid red;*/
+    display: inline-block;
+}
+
+.big-summary-num {
+    font-family: 'Quattrocento', serif;
+    weight: bold;
+    font-size: 30vh;
+    margin-bottom: 0;
+    letter-spacing: 0;
 }
 
 .summary-num {
     font-family: 'Quattrocento', serif;
     weight: bold;
-    font-size: 20vh;
+    font-size: 12vh;
     margin-bottom: 0;
+    letter-spacing: 0;
 }
 
 .summary p {
@@ -124,6 +165,7 @@ body {
 .unicorn-dive {
     font-size: 1.5vw;
     text-align: left;
+    display: none;
 }
 
 #about {
@@ -177,25 +219,28 @@ a {
     font-family: 'Rye';
 }
 
-@media only screen and (max-width: 320px) {
+@media only screen and (max-width: 450px) {
     body {
-        background-position: center;
-        background-size: 250vh;
+        background-position: center 150vh;
+        background-size: 350vw;
+        padding: 0;
+        margin: 0;
     }
 
-    /*#map {
-        display: none;
-    }*/
+    #map {
+        width: 100vw;
+        margin-left: 0;
+        height: 300px;
+    }
 
     #boozicorn-image img {
         width: 50vw;
-        margin-left: 23vw;
+        margin-left: 24vw;
     }
-
 
     .intro-text {
         font-size: 5vw;
-        margin-left: 7vw;
+        margin-left: 9vw;
     }
 
     #date {
@@ -209,12 +254,24 @@ a {
         column-count: 1;
     }
 
+    .aggregated-summary {
+        display: block;
+        width: auto;
+    }
+
     .summary {
         font-size: 7.5vh;
         font-family: 'Quattrocento', serif;
         text-align: center;
         margin-bottom: 1%;
         display: block;
+        float: none;
+        width: auto;
+        height: auto;
+    }
+
+    .big-summary-num {
+        font-size: 25vw;
     }
 
     .summary-num {
