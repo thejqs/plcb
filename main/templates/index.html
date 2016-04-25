@@ -23,7 +23,6 @@
     <meta property="og:image" content="../static/media/boozicorns-twitter.png">
     <link rel="shortcut icon" href="{% static 'media/boozicorn_transparent.png' %}" type="image/x-icon">
     <link rel="icon" href="{% static 'media/boozicorn_transparent.png' %}" type="image/x-icon">
-
     <link href='https://fonts.googleapis.com/css?family=Rye' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=Quattrocento' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -37,7 +36,7 @@
     <div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="" /></div>
     <div class="intro-text">
         <p>
-            Every day across Pennsylvania, about <span class="num">14 percent</span> of the <span class="num">14,000</span> alcohol-related products the state's Liquor Control Board sells in its <span id="num-stores" class="num"></span> monopoly retail stores are available in only <span class="num">one</span> of them. That's <span class="num">2,000</span> products, for one reason or another, for sale in just one place in the commonwealth's <span class="num">46,000 square-miles</span>.
+            Every day across Pennsylvania, about <span class="num">14 percent</span> of the <span class="num">14,000</span> alcohol-related products the state's Liquor Control Board sells in its <span id="num-stores" class="num">{{ unicorns.num_stores }}</span> monopoly retail stores are available in only <span class="num">one</span> of them. That's <span class="num">2,000</span> products, for one reason or another, for sale in just one place in the commonwealth's <span class="num">46,000 square-miles</span>.
         </p>
         <p>
             The PLCB's sites make them almost impossible to find.
@@ -57,9 +56,9 @@
                 {{ unicorns.data_date }}
             </h4>
         </div>
-        <div class="summary">
+        <div class="aggregated-summary">
             <p>
-                <span id="boozicorns" class="num summary-num"></span>
+                <span id="boozicorns" class="num big-summary-num"></span>
             </p>
             <div class="summary-context">
                 <p>
@@ -67,9 +66,9 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div class="aggregated-summary">
             <p>
-                <span id="boozicorns-stores" class="num summary-num"></span>
+                <span id="boozicorns-stores" class="num big-summary-num"></span>
             </p>
             <div class="summary-context">
                 <p>
@@ -77,9 +76,9 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div id="top-price" class="summary">
             <p>
-                <span id="top-price" class="num summary-num">{{ unicorns.max.1 }}</span>
+                <span class="num summary-num">{{ unicorns.max.1 }}</span>
             </p>
             <p>
                 {{ unicorns.max.0 }}
@@ -90,9 +89,9 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div id="low-price" class="summary">
             <p>
-                <span id="low-price" class="num summary-num">{{ unicorns.min.1 }}</span>
+                <span class="num summary-num">{{ unicorns.min.1 }}</span>
             </p>
             <p>
                 {{ unicorns.min.0 }}
@@ -103,9 +102,9 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div id="fancy" class="summary">
             <p>
-                <span id="fancy" class="num summary-num">{{ unicorns.fancy.0 }}</span>
+                <span class="num summary-num">{{ unicorns.fancy.0 }}</span>
             </p>
             <div class="summary-context">
                 <p>
@@ -122,19 +121,9 @@
             </p>
             {% endfor %}
         </div>
-        <div class="summary">
+        <div id="mode" class="summary">
             <p>
-                <span id="mode" class="num summary-num">${{ unicorns.median }}</span>
-            </p>
-            <div class="summary-context">
-                <p>
-                    most common price
-                </p>
-            </div>
-        </div>
-        <div class="summary">
-            <p>
-                <span id="mode" class="num summary-num">{{ unicorns.mode.1 }} at ${{ unicorns.mode.0 }}</span>
+                <span class="num summary-num">${{ unicorns.median }}</span>
             </p>
             <div class="summary-context">
                 <p>
@@ -142,9 +131,19 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div id="median" class="summary">
             <p>
-                <span id="most-bottles" class="num summary-num">{{ unicorns.bottles.1 }}</span>
+                <span class="num summary-num">{{ unicorns.mode.1 }} at ${{ unicorns.mode.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    most common price
+                </p>
+            </div>
+        </div>
+        <div id="most-bottles" class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.bottles.1 }}</span>
             </p>
             <p>
                 {{ unicorns.bottles.0 }}
@@ -166,9 +165,9 @@
                 </p>
             </div>
         </div>
-        <div class="summary">
+        <div id="top-store" class="summary">
             <p>
-                <span id="top-store" class="num summary-num">{{ unicorns.store.1 }}</span>
+                <span class="num summary-num">{{ unicorns.store.1 }}</span>
             </p>
             <p>
                 {{ unicorns.store.0 }}
@@ -186,9 +185,9 @@
             </div>
             </div>
         </div>
-        <div class="summary">
+        <div id="whiskey" class="summary">
             <p>
-                <span id="whiskey" class="num summary-num">{{ unicorns.whiskey.0 }}</span>
+                <span class="num summary-num">{{ unicorns.whiskey.0 }}</span>
             </p>
             <div class="summary-context">
                 <p>
@@ -203,9 +202,9 @@
                 </div>
             </div>
         </div>
-        <div class="summary">
+        <div id="gin" class="summary">
             <p>
-                <span id="gin" class="num summary-num">{{ unicorns.gin.0 }}</span>
+                <span class="num summary-num">{{ unicorns.gin.0 }}</span>
             </p>
             <div class="summary-context">
                 <p>
@@ -220,9 +219,9 @@
                 </div>
             </div>
         </div>
-        <div class="summary">
+        <div id="rum" class="summary">
             <p>
-                <span id="rum" class="num summary-num">{{ unicorns.rum.0 }}</span>
+                <span class="num summary-num">{{ unicorns.rum.0 }}</span>
             </p>
             <div class="summary-context">
                 <p>
@@ -237,9 +236,9 @@
                 </div>
             </div>
         </div>
-        <div class="summary">
+        <div id="agave" class="summary">
             <p>
-                <span id="agave" class="num summary-num">{{ unicorns.agave.0 }}</span>
+                <span class="num summary-num">{{ unicorns.agave.0 }}</span>
             </p>
             <div class="summary-context">
                 <p>
