@@ -36,6 +36,7 @@ import re
 from multiprocessing import Pool
 
 import pdf_parser
+import aws_uploader as aws
 
 
 def open_url(url):
@@ -90,8 +91,10 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../data/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+') as f:
-        print >> f, j
+    f = open('../data/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+')
+    print >> f, j
+    f.close()
+    return f.name
 
 
 def make_product_urls(codes):
@@ -263,7 +266,9 @@ def hunt_unicorns():
     unicorns = unicorn_scrape(trees)
 
     print 'writing unicorns to json ....'
-    write_unicorn_json_to_file(unicorns)
+    filepath = write_unicorn_json_to_file(unicorns)
+    print 'sending unicorns up to s3 heaven'
+    aws.send_to_s3(filepath)
     print 'done hunting.'
 
     end_unicorns = datetime.datetime.now()
