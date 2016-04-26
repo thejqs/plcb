@@ -50,7 +50,7 @@
         </p>
     </div>
     <div class="glass"><span class="fa fa-glass"></span></div>
-    <div id="unicorns">
+    <div id="aggregate">
         <div id="date">
             <h4>
                 {{ unicorns.data_date }}
@@ -72,10 +72,91 @@
             </p>
             <div class="summary-context">
                 <p>
-                    stores with boozicorns
+                     <span id="boozicorns-stores-percentage"></span>% of stores have boozicorns
                 </p>
             </div>
         </div>
+    </div>
+    <div id="unicorns-categories">
+        <div id="whiskey" class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.whiskey.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    whiskeys
+                </p>
+                <div class="unicorn-dive">
+                    <ul>
+                        {% for unicorn in unicorns.whiskey.1 %}
+                            <li>
+                                {{ unicorn.name|lower }} :: {{ unicorn.bottle_size }} :: {{ unicorn.price }} {% if unicorn.on_sale %} :: Sale price: {{ unicorn.on_sale }} {% endif %}
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="gin" class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.gin.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    gins
+                </p>
+                <div class="unicorn-dive">
+                    <ul>
+                        {% for unicorn in unicorns.gin.1 %}
+                            <li>
+                                {{ unicorn.name|lower }} :: {{ unicorn.price }} :: {{ unicorn.bottle_size }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="rum" class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.rum.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    rums
+                </p>
+                <div class="unicorn-dive">
+                    <ul>
+                        {% for unicorn in unicorns.rum.1 %}
+                            <li>
+                                {{ unicorn.name|lower }} :: {{ unicorn.price }} :: {{ unicorn.bottle_size }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="agave" class="summary">
+            <p>
+                <span class="num summary-num">{{ unicorns.agave.0 }}</span>
+            </p>
+            <div class="summary-context">
+                <p>
+                    agave
+                </p>
+                <div class="unicorn-dive">
+                    <ul>
+                        {% for unicorn in unicorns.agave.1 %}
+                            <li>
+                                {{ unicorn.name|lower }} :: {{ unicorn.price }} :: {{ unicorn.bottle_size }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="unicorns-data">
         <div id="top-price" class="summary">
             <p>
                 <span class="num summary-num">{{ unicorns.max.1 }}</span>
@@ -111,15 +192,15 @@
                     above $100
                 </p>
             </div>
-            {% for unicorn in unicorns.fancy.1  %}
-            <p class="unicorn-dive">
-                {% if product.on_sale %}
-                {{ unicorn.name|lower }} :: ${{ unicorn.price }} :: Sale price: ${{ unicorn.on_sale }}
-                {% else %}
-                {{ unicorn.name|lower }} :: ${{ unicorn.price }}
-                {% endif %}
-            </p>
-            {% endfor %}
+            <div class="unicorn-dive">
+                <ul>
+                    {% for unicorn in unicorns.fancy.1  %}
+                        <li>
+                            {{ unicorn.name|lower }} :: ${{ unicorn.price }} {% if unicorn.on_sale %} :: Sale price: ${{ unicorn.on_sale }} {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
         <div id="mode" class="summary">
             <p>
@@ -176,80 +257,15 @@
                 <p>
                     store with the most
                 </p>
-            <div class="unicorn-dive">
-                {% for unicorn in unicorns.store.2 %}
-                    <p>
-                        {{ unicorn }}
-                    </p>
-                {% endfor %}
-            </div>
-            </div>
-        </div>
-        <div id="whiskey" class="summary">
-            <p>
-                <span class="num summary-num">{{ unicorns.whiskey.0 }}</span>
-            </p>
-            <div class="summary-context">
-                <p>
-                    whiskeys
-                </p>
                 <div class="unicorn-dive">
-                    {% for unicorn in unicorns.whiskey.1 %}
-                        <p>
-                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
-                        </p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div id="gin" class="summary">
-            <p>
-                <span class="num summary-num">{{ unicorns.gin.0 }}</span>
-            </p>
-            <div class="summary-context">
-                <p>
-                    gins
-                </p>
-                <div class="unicorn-dive">
-                    {% for unicorn in unicorns.gin.1 %}
-                        <p>
-                            {{ unicorn.name|lower }} :: {{ unicorn.price }} :: {{ unicorn.bottle_size }}
-                        </p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div id="rum" class="summary">
-            <p>
-                <span class="num summary-num">{{ unicorns.rum.0 }}</span>
-            </p>
-            <div class="summary-context">
-                <p>
-                    rums
-                </p>
-                <div class="unicorn-dive">
-                    {% for unicorn in unicorns.rum.1 %}
-                        <p>
-                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
-                        </p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div id="agave" class="summary">
-            <p>
-                <span class="num summary-num">{{ unicorns.agave.0 }}</span>
-            </p>
-            <div class="summary-context">
-                <p>
-                    agave
-                </p>
-                <div class="unicorn-dive">
-                    {% for unicorn in unicorns.agave.1 %}
-                        <p>
-                            {{ unicorn.name|lower }} :: {{ unicorn.price }}
-                        </p>
-                    {% endfor %}
+                    <ul>
+                        {% for unicorn in unicorns.store.2  %}
+                            <li>
+                                {{ unicorn }}
+                                <!-- {{ unicorn.name|lower }} :: ${{ unicorn.price }}{% if unicorn.on_sale %} :: Sale price: ${{ unicorn.on_sale }}{% endif %} -->
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
