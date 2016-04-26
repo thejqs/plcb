@@ -17,6 +17,8 @@ import time
 import os
 import subprocess
 
+from backup_scrapers import multi_plcb_product_getter as mp
+
 
 def copy_pdf():
     '''
@@ -41,15 +43,13 @@ def copy_pdf():
             # will try again for a couple hours-plus, every 10 minutes, to see
             # whether the file is updated for the current day
             tries = 0
-            while tries < 15:
+            while tries < 20:
                 time.sleep(600)
                 copy_pdf()
                 tries += 1
-            if tries >= 15:
-                subprocess.call(['python', 'old_scrapers/multi_plcb_product_getter.py'])
-                return
+            return None
     else:
-        return
+        return None
 
 
 def write_codes_to_file(data):
@@ -122,10 +122,16 @@ def get_pdf_codes():
 
 def collect():
     print 'copying the pdf ....'
-    copy_pdf()
-    codes = get_pdf_codes()
-    print 'done with the pdf'
+    # if the PDF isn't there for us within a few hours of checking,
+    # the function will return None and we launch a different scraper
+    pdf = copy_pdf()
+    if not pdf:
+        url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+        codes = mp.prepare_unicorn_search(**url)
+    else:
+        codes = get_pdf_codes()
     return codes
+    print 'done with the pdf'
 
 
 if __name__ == '__main__':
