@@ -15,7 +15,6 @@ import requests
 import datetime
 import time
 import os
-import subprocess
 
 from backup_scrapers import multi_plcb_product_getter as mp
 
