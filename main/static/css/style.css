@@ -1,8 +1,8 @@
 body {
     background-color: #FDF5E6;
-    background-size: 800vh;
+    background-size: 300vw;
     background-repeat: no-repeat;
-    background-position: -35vw 2vh;
+    background-position: -65vw 2vh;
     z-index: -2;
     background-image: url('../js/lib/images/bottle2.svg')
 }
@@ -22,20 +22,33 @@ p {
 #boozicorn-image img {
     width: 20vw;
     margin-left: 39vw;
+    /*position: fixed;*/
 }
 
-#top-price {
-    /*margin-left: 3vw;*/
-    /*border: 2px solid red;*/
+#aggregate {
+    width: 90vw;
+    margin-left: 5vw;
 }
 
-#low-price {
-    /*border: 2px solid blue;*/
+#unicorns-categories {
+    width: 35vw;
+    margin-top: 3vw;
+    margin-left: 5vw;
+    padding-left: 4vw;
 }
 
-#fancy {
-    /*float: left;*/
-    /*border: 2px solid green;*/
+#unicorns-data {
+    width: 35vw;
+    margin-top: 3vw;
+    margin-left: 5vw;
+    padding-left: 4vw;
+    /*-moz-column-count: 3;
+    -moz-column-gap: 0px;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 0px;
+    column-count: 3;
+    column-gap: 0px;
+    border: 2px solid red;*/
 }
 
 #header {
@@ -53,13 +66,13 @@ p {
 .intro-text {
     font-family: 'Quattrocento', serif;
     font-size: 3vw;
+    width: 80vw;
+    margin-left: 7vw;
     margin-top: 5vh;
     margin-bottom: 7vh;
     text-align: center;
-    width: 76vw;
     display: block;
     text-align: center;
-    margin-left: 10vw;
     border-left: 2px dotted;
     border-right: 2px dotted;
     padding-left: 2%;
@@ -109,39 +122,40 @@ p {
     font-family: 'Quattrocento', serif;
     text-align: center;
     margin-bottom: 1%;
-    margin-left: 8vw;
+    margin-left: 6vw;
     display: inline-block;
     width: 35vw;
-    /*border: 2px solid green;*/
+    border-bottom: 2px dotted;
 }
 
 .summary {
-    font-size: 6.5vh;
+    font-size: 2.5vw;
     font-family: 'Quattrocento', serif;
     text-align: center;
-    width: 20vw;
-    height: 40vh;
-    padding-bottom: 15vh;
-    margin-bottom: 5vh;
-    margin-left: 3.5vw;
-    float: left;
-    border-left: 1px dotted;
-    /*border: 2px solid red;*/
+    width: 23vw;
+    margin-bottom: 3vw;
+    margin-left: 2vw;
+    /*float: left;*/
+    /*border-left: 1px dotted;*/
+    border-bottom: 2px dotted;
     display: inline-block;
+    white-space: nowrap;
 }
 
 .big-summary-num {
     font-family: 'Quattrocento', serif;
+    color: #4682B4;
     weight: bold;
-    font-size: 30vh;
+    font-size: 15vw;
     margin-bottom: 0;
     letter-spacing: 0;
 }
 
 .summary-num {
     font-family: 'Quattrocento', serif;
+    color: #4682B4;
     weight: bold;
-    font-size: 12vh;
+    font-size: 5vw;
     margin-bottom: 0;
     letter-spacing: 0;
 }
@@ -152,20 +166,33 @@ p {
 }
 
 .summary-context {
-    font-size: 2vw;
+    font-size: 1.5vw;
     text-align: center;
     margin-top: 0;
-    margin-bottom: 10vh;
+    margin-bottom: 1vw;
 }
 
 .summary-context p {
     margin-top: 0;
 }
 
+.summary:nth-child(4n) {
+    clear: both;
+}
+
 .unicorn-dive {
     font-size: 1.5vw;
     text-align: left;
+    background-color: #ffffff;
     display: none;
+    margin-top: 2vw;
+    /*border: 2px solid red;*/
+}
+
+.summary:hover .unicorn-dive, .summary.hover .unicorn-dive {
+    display: inline-block;
+    margin-left: 0;
+    /*width: 30vw;*/
 }
 
 #about {
@@ -221,8 +248,8 @@ a {
 
 @media only screen and (max-width: 450px) {
     body {
-        background-position: center 150vh;
-        background-size: 350vw;
+        background-position: center 75vh;
+        background-size: 700vw;
         padding: 0;
         margin: 0;
     }
@@ -244,7 +271,8 @@ a {
     }
 
     #date {
-        font-size: 7vw;
+        font-size: 10vw;
+        margin-left: 5vw;
     }
 
     #unicorns {
@@ -257,13 +285,17 @@ a {
     .aggregated-summary {
         display: block;
         width: auto;
+        border-bottom: none;
     }
 
     .summary {
-        font-size: 7.5vh;
+        font-size: 7.5vw;
         font-family: 'Quattrocento', serif;
         text-align: center;
         margin-bottom: 1%;
+        padding-bottom: 5vw;
+        border-bottom: none;
+        margin-left: 6vw;
         display: block;
         float: none;
         width: auto;
@@ -271,7 +303,7 @@ a {
     }
 
     .big-summary-num {
-        font-size: 25vw;
+        font-size: 20vw;
     }
 
     .summary-num {
