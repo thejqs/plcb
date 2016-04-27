@@ -1,6 +1,5 @@
-<p align="center">
-<img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width="350"  />
-<p>
+
+-> <img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width="350"  /> <-
 
 Boozicorns
 ==========
