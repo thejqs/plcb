@@ -1,5 +1,8 @@
 <img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width="250" />
 
+Boozicorns
+==========
+
 Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions.
 
 It's generally a terrible system for consumers. We as discerning drinkers have to travel to Ohio or Maryland or wherever for even some basics, some staples. **But it works out OK when one wants a bunch of data about booze.**
