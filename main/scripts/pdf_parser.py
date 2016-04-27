@@ -47,7 +47,7 @@ def copy_pdf():
                 time.sleep(600)
                 copy_pdf()
                 tries += 1
-            if tries >= 20:
+            if tries == 20:
                 url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
                 return mp.prepare_unicorn_search(**url)
 
@@ -124,6 +124,14 @@ def get_pdf_codes():
 
 
 def collect():
+    '''
+    called from pdf_multi_plcb_product_getter.py
+
+    checks for the daily PDF of retail inventory and collects product ids
+
+    Returns:
+    product ids used to check for unicorns
+    '''
     print 'copying the pdf ....'
     # if the PDF is there, it will be written to a file and the function
     # returns None. If it isn't there for us within a few hours of checking,
