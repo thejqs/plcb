@@ -12,9 +12,14 @@ from operator import itemgetter
 # def ascii_encode_dict(data):
 #     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
 #     return dict(map(ascii_encode, pair) for pair in data.items())
-def find_median(l):
-    l = sorted(l)
-    len_l = len(l)
+
+
+def find_median(lst):
+    '''
+    given a list, we find or compute the median value
+    '''
+    l = sorted(lst)
+    len_l = len(lst)
     if len_l < 1:
         return 'you are a silly person. nothing in this list'
     idx = (len_l - 1) // 2
@@ -22,6 +27,14 @@ def find_median(l):
         return l[idx]
     else:
         return (l[idx] + l[idx + 1]) / 2.0
+
+
+def sort_by_price(lst):
+    '''
+    a one-liner, but one we'll use repeatedly.
+    would otherwise be a lambda
+    '''
+    return sorted(lst, key=itemgetter('price'), reverse=True)
 
 
 def unicorns(request):
@@ -110,16 +123,18 @@ def unicorns(request):
     unicorns_dict['min'] = [min_name.lower(), '${}'.format(min_price)]
     unicorns_dict['max'] = [max_name.lower(), '${}'.format(max_price)]
     unicorns_dict['bottles'] = [most_bottles_name.lower(), most_bottles, '${}'.format(most_bottles_price), most_bottles_on_sale]
-    unicorns_dict['whiskey'] = [len(whiskey), whiskey]
-    unicorns_dict['rum'] = [len(rum), rum]
-    unicorns_dict['agave'] = [len(agave), agave]
-    unicorns_dict['gin'] = [len(gin), gin]
-    unicorns_dict['fancy'] = [len(fancy), sorted(fancy, key=lambda k: k['price'], reverse=True)]
+    unicorns_dict['whiskey'] = [len(whiskey), sort_by_price(whiskey)]
+    unicorns_dict['rum'] = [len(rum), sort_by_price(rum)]
+    unicorns_dict['agave'] = [len(agave), sort_by_price(agave)]
+    unicorns_dict['gin'] = [len(gin), sort_by_price(gin)]
+    unicorns_dict['fancy'] = [len(fancy), sort_by_price(fancy)]
 
-    top_store_contents = [unicorn['name'].lower() for unicorn in unicorns_json if unicorn['store_id'] == top_store[0]]
+    top_store_contents = [unicorn for unicorn in unicorns_json if unicorn['store_id'] == top_store[0]]
 
     with open('main/data/stores/retail_stores-2016-04-10.json', 'r') as f:
         stores_json = json.load(f)  # , object_hook=ascii_encode_dict
+        # don't want to have to manually update the number of stores
+        # in the intro text should it change with a new scrape for store data
         unicorns_dict['num_stores'] = len(stores_json)
         store_data = None
         for store in stores_json:
@@ -129,7 +144,7 @@ def unicorns(request):
                 store_type = store['store_type']
             if most_bottles_store_id == store['id']:
                 unicorns_dict['bottles'].append(store['address'].lower())
-        unicorns_dict['store'] = (address.lower(), top_store[1], top_store_contents, phone, store_type)
+        unicorns_dict['store'] = (address.lower(), top_store[1], sort_by_price(top_store_contents), phone, store_type)
 
     context['unicorns'] = unicorns_dict
     # context['unicorns_json'] = json.dumps(unicorns_json)
