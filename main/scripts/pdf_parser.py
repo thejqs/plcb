@@ -37,6 +37,7 @@ def copy_pdf():
             r = requests.get(pdf_url)
             with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
                 f.write(r.content)
+
         else:
             print datetime.datetime.now(), "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
             # will try again for a couple hours-plus, every 10 minutes, to see
@@ -46,7 +47,10 @@ def copy_pdf():
                 time.sleep(600)
                 copy_pdf()
                 tries += 1
-            return None
+            if tries >= 20:
+                url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
+                return mp.prepare_unicorn_search(**url)
+
     else:
         return None
 
@@ -121,15 +125,16 @@ def get_pdf_codes():
 
 def collect():
     print 'copying the pdf ....'
-    # if the PDF isn't there for us within a few hours of checking,
-    # the function will return None and we launch a different scraper
-    pdf = copy_pdf()
-    if not pdf:
-        url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
-        codes = mp.prepare_unicorn_search(**url)
+    # if the PDF is there, it will be written to a file and the function
+    # returns None. If it isn't there for us within a few hours of checking,
+    # the function will launch a backup scraper that will collect the
+    # product ids needed by means other than the PDF.
+    backup_codes = copy_pdf()
+    if backup_codes:
+        return backup_codes
     else:
         codes = get_pdf_codes()
-    return codes
+        return codes
     print 'done with the pdf'
 
 
