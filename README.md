@@ -1,5 +1,5 @@
-Boozicorns
-=============
+![alt text][boozicorn]
+
 Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions.
 
 It's generally a terrible system for consumers. We as discerning drinkers have to travel to Ohio or Maryland or wherever for even some basics, some staples. **But it works out OK when one wants a bunch of data about booze.**
@@ -56,6 +56,7 @@ Thus: *On Python!* *On JavaScript!*
 
 **Let's do this.**
 
+[boozicorn]: https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png
 [leaflet]: https://github.com/thejqs/plcb/blob/master/leaflet_screenshot1.png
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
 [psearch]: https://github.com/thejqs/plcb/blob/master/interface.png
