@@ -56,7 +56,7 @@ Thus: *On Python!* *On JavaScript!*
 
 **Let's do this.**
 
-[boozicorn]: <img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width=250 />
+[boozicorn]: <img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width="250" />
 [leaflet]:
 https://github.com/thejqs/plcb/blob/master/leaflet_screenshot1.png
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
