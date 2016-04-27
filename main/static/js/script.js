@@ -1,8 +1,12 @@
-var today = new Date()
-var yesterday = new Date(today)
-yesterday.setDate(today.getDate() - 1)
-today = today.toISOString().slice(0, 10)
-yesterday = yesterday.toISOString().slice(0, 10)
+// var today = new Date()
+// var yesterday = new Date(today)
+// yesterday.setDate(today.getDate() - 1)
+// console.log(today)
+// console.log(yesterday)
+// today = today.toLocaleDateString().slice(0, 10)
+// console.log(today)
+// yesterday = yesterday.toLocaleDateString().slice(0, 10)
+// console.log(yesterday)
 
 // don't want to have to manually update the number of stores in the intro text
 // should it change with a new scrape for store data
@@ -81,7 +85,7 @@ function populateMap () {
 
 function secondAjax () {
   var stores_xhr = new XMLHttpRequest()
-  stores_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/data/retail_stores-2016-04-10.json', true)
+  stores_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/retail_stores-2016-04-10.json', true)
   stores_xhr.onload = function () {
     if (stores_xhr.status === 200) {
       stores = JSON.parse(stores_xhr.responseText)
@@ -90,7 +94,7 @@ function secondAjax () {
       // var numStores = stores.length
       // document.getElementById('num-stores').innerHTML = numStores
       var stores_percentage = ((uniques.size / stores.length) * 100).toFixed(1)
-      console.log(document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage)
+      document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage
       populateMap()
     }
   }
@@ -99,27 +103,22 @@ function secondAjax () {
 
 function firstAjax () {
   var unicorns_xhr = new XMLHttpRequest()
-  try {
-    unicorns_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/data/unicorns-' + today + '.json', true)
-  } catch (e) {
-    unicorns_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/data/unicorns-' + yesterday + '.json', true)
-  } finally {
-    unicorns_xhr.onload = function () {
-      if (unicorns_xhr.status === 200) {
-        unicorns = JSON.parse(unicorns_xhr.responseText)
-        var numBoozicorns = unicorns.length
-        document.getElementById('boozicorns').innerHTML = numBoozicorns.toLocaleString()
-        for (var i = 0; i < unicorns.length; i++) {
-          var unicorn = unicorns[i]
-          var unicorn_store_id = unicorn['store_id']
-          if (!(unicorn_store_id in uniques)) {
-            uniques.add(unicorn_store_id)
-          }
+  unicorns_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/unicorns-' + scrapeDate + '.json', true)
+  unicorns_xhr.onload = function () {
+    if (unicorns_xhr.status === 200) {
+      unicorns = JSON.parse(unicorns_xhr.responseText)
+      var numBoozicorns = unicorns.length
+      document.getElementById('boozicorns').innerHTML = numBoozicorns.toLocaleString()
+      for (var i = 0; i < unicorns.length; i++) {
+        var unicorn = unicorns[i]
+        var unicorn_store_id = unicorn['store_id']
+        if (!(unicorn_store_id in uniques)) {
+          uniques.add(unicorn_store_id)
         }
-        var numBoozicornStores = uniques.size
-        document.getElementById('boozicorns-stores').innerHTML = numBoozicornStores
-        secondAjax()
       }
+      var numBoozicornStores = uniques.size
+      document.getElementById('boozicorns-stores').innerHTML = numBoozicornStores
+      secondAjax()
     }
   }
   unicorns_xhr.send()

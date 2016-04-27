@@ -15,7 +15,7 @@
     <meta name="twitter:title" content="Boozicorns: Alcohol-related singularities in Pennsylvania. Every day.">
     <meta name="twitter:description" content="A Python scraping project.">
     <meta name="twitter:image" content="../static/media/boozicorns-twitter.png">
-    <meta property="og:url" content="http://www.boozicorns.com/">
+    <meta property="og:url" content="http://boozicorns.com/">
     <meta property="og:site_name" content="Jacob Quinn Sanders.">
     <meta property="article:author" content="https://www.facebook.com/thejqs">
     <meta property="og:title" content="Boozicorns: A Python scraping project exploring rarities within the databases of the Pennsylvania Liquor Control Board.">
@@ -296,14 +296,13 @@
             Go inside the Boozicorns project on <a target="_blank" href="https://github.com/thejqs/plcb">GitHub</a>
         </p>
     </div>
-
+    
 	<script src="{% static 'js/lib/leaflet-0.75.js' %}" type="text/javascript"></script>
 	<script src="{% static 'js/lib/tile.stamen-1.3.0.js' %}" type="text/javascript"></script>
 
     </script>
     <script type="text/javascript">
-        // var unicorns = {{ unicorns_json|safe }};
-        // var stores = {{ stores_json|safe }};
+        var scrapeDate = '{{ unicorns.scrape_date }}';
     </script>
 	<script src="{% static 'js/script.js' %}"></script>
 </body>

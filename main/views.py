@@ -26,17 +26,19 @@ def find_median(l):
 
 def unicorns(request):
     context = {}
+    unicorns_dict = {}
     today = datetime.date.today()
     # if today's data file doesn't exist, we'll use yesterday's.
     # will help for those cases after midnight and before we have fresh data
     try:
         f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
+        unicorns_dict['scrape_date'] = today.strftime('%Y-%m-%d')
     except IOError:
         f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
+        unicorns_dict['scrape_date'] = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
     unicorns_json = json.load(f)  # , object_hook=ascii_encode_dict
     # don't need an open file no mo'
     f.close()
-    unicorns_dict = {}
     max_price = None
     min_price = None
     min_name = None
@@ -100,9 +102,9 @@ def unicorns(request):
     top_store = max(count_stores, key=itemgetter(1))
 
     if today.strftime('%Y-%m-%d') in f.name:
-        unicorns_dict['data_date'] = today.strftime('%d %B %Y')
+        unicorns_dict['data_date'] = '{}'.format(today.strftime('%d %B %Y'))
     elif (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d') in f.name:
-        unicorns_dict['data_date'] = (today - datetime.timedelta(days=1)).strftime('%d %B %Y')
+        unicorns_dict['data_date'] = '{}'.format((today - datetime.timedelta(days=1)).strftime('%d %B %Y'))
     unicorns_dict['mode'] = most_common_price
     unicorns_dict['median'] = median_price
     unicorns_dict['min'] = [min_name.lower(), '${}'.format(min_price)]
