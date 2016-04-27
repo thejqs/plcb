@@ -1,15 +1,4 @@
-// var today = new Date()
-// var yesterday = new Date(today)
-// yesterday.setDate(today.getDate() - 1)
-// console.log(today)
-// console.log(yesterday)
-// today = today.toLocaleDateString().slice(0, 10)
-// console.log(today)
-// yesterday = yesterday.toLocaleDateString().slice(0, 10)
-// console.log(yesterday)
 
-// don't want to have to manually update the number of stores in the intro text
-// should it change with a new scrape for store data
 var stores = []
 var unicorns = []
 var uniques = new Set()
