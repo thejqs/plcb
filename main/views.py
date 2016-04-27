@@ -33,6 +33,9 @@ def sort_by_price(lst):
     '''
     a one-liner, but one we'll use repeatedly.
     would otherwise be a lambda
+
+    Args:
+    a list of dictionaries, which each contain 'price' keys
     '''
     return sorted(lst, key=itemgetter('price'), reverse=True)
 
