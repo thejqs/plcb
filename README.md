@@ -9,9 +9,15 @@ It's generally a terrible system for consumers. We as discerning drinkers have t
 
 Also terrible: the interface(s) the state puts on the data. No joke.
 
+Here's one:
+
 ![alt text][finewine]
 
+And here's another one:
+
 ![alt text][psearch]
+
+Yeah.
 
 I can't search like I'd want:
 
