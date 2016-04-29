@@ -9,19 +9,19 @@ to use this on a batch of files the way filenames are structured
 for this project. At some point I'm probably going to need to also run this
 to restore broken data or populate a new bucket. I mean, Let's be real.
 
-for example, could be used on a full directory as a module:
+For example, could be used on a full directory as a module:
 import os
 import re
 import boto3
 from aws_uploader import send_to_s3
 
-for i in os.listdir('../data/unicorns_json'):
-    send_to_s3('../data/unicorns_json/' + i)
+for fp in os.listdir('../data/unicorns_json'):
+    send_to_s3('../data/unicorns_json/' + fp)
 
 '''
 
 # after pip install boto3 and pip install awscli +
-# credentialing on aws with an IAM access key:
+# credentialing on aws with an IAM user access key:
 import boto3
 import re
 

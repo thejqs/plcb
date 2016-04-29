@@ -267,7 +267,7 @@ def hunt_unicorns():
 
     print 'writing unicorns to json ....'
     filepath = write_unicorn_json_to_file(unicorns)
-    print 'sending unicorns up to s3 heaven'
+    print 'sending unicorns up to s3 heaven ....'
     aws.send_to_s3(filepath)
     print 'done hunting.'
 
