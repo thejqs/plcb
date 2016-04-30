@@ -5,6 +5,7 @@ from django.conf import settings
 from collections import Counter
 import datetime
 import json
+import re
 from operator import itemgetter
 
 
@@ -40,21 +41,30 @@ def sort_by_price(lst):
     return sorted(lst, key=itemgetter('price'), reverse=True)
 
 
+def choose_correct_file():
+    try:
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
+    except IOError:
+        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
+
+    f.close()
+    return f
+
+
 def unicorns(request):
     context = {}
     unicorns_dict = {}
     today = datetime.date.today()
     # if today's data file doesn't exist, we'll use yesterday's.
     # will help for those cases after midnight and before we have fresh data
-    try:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
-        unicorns_dict['scrape_date'] = today.strftime('%Y-%m-%d')
-    except IOError:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
-        unicorns_dict['scrape_date'] = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    unicorns_json = json.load(f)  # , object_hook=ascii_encode_dict
+    f = choose_correct_file()
+    file_date_pattern = '((?<=\-)\d+.*(?=\.))'
+    file_date = re.search(file_date_pattern, f.name).group()
+
+    unicorns_dict['scrape_date'] = file_date  # today.strftime('%Y-%m-%d')
+    # unicorns_dict['scrape_date'] = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+    # unicorns_json = json.load(f)  # , object_hook=ascii_encode_dict
     # don't need an open file no mo'
-    f.close()
     max_price = None
     min_price = None
     min_name = None
