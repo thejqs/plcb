@@ -39,7 +39,7 @@ def copy_pdf():
                 f.write(r.content)
 
         else:
-            print datetime.datetime.now(), "it's the same file as yesterday, hoss, or it ain't there. gimme a few minutes."
+            print datetime.datetime.now(), req.headers['last-modified'], "looks like it's the same file as yesterday, hoss. gimme a few minutes."
             # will try again for a couple hours-plus, every 10 minutes, to see
             # whether the file is updated for the current day
             tries = 0
@@ -48,6 +48,7 @@ def copy_pdf():
                 copy_pdf()
                 tries += 1
             if tries == 20:
+                print 'switching to backup scraper ....'
                 url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
                 return mp.prepare_unicorn_search(**url)
 
