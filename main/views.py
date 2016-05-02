@@ -14,6 +14,8 @@ from operator import itemgetter
 #     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
+today = datetime.date.today()
+
 
 def find_median(lst):
     '''
@@ -42,29 +44,47 @@ def sort_by_price(lst):
 
 
 def choose_correct_file():
+    # if today's data file doesn't exist, we'll use yesterday's.
+    # will help for those cases after midnight and before we have fresh data.
+    # would load json here but will need the filename a little while longer
     try:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
+        fp = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today)), 'r')
     except IOError:
-        f = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
+        fp = open(os.path.join(settings.BASE_DIR, 'main/data/unicorns_json/unicorns-{}.json'.format(today - datetime.timedelta(days=1))), 'r')
+    unicorns_json = json.load(fp)
+    # don't need an open file no mo'
+    fp.close()
+    return fp, unicorns_json
 
-    f.close()
-    return f
+
+def get_stores_data(top_store, unicorns_dict, most_bottles_store_id, top_store_contents):
+    # stores_dict = {}
+    stores_json = json.load(open('main/data/stores/retail_stores-2016-04-10.json', 'r'))
+    # don't want to have to manually update the number of stores
+    # in the intro text should it change with a new scrape for store data
+    unicorns_dict['num_stores'] = len(stores_json)
+    store_data = None
+    for store in stores_json:
+        if top_store[0] == store['id']:
+            address = store['address']
+            phone = store['phone']
+            store_type = store['store_type']
+        if most_bottles_store_id == store['id']:
+            unicorns_dict['bottles'].append(store['address'].lower())
+    unicorns_dict['store'] = (address.lower(), top_store[1], sort_by_price(top_store_contents), phone, store_type)
+    return unicorns_dict
 
 
 def unicorns(request):
     context = {}
     unicorns_dict = {}
-    today = datetime.date.today()
-    # if today's data file doesn't exist, we'll use yesterday's.
-    # will help for those cases after midnight and before we have fresh data
-    f = choose_correct_file()
-    file_date_pattern = '((?<=\-)\d+.*(?=\.))'
-    file_date = re.search(file_date_pattern, f.name).group()
+    fp, unicorns_json = choose_correct_file()
 
+    file_date_pattern = '((?<=\-)\d+.*(?=\.))'
+    file_date = re.search(file_date_pattern, fp.name).group()
     unicorns_dict['scrape_date'] = file_date  # today.strftime('%Y-%m-%d')
     # unicorns_dict['scrape_date'] = (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-    # unicorns_json = json.load(f)  # , object_hook=ascii_encode_dict
-    # don't need an open file no mo'
+    # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
     max_price = None
     min_price = None
     min_name = None
@@ -91,6 +111,7 @@ def unicorns(request):
         num_bottles = int(unicorn['bottles'])
         price = float(unicorn['price'])
         on_sale = unicorn['on_sale']
+        # we'll count these later to see which store has the most unicorns
         stores.append(unicorn['store_id'])
 
         if price > 100:
@@ -126,10 +147,11 @@ def unicorns(request):
 
     count_stores = [(x, stores.count(x)) for x in stores]
     top_store = max(count_stores, key=itemgetter(1))
+    top_store_contents = [unicorn for unicorn in unicorns_json if unicorn['store_id'] == top_store[0]]
 
-    if today.strftime('%Y-%m-%d') in f.name:
+    if today.strftime('%Y-%m-%d') in fp.name:
         unicorns_dict['data_date'] = '{}'.format(today.strftime('%d %B %Y'))
-    elif (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d') in f.name:
+    elif (today - datetime.timedelta(days=1)).strftime('%Y-%m-%d') in fp.name:
         unicorns_dict['data_date'] = '{}'.format((today - datetime.timedelta(days=1)).strftime('%d %B %Y'))
     unicorns_dict['mode'] = most_common_price
     unicorns_dict['median'] = median_price
@@ -142,24 +164,9 @@ def unicorns(request):
     unicorns_dict['gin'] = [len(gin), sort_by_price(gin)]
     unicorns_dict['fancy'] = [len(fancy), sort_by_price(fancy)]
 
-    top_store_contents = [unicorn for unicorn in unicorns_json if unicorn['store_id'] == top_store[0]]
+    updated_unicorns_dict = get_stores_data(top_store, unicorns_dict, most_bottles_store_id, top_store_contents)
 
-    with open('main/data/stores/retail_stores-2016-04-10.json', 'r') as f:
-        stores_json = json.load(f)  # , object_hook=ascii_encode_dict
-        # don't want to have to manually update the number of stores
-        # in the intro text should it change with a new scrape for store data
-        unicorns_dict['num_stores'] = len(stores_json)
-        store_data = None
-        for store in stores_json:
-            if top_store[0] == store['id']:
-                address = store['address']
-                phone = store['phone']
-                store_type = store['store_type']
-            if most_bottles_store_id == store['id']:
-                unicorns_dict['bottles'].append(store['address'].lower())
-        unicorns_dict['store'] = (address.lower(), top_store[1], sort_by_price(top_store_contents), phone, store_type)
-
-    context['unicorns'] = unicorns_dict
+    context['unicorns'] = updated_unicorns_dict
     # context['unicorns_json'] = json.dumps(unicorns_json)
     # context['stores_json'] = json.dumps(stores_json)
     return render(request, 'index.html', context)
