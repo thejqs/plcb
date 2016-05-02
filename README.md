@@ -13,7 +13,7 @@ Here's one:
 
 ![alt text][finewine]
 
-And here's another one:
+And here's another:
 
 ![alt text][psearch]
 
@@ -33,11 +33,31 @@ To go through what's provided to me, I'd have to read through roughly 2,500 sear
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
-Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
+Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server. The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now witht he PDF parser it's down to about an hour and 15 minutes.
 
-**I guess I should make a computer do it.**
+Regardless, that's a lot to ask of any human. **I guess I should make a computer do it.**
 
 **Good thing I can write code.**
+
+So much better:
+
+```zsh
+2016-05-01 12:01:19.841944
+copying the pdf ....
+loading pdf ....
+getting codes ....
+0:10:52.893204
+made 14037 urls ....
+getting product urls ....
+making DOM trees ... happy little DOM trees ....
+hunting unicorns ....
+found 1974 unicorns ....
+writing unicorns to json ....
+sending unicorns up to s3 heaven ....
+done hunting.
+1:16:02.962245
+all cleaned up. long day. tacos?
+```
 
 This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. **The boozicorns.** Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
 
