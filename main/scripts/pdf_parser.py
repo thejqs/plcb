@@ -19,7 +19,13 @@ import os
 from backup_scrapers import multi_plcb_product_getter as mp
 
 
-def copy_pdf():
+def copy_pdf(pdf_url):
+    r = requests.get(pdf_url)
+    with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
+        f.write(r.content)
+
+
+def check_for_new_codes():
     '''
     for now, it's worth keeping a copy of the daily PDF to easily
     check ourselves and make sure we're getting all the data we mean to.
@@ -34,19 +40,23 @@ def copy_pdf():
         d = datetime.date.today()
         # checking the headers to make sure it's from the right date
         if d.strftime('%d %b %Y') in req.headers['last-modified']:  # also check type? req.headers['content-type'] == 'application/pdf'
-            r = requests.get(pdf_url)
-            with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
-                f.write(r.content)
+            copy_pdf(pdf_url)
 
         else:
-            print datetime.datetime.now(), req.headers['last-modified'], "looks like it's the same file as yesterday, hoss. gimme a few minutes."
-            # will try again for a couple hours-plus, every 10 minutes, to see
+            # will try again for three hours and change, every 10 minutes, to see
             # whether the file is updated for the current day
             tries = 0
-            while tries < 20:
-                time.sleep(600)
-                copy_pdf()
-                tries += 1
+            if tries < 20:
+                req = requests.head(pdf_url)
+                if d.strftime('%d %b %Y') in req.headers['last-modified']:
+                    copy_pdf(pdf_url)
+                else:
+                    tries += 1
+                    print '{0}\nNow: {1}\nFile: {2}\n{3}\n'.format(tries, datetime.datetime.now(),
+                                                                   req.headers['last-modified'],
+                                                                   "looks like it's the same file as yesterday, hoss. gimme a few minutes.")
+                    time.sleep(600)
+                    check_for_new_codes()
             if tries == 20:
                 print 'switching to backup scraper ....'
                 url = {'url': 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/psi_ProductListPage_Inter.asp?searchPhrase=&selTyp=&selTypS=&selTypW=&selTypA=&CostRange=&searchCode=&submit=Search'}
@@ -108,7 +118,14 @@ def get_pdf_codes():
         # much narrower than this and we miss about 500 of 14,000 product codes
         x_plus = 30
 
-        cells = pdf.extract([('with_formatter', 'text'), ('with_parent', 'LTPage[pageid=\'{0}\']'.format(page)), ('cells', 'LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(x, y - y_minus, x + x_plus, y))])
+        cells = pdf.extract([('with_formatter',
+                              'text'),
+                             ('with_parent',
+                              'LTPage[pageid=\'{0}\']'.format(page)),
+                             ('cells', 'LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(x,
+                                                                                                     y - y_minus,
+                                                                                                     x + x_plus,
+                                                                                                     y))])
         new_codes = [c.strip() for c in cells['cells'].split(' ') if c.isdigit() and len(c) >= 3]
         # handles cases where overlaps_bbox grabs, y'know, 'APRICOT' or ''
         if first_code.isdigit():
@@ -138,7 +155,7 @@ def collect():
     # returns None. If it isn't there for us within a few hours of checking,
     # the function will launch a backup scraper that will collect the
     # product ids needed by means other than the PDF.
-    backup_codes = copy_pdf()
+    backup_codes = check_for_new_codes()
     if backup_codes:
         return backup_codes
     else:
