@@ -39,8 +39,6 @@ Regardless, that's a lot to ask of any human. **I guess I should make a computer
 
 **Good thing I can write code.**
 
-So much better:
-
 ```zsh
 2016-05-01 12:01:19.841944
 copying the pdf ....
