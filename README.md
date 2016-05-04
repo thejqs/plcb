@@ -3,6 +3,20 @@
 Boozicorns
 ==========
 
+This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the Pennsylvania Liquor Control Board runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
+
+Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
+
+The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.
+
+That doesn't mean we can't be nice about it. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
+
+And it's not like the PLCB is actively discouraging this sort of thing.
+
+![alt text][permissions]
+
+So here we are.
+
 Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions.
 
 It's generally a terrible system for consumers. We as discerning drinkers have to travel to Ohio or Maryland or wherever for even some basics, some staples. **But it works out OK when one wants a bunch of data about booze.**
@@ -33,7 +47,9 @@ To go through what's provided to me, I'd have to read through roughly 2,500 sear
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
-Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server. The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now witht he PDF parser it's down to about an hour and 15 minutes.
+Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server. The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes.
+
+Once in hand, the data goes into a PostgreSQL database for later time-series and pattern analysis and also up to an S3 instance as JSON to make our map.
 
 Regardless, that's a lot to ask of any human. **I guess I should make a computer do it.**
 
@@ -57,23 +73,11 @@ done hunting.
 all cleaned up. long day. tacos?
 ```
 
-This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the state runs across Pennsylvania. The unicorns, as it were. **The boozicorns.** Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
-
-The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.
-
-That doesn't mean we can't be nice about it. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
-
-And it's not like the PLCB is actively discouraging this sort of thing.
-
-![alt text][permissions]
-
-So here we are.
-
 **Isn't that better?**
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. On Sundays it can be almost 2 p.m. So at least one of the scripts in the project will probably wind up running on a cronjob to collect the data when it's freshest.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. So at least one of the scripts in the project will wind up running on a cronjob to collect the data when it's freshest.
 
 And the data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
