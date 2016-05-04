@@ -37,6 +37,7 @@ from multiprocessing import Pool
 
 import pdf_parser
 import aws_uploader as aws
+import daily_importer as importer
 
 
 def open_url(url):
@@ -269,6 +270,8 @@ def hunt_unicorns():
     filepath = write_unicorn_json_to_file(unicorns)
     print 'sending unicorns up to s3 heaven ....'
     aws.send_to_s3(filepath)
+    print 'writing unicorns to PostgreSQL ....'
+    importer.import_unicorns(filepath)
     print 'done hunting.'
 
     end_unicorns = datetime.datetime.now()
