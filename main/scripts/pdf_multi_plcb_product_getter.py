@@ -59,7 +59,7 @@ def open_url(url):
         print datetime.datetime.now()
         print e
         print url
-        print 'no delicious bytes to eat getting {0}'.format(url)
+        print 'no delicious bytes to eat while getting {0}'.format(url)
 
 
 def parse_html(unparsed_html):
