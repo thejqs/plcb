@@ -14,6 +14,8 @@ django.setup()
 def import_unicorns():  # store_object
     Unicorns.objects.all().delete()
 
+    total_records = []
+
     # import ipdb; ipdb.set_trace()
     for fp in os.listdir('../data/unicorns_json'):
         # print fp
@@ -21,32 +23,25 @@ def import_unicorns():  # store_object
         # for store in store_object:
         for idx, unicorn in enumerate(j):
             # if unicorn['store_id'] in store:
-            print '{} from {}'.format(idx, fp)
-            try:
-                u = Unicorns.objects.create(product_id=unicorn['product_code'],
-                                            name=unicorn['name'],
-                                            num_bottles=unicorn['bottles'],
-                                            bottle_size=unicorn['bottle_size'],
-                                            price=unicorn['price'],
-                                            on_sale=unicorn['on_sale'] if False else True,
-                                            on_sale_price=unicorn['on_sale'],
-                                            scrape_date=unicorn['scrape_date'],
-                                            store_id=unicorn['store_id'])
-            except (KeyError, ValueError) as e:
-                # print e
-                # print unicorn
-                # print store
-                # print u
-                u = Unicorns.objects.create(product_id=unicorn['product_code'],
-                                            name=unicorn['name'],
-                                            num_bottles=unicorn['bottles'],
-                                            bottle_size=unicorn['bottle_size'],
-                                            price=unicorn['price'],
-                                            on_sale=unicorn['on_sale'] if False else True,
-                                            on_sale_price=unicorn['on_sale'],
-                                            scrape_date=None,
-                                            store_id=unicorn['store_id'])
+            # print '{} from {}'.format(idx, fp)
+            u = Unicorns.objects.create(product_id=unicorn['product_code'],
+                                        name=unicorn['name'],
+                                        num_bottles=unicorn['bottles'],
+                                        bottle_size=unicorn['bottle_size'],
+                                        price=unicorn['price'],
+                                        on_sale=unicorn['on_sale'],
+                                        on_sale_price=unicorn['on_sale'],
+                                        store_id=unicorn['store_id'],
+                                        scrape_date=unicorn['scrape_date'])
+            # try:
+            #     u.scrape_date = unicorn['scrape_date']
+            # except (KeyError, ValueError) as e:
+            #     u.scrape_date = None
+
+            total_records.append(u)
             print 'created {}'.format(u.name)
+
+    print 'made {} records'.format(len(total_records))
 
 
 def import_stores():

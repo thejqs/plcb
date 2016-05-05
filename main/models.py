@@ -5,12 +5,12 @@ from django.db import models
 
 
 class Stores(models.Model):
-    store_id = models.CharField(max_length=10, primary_key=True,)
+    store_id = models.CharField(max_length=10, primary_key=True)
     address = models.CharField(max_length=255, null=False, blank=False)
-    hours = models.CharField(max_length=255, null=True, blank=True)
-    latitude = models.FloatField(null=True)
-    longitude = models.FloatField(null=True)
-    phone = models.CharField(max_length=15, null=True, blank=True)
+    hours = models.CharField(max_length=255, null=False, blank=False)
+    latitude = models.FloatField(null=False)
+    longitude = models.FloatField(null=False)
+    phone = models.CharField(max_length=15, null=False, blank=False)
     store_type = models.CharField(max_length=100, null=True, blank=True)
     # county =
 
@@ -23,14 +23,14 @@ class Stores(models.Model):
 
 class Unicorns(models.Model):
     product_id = models.CharField(max_length=10)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    num_bottles = models.IntegerField(null=True)
-    bottle_size = models.CharField(max_length=10, null=True, blank=True)
-    price = models.FloatField(null=True, blank=True)
+    name = models.CharField(max_length=255, null=False, blank=False)
+    num_bottles = models.IntegerField(null=False)
+    bottle_size = models.CharField(max_length=10, null=False, blank=False)
+    price = models.FloatField(null=False, blank=False)
     on_sale = models.NullBooleanField(null=True, blank=True)
     on_sale_price = models.FloatField(null=True, blank=True)
     scrape_date = models.DateField(null=True, blank=True)
-    store_id = models.CharField(max_length=10, null=True)
+    store_id = models.CharField(max_length=10, null=False)
     # proof =
     # booze_type =
 
