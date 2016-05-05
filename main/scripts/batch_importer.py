@@ -1,5 +1,9 @@
 #!usr/bin/env python
 
+'''
+a script to handle importing of more than a single day's data
+'''
+
 import django
 import os, sys
 
@@ -12,13 +16,16 @@ django.setup()
 
 
 def import_unicorns():  # store_object
-    Unicorns.objects.all().delete()
+    '''
+    loops through our directory of JSON files and unpacks each dict
+    into a Django object for storage in PostgreSQL.
 
-    total_records = []
-
-    # import ipdb; ipdb.set_trace()
+    Ultimately this will include a foreign key relationship to the
+    stores data but for now they can be joined through store_id
+    '''
+    # Unicorns.objects.all().delete()
+    # total_records = []
     for fp in os.listdir('../data/unicorns_json'):
-        # print fp
         j = json.load(open('../data/unicorns_json/' + fp, 'r'))
         # for store in store_object:
         for idx, unicorn in enumerate(j):
@@ -33,23 +40,20 @@ def import_unicorns():  # store_object
                                         on_sale_price=unicorn['on_sale'],
                                         store_id=unicorn['store_id'],
                                         scrape_date=unicorn['scrape_date'])
-            # try:
-            #     u.scrape_date = unicorn['scrape_date']
-            # except (KeyError, ValueError) as e:
-            #     u.scrape_date = None
 
-            total_records.append(u)
-            print 'created {}'.format(u.name)
-
-    print 'made {} records'.format(len(total_records))
+            # total_records.append(u)
+            # print 'created {}'.format(u.name)
+    # print 'made {} records'.format(len(total_records))
 
 
 def import_stores():
-    Stores.objects.all().delete()
+    '''
+    unpacks JSON objects of retail-store data into Django counterparts
+    for PostgreSQL storage
+    '''
+    # Stores.objects.all().delete()
 
-    # import ipdb; ipdb.set_trace()
     for fp in os.listdir('../data/stores'):
-        # print fp
         j = json.load(open('../data/stores/' + fp, 'r'))
         for store in j:
             s = Stores.objects.get_or_create(store_id=store['id'],

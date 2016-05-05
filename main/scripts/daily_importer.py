@@ -12,14 +12,10 @@ django.setup()
 
 
 def import_unicorns(filepath):
-    """
+    '''
     given our daily scraped data, passes it into our
     PostgreSQL time-series table
-    """
-    # Unicorns.objects.all().delete()
-    # file_date_pattern = '((?<=\-)\d+.*(?=\.))'
-    # file_date = re.search(file_date_pattern, filepath).group()
-
+    '''
     j = json.load(open(filepath, 'r'))
     for unicorn in j:
         try:
@@ -36,13 +32,11 @@ def import_unicorns(filepath):
             print e
             print unicorn
 
-        print 'created {}'.format(u.name)
-
 
 def import_stores(filepath):
-    """
+    '''
     a function to use infrequently, whenever we need to update stores data
-    """
+    '''
     Stores.objects.all().delete()
 
     j = json.load(open(filepath 'r'))
