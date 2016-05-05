@@ -39,7 +39,7 @@ def import_stores(filepath):
     '''
     Stores.objects.all().delete()
 
-    j = json.load(open(filepath 'r'))
+    j = json.load(open(filepath, 'r'))
     for store in j:
         s = Stores.objects.get_or_create(store_id=store['id'],
                                          address=store['address'],
