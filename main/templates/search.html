@@ -1,0 +1,18 @@
+{% load staticfiles %}
+
+<div class="search">
+    <form method="POST" action='{% url "unicorns" %}'>
+        {% csrf_token %}
+        <p>{{ message }}</p>
+        <p>{{ form }}</p>
+        <!-- <input class="form-control" name='search the boozicorns' placeholder="Enter a name of a booze please and thank you"> -->
+        <div class="unicorn-button">
+            <button class="button" method="post" type="submit"> Search today's boozicorns</button>
+        </div>
+        <div>
+            {% for unicorns in unicorn_response %}
+                <p>{{ unicorn }}</p>
+            {% endfor %}
+        </div>
+    </form>
+</div>
