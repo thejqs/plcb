@@ -24,7 +24,7 @@ def import_unicorns(filepath):
                                         num_bottles=unicorn['bottles'],
                                         bottle_size=unicorn['bottle_size'],
                                         price=unicorn['price'],
-                                        on_sale=unicorn['on_sale'] if False else True,
+                                        on_sale=unicorn['on_sale'],
                                         on_sale_price=unicorn['on_sale'],
                                         scrape_date=unicorn['scrape_date'],
                                         store_id=unicorn['store_id'])
