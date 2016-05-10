@@ -16,6 +16,7 @@ import datetime
 import time
 import os
 
+from decorator import memoize
 from backup_scrapers import multi_plcb_product_getter as mp
 
 
@@ -25,7 +26,7 @@ def copy_pdf(pdf_url):
         f.write(r.content)
 
 
-def check_for_new_codes():
+def check_for_new_codes(tries=[0]):
     '''
     for now, it's worth keeping a copy of the daily PDF to easily
     check ourselves and make sure we're getting all the data we mean to.
@@ -45,14 +46,14 @@ def check_for_new_codes():
         else:
             # will try again for three hours and change, every 10 minutes, to see
             # whether the file is updated for the current day
-            tries = 0
-            if tries < 20:
+            while tries[0] < 20:
                 req = requests.head(pdf_url)
                 if d.strftime('%d %b %Y') in req.headers['last-modified']:
                     copy_pdf(pdf_url)
+                    break
                 else:
-                    tries += 1
-                    print '{0}\nNow: {1}\nFile: {2}\n{3}\n'.format(tries, datetime.datetime.now(),
+                    tries[0] += 1
+                    print '{0}\nNow: {1}\nFile: {2}\n{3}\n'.format(tries[0], datetime.datetime.now(),
                                                                    req.headers['last-modified'],
                                                                    "looks like it's the same file as yesterday, hoss. gimme a few minutes.")
                     time.sleep(600)
