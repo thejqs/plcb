@@ -9,8 +9,8 @@ Configured to use Python's multiprocessing module -- thus I can't use
 generators everywhere I'd like. Life is just hard sometimes. Boo. Also hoo.
 
 The PLCB claims the database is updated at the close of business every day,
-but it's more like 5 or 7 a.m. the following day at the earliest. Nonetheless,
-that's still before stores open for the day.
+but it's more like 5 or 7 a.m. the following day at the earliest -- and usually
+later than that. Nonetheless, that's still before stores open for the day.
 
 Every day is a chance for fresh data.
 
@@ -244,6 +244,7 @@ def hunt_unicorns():
     a JSON-serializable list of unicorn dicts
     '''
     start_products = datetime.datetime.now()
+    p = Pool(8)
     print start_products
 
     all_product_codes = pdf_parser.collect()
