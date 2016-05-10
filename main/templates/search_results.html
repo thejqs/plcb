@@ -1,0 +1,9 @@
+{% load staticfiles %}
+
+<div class="search-results">
+    <div>
+        {% for unicorn in unicorn_response %}
+            <p>{{ unicorn.name }} :: {{ unicorn.price }}</p>
+        {% endfor %}
+    </div>
+</div>
