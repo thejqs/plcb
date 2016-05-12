@@ -47,7 +47,11 @@ To go through what's provided to me, I'd have to read through roughly 2,500 sear
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
-Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server. The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes.
+Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
+
+The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes.
+
+That time savings came with a price: a dramatically memory-intensive `load()` operation for the PDF. But the tradeoff seemed worth it.
 
 Once in hand, the data goes into a PostgreSQL database for later time-series and pattern analysis and also up to an S3 instance as JSON to make our map.
 
