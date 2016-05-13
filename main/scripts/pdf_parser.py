@@ -21,7 +21,7 @@ from backup_scrapers import multi_plcb_product_getter as mp
 
 def copy_pdf(pdf_url):
     r = requests.get(pdf_url)
-    with open('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
+    with open('/sites/projects/plcb/main/data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()), 'wb') as f:
         f.write(r.content)
 
 
@@ -33,7 +33,7 @@ def check_for_new_codes():
     given us by the original file
     '''
     # making sure we don't already have a file for today
-    if not os.path.isfile('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
+    if not os.path.isfile('/sites/projects/plcb/main/data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today())):
         # getting just the headers to make sure we want to continue
         pdf_url = 'https://www.lcbapps.lcb.state.pa.us/webapp/Product_Management/Files/productCatalog.PDF'
         req = requests.head(pdf_url)
@@ -74,7 +74,7 @@ def write_codes_to_file(data):
     Args:
     expects an iterable of product codes
     '''
-    with open('../data/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
+    with open('/sites/projects/plcb/main/data/product_codes/product_codes-{}.txt'.format(datetime.date.today()), 'a+') as f:
         # don't want the result to be a list, just lines of text
         for datum in data:
             print >> f, datum
@@ -86,7 +86,7 @@ def get_pdf_codes():
     containing all the codes given a starting point determined from the page
     layout and attempts to slurp up the yummy data thingies.
     '''
-    pdf = pdfquery.PDFQuery('../data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()))
+    pdf = pdfquery.PDFQuery('/sites/projects/plcb/main/data/pdfs/plcb_pdf-{0}.pdf'.format(datetime.date.today()))
     # should be 600-plus
     pages = pdf.doc.catalog['Pages'].resolve()['Count']
     d = datetime.date.today()

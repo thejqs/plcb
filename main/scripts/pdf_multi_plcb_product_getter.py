@@ -92,7 +92,7 @@ def write_unicorn_json_to_file(data):
     a dictionary or list of dictionaries
     '''
     j = json.dumps(data, sort_keys=True, indent=4)
-    f = open('../data/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+')
+    f = open('/sites/projects/plcb/main/data/unicorns_json/unicorns-{}.json'.format(datetime.date.today()), 'a+')
     print >> f, j
     f.close()
     return f.name
@@ -245,6 +245,7 @@ def hunt_unicorns():
     '''
     start_products = datetime.datetime.now()
     print start_products
+    p = Pool(6)
 
     all_product_codes = pdf_parser.collect()
 
@@ -277,6 +278,7 @@ def hunt_unicorns():
     end_unicorns = datetime.datetime.now()
     print end_unicorns - start_products
     print 'all cleaned up. long day. tacos?'
+    print '_' * 30
 
 
 if __name__ == '__main__':
