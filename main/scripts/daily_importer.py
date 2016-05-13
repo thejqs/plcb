@@ -13,6 +13,8 @@ django.setup()
 
 def import_unicorns(filepath):
     '''
+    called from pdf_multi_plcb_product_getter.py
+    
     given our daily scraped data, passes it into our
     PostgreSQL time-series table
     '''

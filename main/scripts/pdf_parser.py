@@ -25,7 +25,7 @@ def copy_pdf(pdf_url):
         f.write(r.content)
 
 
-def check_for_new_codes():
+def check_for_new_codes(tries=[0]):
     '''
     for now, it's worth keeping a copy of the daily PDF to easily
     check ourselves and make sure we're getting all the data we mean to.
@@ -39,20 +39,21 @@ def check_for_new_codes():
         req = requests.head(pdf_url)
         d = datetime.date.today()
         # checking the headers to make sure it's from the right date
-        if d.strftime('%d %b %Y') in req.headers['last-modified']:  # also check type? req.headers['content-type'] == 'application/pdf'
+        # and right type; if there's a 500 or 503 error, that handles it
+        if d.strftime('%d %b %Y') in req.headers['last-modified'] and req.headers['content-type'] == 'application/pdf':
             copy_pdf(pdf_url)
 
         else:
             # will try again for three hours and change, every 10 minutes, to see
             # whether the file is updated for the current day
-            tries = 0
-            if tries < 20:
+            while tries[0] < 20:
                 req = requests.head(pdf_url)
-                if d.strftime('%d %b %Y') in req.headers['last-modified']:
+                if d.strftime('%d %b %Y') in req.headers['last-modified'] and req.headers['content-type'] == 'application/pdf':
                     copy_pdf(pdf_url)
+                    break
                 else:
-                    tries += 1
-                    print '{0}\nNow: {1}\nFile: {2}\n{3}\n'.format(tries, datetime.datetime.now(),
+                    tries[0] += 1
+                    print '{0}\nNow: {1}\nFile: {2}\n{3}\n'.format(tries[0], datetime.datetime.now(),
                                                                    req.headers['last-modified'],
                                                                    "looks like it's the same file as yesterday, hoss. gimme a few minutes.")
                     time.sleep(600)
@@ -102,13 +103,20 @@ def get_pdf_codes():
             # structure of the page, but we can calculate this based on the
             # first element containing our data.
             try:
-                first_code_element = pdf.pq('LTPage[pageid=\'{0}\'] LTTextBoxHorizontal:overlaps_bbox("{1},{2},{3},{4}")'.format(page, 61.45, 551.767, 71, 563.527))[0]
+                first_code_element = pdf.pq('LTPage[pageid=\'{0}\'] LTTextBoxHorizontal:overlaps_bbox("{1},{2},{3},{4}")'.format(page,
+                                                                                                                                 61.45,
+                                                                                                                                 551.767,
+                                                                                                                                 71,
+                                                                                                                                 563.527))[0]
                 y_minus = 550
             except IndexError as e:
                 print '{} at page {}'.format(e, page)
                 print first_code_element
         elif page == 1:
-            first_code_element = pdf.pq('LTPage[pageid=\'1\'] LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(61.45, 445.267, 71, 457.027))[0]
+            first_code_element = pdf.pq('LTPage[pageid=\'1\'] LTTextBoxHorizontal:overlaps_bbox("{0},{1},{2},{3}")'.format(61.45,
+                                                                                                                           445.267,
+                                                                                                                           71,
+                                                                                                                           457.027))[0]
             y_minus = 440
 
         first_code = first_code_element.text.strip()

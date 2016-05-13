@@ -11,5 +11,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         help = "Runs the daily PLCB scraper."
-        # function call here.
         pg.hunt_unicorns()

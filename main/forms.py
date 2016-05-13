@@ -12,7 +12,8 @@ class SearchBoozicornForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'class': 'form-control',
-                'placeholder': "Whatcha lookin' for?",
+                'placeholder': "Name your booze",
+                'name': 'Search button for boozicorns'
             }
         )
     )
