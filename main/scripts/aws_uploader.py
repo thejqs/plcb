@@ -21,7 +21,7 @@ for fp in os.listdir('sites/projects/plcb/main/data/unicorns_json'):
 '''
 
 # after pip install boto3 and pip install awscli +
-# credentialing on aws with an IAM user access key:
+# credentialing on aws with `aws configure` and an IAM user access key:
 import boto3
 import re
 
