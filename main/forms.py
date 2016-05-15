@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 # import datetime
-from main.models import Unicorns, Stores
+from main.models import Unicorn, Store
 
 # today = datetime.date.today()
 

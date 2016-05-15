@@ -4,24 +4,25 @@ from django.db import models
 # Create your models here.
 
 
-class Stores(models.Model):
-    store_id = models.CharField(max_length=10, primary_key=True)
+class Store(models.Model):
+    store_id = models.CharField(max_length=10)
     address = models.CharField(max_length=255, null=False, blank=False)
     hours = models.CharField(max_length=255, null=False, blank=False)
     latitude = models.FloatField(null=False)
     longitude = models.FloatField(null=False)
     phone = models.CharField(max_length=15, null=False, blank=False)
     store_type = models.CharField(max_length=100, null=True, blank=True)
+    store_data_date = models.DateField(null=True, blank=True)
     # county =
 
     def __unicode__(self):
         return '{}, {}, {}, {}'.format(self.store_id,
-                                        self.address,
-                                        self.phone,
-                                        self.store_type)
+                                       self.address,
+                                       self.store_type,
+                                       self.phone)
 
 
-class Unicorns(models.Model):
+class Unicorn(models.Model):
     product_id = models.CharField(max_length=10)
     name = models.CharField(max_length=255, null=False, blank=False)
     num_bottles = models.IntegerField(null=False)
@@ -30,22 +31,9 @@ class Unicorns(models.Model):
     on_sale = models.NullBooleanField(null=True, blank=True)
     on_sale_price = models.FloatField(null=True, blank=True)
     scrape_date = models.DateField(null=True, blank=True)
-    store_id = models.CharField(max_length=10, null=False)
+    store = models.ForeignKey('Store', null=True)
     # proof =
     # booze_type =
 
     def __unicode__(self):
         return '{}'.format(self.name)
-
-
-# class Bottles(Models.model):
-#
-#     def __unicode__(self):
-#         return '{}'.format(XXX)
-#
-#
-# class BoozeTypes(Models.model):
-#     name = models.CharField(max_length=255)
-#
-#     def __unicode__(self):
-#         return '{}'.format(XXX)
