@@ -49,7 +49,7 @@ So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
 Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
 
-The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes.
+The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or closer to two hours if it's in a more-constrained environment.
 
 That time savings came with a price: a dramatically memory-intensive `load()` operation for the PDF. But the tradeoff seemed worth it.
 
@@ -59,30 +59,30 @@ Regardless, that's a lot to ask of any human. **I guess I should make a computer
 
 **Good thing I can write code.**
 
-```zsh
-2016-05-12 12:21:03.817568
-copying the pdf ....
-loading pdf ....
-getting codes ....
-0:12:03.160956
-made 14059 urls ....
-getting product urls ....
-making DOM trees ... happy little DOM trees ....
-hunting unicorns ....
-found 1967 unicorns ....
-writing unicorns to json ....
-sending unicorns up to s3 heaven ....
-writing unicorns to PostgreSQL ....
-done hunting.
-1:15:56.867781
-all cleaned up. long day. tacos?
+```python
+unicorns = []
+for tree in trees:
+    is_unicorn = check_for_unicorn(tree)
+    # just being explicit about our False case
+    if not is_unicorn:
+        continue
+    else:
+        unicorn = assemble_unicorn(tree)
+        sale_price = on_sale(tree)
+        # it's either this or a ternary operator, so ....
+        try:
+            unicorn['on_sale'] = float(sale_price.replace('Sale Price: $', ''))
+        except (ValueError, AttributeError) as e:
+            unicorn['on_sale'] = False
+        unicorns.append(unicorn)
+return unicorns
 ```
 
 **Isn't that better?**
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. So at least one of the scripts in the project will wind up running on a cronjob to collect the data when it's freshest.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. The main scrape script runs daily on a Linux/Ubuntu cronjob to collect the data when it's freshest.
 
 And the data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
