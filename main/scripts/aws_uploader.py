@@ -15,8 +15,8 @@ import re
 import boto3
 from aws_uploader import send_to_s3
 
-for fp in os.listdir('../data/unicorns_json'):
-    send_to_s3('../data/unicorns_json/' + fp)
+for fp in os.listdir('sites/projects/plcb/main/data/unicorns_json'):
+    send_to_s3('/sites/projects/plcb/main/data/unicorns_json/' + fp)
 
 '''
 
