@@ -155,7 +155,7 @@ def assemble_unicorn(tree):
         # as strings of four-digit numbers on this site all carry commas
         num_unicorn_bottles = unicorn_store[2].replace(',', '')
         # perhaps a little overwrought -- \d+ would accomplish much the same --
-        # but just being careful
+        # but just being careful and matching the exact pattern
         num_unicorn_bottles_pattern = '(^\d+(?!\S))'
         num_unicorn_bottles = re.match(num_unicorn_bottles_pattern, num_unicorn_bottles).group()
 
