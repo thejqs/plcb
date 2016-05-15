@@ -32,6 +32,8 @@ def import_unicorns(filepath):
             u.scrape_date = unicorn['scrape_date']
             try:
                 u.store = Store.objects.get(store_id=str(unicorn['store_id']), store_data_date='2016-05-15')
+            except Store.DoesNotExist:
+                u.store = Store.objects.get(store_id=str(unicorn['store_id']), store_data_date='2016-04-10')
             except Exception as e:
                 print 'Something wrong with the unicorn store: ', e, unicorn
                 u.store = None
