@@ -4,7 +4,7 @@ import os, sys
 sys.path.append("../../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
-from main.models import Unicorns, Stores
+from main.models import Unicorn, Store
 from main.scripts import pdf_multi_plcb_product_getter as pg
 
 class Command(BaseCommand):
