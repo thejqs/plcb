@@ -25,6 +25,12 @@ yesterday = (today - datetime.timedelta(days=1))
 
 
 class UnicornView(View):
+    '''
+    handles data and object assembly for GET and POST requests
+    '''
+
+    # TODO: pull out these helper functions into a separate file. they
+    # inform the view but are not themselves views
     def find_median(self, lst):
         '''
         given a list, we find or compute the median value
@@ -85,32 +91,11 @@ class UnicornView(View):
         return sorted(s, key=lambda k: 1 - (k.on_sale_price / k.price), reverse=True)[:10]
 
 
-    # # TODO abstract out the parameters
-    # def get_stores_data(self, top_stores, unicorns_dict, most_bottles_store_id, top_store_contents):
-    #     # stores_dict = {}
-    #     stores = Store.objects.all()
-    #     # json.load(open('main/data/stores/retail_stores-2016-04-10.json', 'r'))
-    #     # don't want to have to manually update the number of stores
-    #     # in the intro text should it change with a new scrape for store data
-    #     unicorns_dict['num_stores'] = len(stores)
-    #     store_data = None
-    #     for top_store in top_stores:
-    #         for store in stores:
-    #             if top_store[0] == store.store_id:
-    #                 address = store.address
-    #                 phone = store.phone
-    #                 store_type = store.store_type
-    #             if most_bottles_store_id == store.store_id:
-    #                 unicorns_dict['bottles'].append(store.address.lower())
-    #             unicorns_dict['store'] = (address.lower(), top_store[1], self.sort_by_price(top_store_contents), phone, store_type)
-    #     return unicorns_dict
-
     def get(self, request):
         context = {}
         unicorns_dict = {}
         form = SearchBoozicornForm()
         context['form'] = form
-
         boozicorns = Unicorn.objects.filter(scrape_date=today.strftime('%Y-%m-%d'))
         if not boozicorns:
             boozicorns = Unicorn.objects.filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
@@ -131,8 +116,10 @@ class UnicornView(View):
         gin = []
         fancy = []
 
+        # could be separate function
         all_prices = [u.price for u in boozicorns]
         most_common_price = Counter(all_prices).most_common()[0]
+
         median_price = self.find_median(all_prices)
 
         # capturing various summary data in one loop through the JSON objects
@@ -159,7 +146,8 @@ class UnicornView(View):
                 agave.append(unicorn)
             if 'Mezcal' in name and unicorn not in agave:
                 agave.append(unicorn)
-            if 'Gin' in name and 'Ginjo' not in name and 'Ginger' not in name and unicorn not in gin:
+            # excluding 'Ginger' and 'Ginjo'
+            if 'Gin ' in name and unicorn not in gin:
                 gin.append(unicorn)
 
             if (min_price is None or min_price > price) and price > 1 and unicorn.bottle_size != 'EACH':
@@ -175,15 +163,15 @@ class UnicornView(View):
         # gives me the top 10 store ids
         top_stores = self.find_top_stores(stores)
         # separates the ids from the number of occurrences
+        # also could be its own function
         top_store_ids = [store[0] for store in top_stores]
-
         top_store_contents = []
-
         for store_id in top_store_ids:
-            top_store_contents.append({store_id: boozicorns.filter(store__store_id=store_id)})
+            contents = boozicorns.filter(store__store_id=store_id)
+            top_store_contents.append({contents[0].store.address: (len(contents),
+                                                                   contents)})
 
         unicorns_dict['top_stores'] = top_store_contents
-
         # formatted thus to work with a JavaScript function and Ajax call to set the map
         unicorns_dict['scrape_date'] = str(boozicorns[0].scrape_date)
         # formatted thus for display
@@ -193,17 +181,23 @@ class UnicornView(View):
         unicorns_dict['min'] = [min_name.lower(), '${}'.format(min_price)]
         unicorns_dict['mode'] = most_common_price
         unicorns_dict['median'] = median_price
-        unicorns_dict['bottles'] = [most_bottles_name.lower(), most_bottles, '${}'.format(most_bottles_price), most_bottles_on_sale, most_bottles_store]
-        unicorns_dict['whiskey'] = [len(whiskey), self.sort_by_price(whiskey)]
-        unicorns_dict['rum'] = [len(rum), self.sort_by_price(rum)]
-        unicorns_dict['agave'] = [len(agave), self.sort_by_price(agave)]
-        unicorns_dict['gin'] = [len(gin), self.sort_by_price(gin)]
+        unicorns_dict['bottles'] = [most_bottles_name.lower(),
+                                    most_bottles,
+                                    '${}'.format(most_bottles_price),
+                                    most_bottles_on_sale,
+                                    most_bottles_store]
+        unicorns_dict['whiskey'] = [len(whiskey),
+                                    self.sort_by_price(whiskey)]
+        unicorns_dict['rum'] = [len(rum),
+                                self.sort_by_price(rum)]
+        unicorns_dict['agave'] = [len(agave),
+                                  self.sort_by_price(agave)]
+        unicorns_dict['gin'] = [len(gin),
+                                self.sort_by_price(gin)]
         top_prices = self.sort_by_price(fancy)
-        unicorns_dict['fancy'] = [len(fancy), top_prices]
+        unicorns_dict['fancy'] = [len(fancy),
+                                  top_prices]
         unicorns_dict['max'] = top_prices[:10]
-
-        # adding in data for stores; new state, new variable name
-        # updated_unicorns_dict = self.get_stores_data(top_stores, unicorns_dict, most_bottles_store_id, top_store_contents)
 
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context)
@@ -214,7 +208,7 @@ class UnicornView(View):
         context['form'] = form
 
         if form.is_valid():
-            search = form.cleaned_data['name']
+            search = ' ' + form.cleaned_data['name'] + ' '
             context['unicorn_response'] = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
             if not context['unicorn_response']:
                 context['unicorn_response'] = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
