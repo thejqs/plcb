@@ -57,7 +57,7 @@ Once in hand, the data goes into a PostgreSQL database for later time-series and
 
 Regardless, that's a lot to ask of any human. **I guess I should make a computer do it.**
 
-**Good thing I can write code.**
+**Good thing I can write code.** (Well. Ish.)
 
 ```python
 unicorns = []
