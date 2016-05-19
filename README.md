@@ -3,7 +3,7 @@
 Boozicorns
 ==========
 
-This project exists to collect and illuminate all of the products available for sale in only one store -- one of 597 stores, to be precise -- the Pennsylvania Liquor Control Board runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
+This project exists to collect and illuminate all of the products available for sale in only one store of the hundreds the Pennsylvania Liquor Control Board runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
 
 Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
 
@@ -49,13 +49,7 @@ So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
 Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
 
-The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or closer to two hours if it's in a more-constrained environment.
-
-That time savings came with a price: a dramatically memory-intensive `load()` operation for the PDF. But the tradeoff seemed worth it.
-
-Once in hand, the data goes into a PostgreSQL database for later time-series and pattern analysis and also up to an S3 instance as JSON to make our map.
-
-Regardless, that's a lot to ask of any human. **I guess I should make a computer do it.**
+That's a lot to ask of any human. **I guess I should make a computer do it.**
 
 **Good thing I can write code.** (Well. Ish.)
 
@@ -78,11 +72,17 @@ for tree in trees:
 return unicorns
 ```
 
+The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or between an hour and a half and two hours if it's in a more-constrained environment.
+
+That time savings came with a price: a dramatically CPU- and memory-intensive `load()` operation for the PDF, courtesy of a library sub-module. But the tradeoff seemed worth it.
+
+Once in hand, the data goes into a PostgreSQL database for later time-series and pattern analysis and also up to an S3 instance as a daily JSON file to support an Ajax call to make our map.
+
 **Isn't that better?**
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. The main scrape script runs daily on a Linux/Ubuntu cronjob to collect the data when it's freshest.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest.
 
 And the data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
