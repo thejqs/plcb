@@ -210,19 +210,22 @@ class UnicornView(View):
         context['form'] = form
 
         if form.is_valid():
-            search = form.cleaned_data['name']
-            response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
-            clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
-            context['unicorn_response'] = clean_response
-            if not context['unicorn_response']:
-                response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+            search = form.cleaned_data['name'].strip()
+            if search.isalnum():
+                response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
                 clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
                 context['unicorn_response'] = clean_response
-            if context['unicorn_response']:
-                context['message'] = "WOO BOOZICORNS"
+                if not context['unicorn_response']:
+                    response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+                    clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
+                    context['unicorn_response'] = clean_response
+                if context['unicorn_response']:
+                    context['message'] = "WOO BOOZICORNS"
+                else:
+                    context['message'] = 'Ain\'t got none o\' them.'
             else:
-                context['message'] = "Ain\'t got none o\' them."
+                context['message'] = 'That\'s not a valid search.\nC\'mon now.'
         else:
-            context['message'] = form.non_field_errors
+            context['message'] = 'That\'s not a valid search. C\'mon now.'
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
