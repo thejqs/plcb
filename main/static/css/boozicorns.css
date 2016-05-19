@@ -119,7 +119,7 @@ form {
 
 input {
     font-family: 'Quattrocento', serif;
-    font-size: .9vw;
+    font-size: 1.2vw;
 }
 
 label {
@@ -170,8 +170,6 @@ label {
     width: 23vw;
     margin-bottom: 3vw;
     margin-left: 2vw;
-    /*float: left;*/
-    /*border-left: 1px dotted;*/
     border-bottom: 2px dotted;
     display: inline-block;
     white-space: nowrap;
@@ -222,7 +220,6 @@ label {
     display: none;
     margin-top: 2vw;
     padding: 1vw;
-    /*border: 2px solid red;*/
 }
 
 .summary:hover .unicorn-dive {
@@ -292,6 +289,7 @@ a {
     #map {
         width: 100vw;
         margin-left: 0;
+        margin-bottom: 5vw;
         height: 300px;
     }
 
@@ -301,8 +299,8 @@ a {
     }
 
     .intro-text {
-        font-size: 5vw;
-        margin-left: 9vw;
+        font-size: 5.5vw;
+        margin-left: 7vw;
     }
 
     #date {
@@ -317,6 +315,39 @@ a {
         column-count: 1;
     }
 
+    #unicorns-categories {
+        width: 80vw;
+        margin-top: 10vw;
+    }
+
+    #search {
+        margin-left: 10vw;
+    }
+
+    form {
+        height: 50vw;
+        width: 80vw;
+        display: block;
+    }
+
+    .form-control {
+        width: 80vw;
+        height: 20vw;
+        display: block;
+    }
+
+    .button {
+        margin-left: 0;
+        font-size: 8vw;
+        display: block;
+        padding: 2vw;
+    }
+
+    input {
+        font-family: 'Quattrocento', serif;
+        font-size: 7vw;
+    }
+
     .aggregated-summary {
         display: block;
         width: auto;
@@ -325,22 +356,18 @@ a {
 
     .summary {
         font-size: 7.5vw;
+        width: 80vw;
         font-family: 'Quattrocento', serif;
         text-align: center;
         margin-bottom: 1%;
         padding-bottom: 5vw;
         border-bottom: none;
-        margin-left: 6vw;
+        margin-left: 0;
         display: block;
         float: none;
-        width: auto;
-        height: auto;
+        white-space: normal;
+        border: 1px solid #000000;
     }
-
-    /*.summary:active .unicorn-dive {
-        display: inline-block;
-        margin-left: 0;
-    }*/
 
     .big-summary-num {
         font-size: 20vw;
@@ -358,6 +385,10 @@ a {
         text-align: center;
         margin-top: 0;
         margin-bottom: 10vh;
+    }
+
+    .top10 {
+        font-size: 12vw
     }
 
     .unicorn-dive {

@@ -153,7 +153,7 @@
                         <li>
                             {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
-                            {{ unicorn.price }} ::
+                            {{ unicorn.price }}
                             {% if unicorn.on_sale_price %} :: sale price: {{ unicorn.on_sale_price }} {% endif %} ::
                             {{ unicorn.store.address|lower }}
                         </li>
@@ -166,7 +166,7 @@
 <div id="unicorns-data">
     <div id="top-price" class="summary">
         <p>
-            <span class="num summary-num">Top 10 by price</span>
+            <span class="num summary-num top10">Top 10 by price</span>
         </p>
         <div class="unicorn-dive">
             <ul>
@@ -183,7 +183,7 @@
     </div>
     <div id="low-price" class="summary">
         <p>
-            <span class="num summary-num">Bottom 10 by price</span>
+            <span class="num summary-num top10">Bottom 10 by price</span>
         </p>
         <div class="unicorn-dive">
             <ul>
@@ -222,7 +222,7 @@
     </div>
     <div id="discounted-dollars" class="summary">
         <p>
-            <span class="num summary-num">Top 10 most discounted (dollars)</span>
+            <span class="num summary-num top10">Top 10 most discounted (dollars)</span>
         </p>
         <div class="unicorn-dive">
             <ul>
@@ -239,7 +239,7 @@
     </div>
     <div id="discounted-percentage" class="summary">
         <p>
-            <span class="num summary-num">Top 10 most discounted (percentage)<a class="asterisk" href="#caveat-percentage">*</a></span>
+            <span class="num summary-num top10">Top 10 most discounted (percentage)<a class="asterisk" href="#caveat-percentage">*</a></span>
         </p>
         <div class="unicorn-dive">
             <ul>
@@ -302,13 +302,13 @@
     </div>
     <div id="top-store">
         <p>
-            <span class="num summary-num">top 10 stores</span>
+            <span class="num summary-num top10">top 10 stores</span>
         </p>
         <div class="summary-context">
-            <ul class="summary">
+            <ul>
                 {% for stores in unicorns.top_stores %}
                  {% for store, unicorns in stores.items %}
-                    <p>
+                    <p class="summary-store">
                         {{ store|lower }} ::
                         {{ unicorns.0 }}
                         <!-- {{ unicorns.1.0.store.store_type }} -->
