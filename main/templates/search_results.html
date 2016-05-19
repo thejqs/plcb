@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="" /></div>
+<div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></div>
     <div class="search-results">
         <div class="message">
             {{ message }}
@@ -22,9 +22,10 @@
         </div>
         <div>
             {% for unicorn in unicorn_response %}
-                <ul>{{ unicorn.name|lower }}
+                <ul>{{ unicorn.name|lower }} ({{ unicorn.num_bottles }})
                     <li>{{ unicorn.price }}</li>
                     {% if unicorn.on_sale_price %}<li> Sale price: ${{ unicorn.on_sale_price }}</li>{% endif %}
+                    <li>{{ unicorn.bottle_size }}</li>
                     <li>{{ unicorn.store.address|lower }}</li>
                     <li>{{ unicorn.store.phone }}</li>
                 </ul>

@@ -7,7 +7,10 @@
 {% endblock %}
 
 {% block content %}
-<div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="" /></div>
+<div id="header">
+    <h1>boozicorns<span>.</span></h1>
+</div>
+<div id="boozicorn-image"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></div>
 <div class="intro-text">
     <p>
         Every day across Pennsylvania, about <span class="num">14 percent</span> of the <span class="num">14,000</span>
@@ -79,10 +82,11 @@
                 <ul>
                     {% for unicorn in unicorns.whiskey.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ::
+                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
                             {{ unicorn.price }}
-                            {% if unicorn.on_sale_price %} :: Sale price: {{ unicorn.on_sale_price }} {% endif %}
+                            {% if unicorn.on_sale_price %} :: sale price: {{ unicorn.on_sale_price }} {% endif %} ::
+                            {{ unicorn.store.address|lower }}
                         </li>
                     {% endfor %}
                 </ul>
@@ -101,9 +105,11 @@
                 <ul>
                     {% for unicorn in unicorns.gin.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ::
-                            {{ unicorn.price }} ::
-                            {{ unicorn.bottle_size }}
+                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            {{ unicorn.bottle_size }} ::
+                            {{ unicorn.price }}
+                            {% if unicorn.on_sale_price %} :: sale price: {{ unicorn.on_sale_price }} {% endif %} ::
+                            {{ unicorn.store.address|lower }}
                         </li>
                     {% endfor %}
                 </ul>
@@ -122,9 +128,11 @@
                 <ul>
                     {% for unicorn in unicorns.rum.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ::
-                            {{ unicorn.price }} ::
-                            {{ unicorn.bottle_size }}
+                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            {{ unicorn.bottle_size }} ::
+                            {{ unicorn.price }}
+                            {% if unicorn.on_sale_price %} :: sale price: {{ unicorn.on_sale_price }} {% endif %} ::
+                            {{ unicorn.store.address|lower }}
                         </li>
                     {% endfor %}
                 </ul>
@@ -143,9 +151,11 @@
                 <ul>
                     {% for unicorn in unicorns.agave.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ::
+                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            {{ unicorn.bottle_size }} ::
                             {{ unicorn.price }} ::
-                            {{ unicorn.bottle_size }}
+                            {% if unicorn.on_sale_price %} :: sale price: {{ unicorn.on_sale_price }} {% endif %} ::
+                            {{ unicorn.store.address|lower }}
                         </li>
                     {% endfor %}
                 </ul>
@@ -158,35 +168,34 @@
         <p>
             <span class="num summary-num">Top 10 by price</span>
         </p>
-        <!-- {{ unicorns.max }} -->
         <div class="unicorn-dive">
             <ul>
                 {% for unicorn in unicorns.max  %}
                     <li>
-                        {{ unicorn.name|lower }} ::
+                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
                         ${{ unicorn.price }}
-                        {% if unicorn.on_sale_price_price %} :: Sale price: ${{ unicorn.on_sale_price }} {% endif %}
+                        {% if unicorn.on_sale_price_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
+                        {{ unicorn.store.address|lower }}
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        <!-- <div class="summary-context">
-            <p>
-                highest-priced
-            </p>
-        </div> -->
     </div>
     <div id="low-price" class="summary">
         <p>
-            <span class="num summary-num">{{ unicorns.min.1 }}</span>
+            <span class="num summary-num">Bottom 10 by price</span>
         </p>
-        <p>
-            {{ unicorns.min.0 }}
-        </p>
-        <div class="summary-context">
-            <p>
-                lowest-priced
-            </p>
+        <div class="unicorn-dive">
+            <ul>
+                {% for unicorn in unicorns.min  %}
+                    <li>
+                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                        ${{ unicorn.price }}
+                        {% if unicorn.on_sale_price_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
+                        {{ unicorn.store.address|lower }}
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
     <div id="fancy" class="summary">
@@ -202,15 +211,16 @@
             <ul>
                 {% for unicorn in unicorns.fancy.1  %}
                     <li>
-                        {{ unicorn.name|lower }} ::
+                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
                         ${{ unicorn.price }}
-                        {% if unicorn.on_sale_price %} :: Sale price: ${{ unicorn.on_sale_price }} {% endif %}
+                        {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
+                        {{ unicorn.store.address|lower }}
                     </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
-    <div id="discounted" class="summary">
+    <div id="discounted-dollars" class="summary">
         <p>
             <span class="num summary-num">Top 10 most discounted (dollars)</span>
         </p>
@@ -218,24 +228,24 @@
             <ul>
                 {% for unicorn in unicorns.discounted  %}
                     <li>
-                        {{ unicorn.name|lower }} ::
+                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
                         ${{ unicorn.price }}
-                        {% if unicorn.on_sale_price %} :: Sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
+                        {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
                         {{ unicorn.store.address|lower }}
                     </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
-    <div id="discounted" class="summary">
+    <div id="discounted-percentage" class="summary">
         <p>
-            <span class="num summary-num">Top 10 most discounted (percentage)<a class="asterisk" href="#percent-caveat">*</a></span>
+            <span class="num summary-num">Top 10 most discounted (percentage)<a class="asterisk" href="#caveat-percentage">*</a></span>
         </p>
         <div class="unicorn-dive">
             <ul>
                 {% for unicorn in unicorns.percent_discount %}
                     <li>
-                        {{ unicorn.name }} ::
+                        {{ unicorn.name }} ({{ unicorn.num_bottles }}) ::
                         {{ unicorn.price }} ::
                         {{ unicorn.on_sale_price }} ::
                         {{ unicorn.store.address|lower }} ::
@@ -290,22 +300,27 @@
             </p>
         </div>
     </div>
-    <div id="top-store" class="summary">
+    <div id="top-store">
         <p>
             <span class="num summary-num">top 10 stores</span>
         </p>
         <div class="summary-context">
-            <ul>
+            <ul class="summary">
                 {% for stores in unicorns.top_stores %}
                  {% for store, unicorns in stores.items %}
                     <p>
-                        {{ store|lower }} :: {{ unicorns.0 }} :: {{ unicorns.1.0.store.store_type }}
+                        {{ store|lower }} ::
+                        {{ unicorns.0 }}
+                        <!-- {{ unicorns.1.0.store.store_type }} -->
                     </p>
-                        <div class="unicorn-dive">
-                             {% for unicorn in unicorns.1 %}
-                             <li>{{ unicorn.name|lower }} :: {{ unicorn.price }}{% if unicorn.on_sale_price %} :: Sale price: ${{ unicorn.on_sale_price }}{% endif %}</li>
-                             {% endfor %}
-                        </div>
+                    <div class="unicorn-dive">
+                         {% for unicorn in unicorns.1 %}
+                         <li>{{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                             {{ unicorn.price }}
+                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }}{% endif %} ::
+                             {{ unicorn.store.address|lower }}</li>
+                         {% endfor %}
+                    </div>
                 {% endfor %}
                {% endfor %}
             </ul>
@@ -345,7 +360,7 @@
         So keep all that in mind. And happy hunting. <a href="#back-to-top"><span class="fa fa-caret-up"></span></a></em>
     </p>
 </div>
-<div id="caveat-percentage">Minimum retail price: $20</div>
+<div id="caveat-percentage">Minimum retail price: $20 <a href="#discounted-dollars"><span class="fa fa-caret-up"></span></a></em></div>
 <div id="about">
     <p>
         Go inside the Boozicorns project on <a target="_blank" href="https://github.com/thejqs/plcb">GitHub</a>
