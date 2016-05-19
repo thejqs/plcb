@@ -1,0 +1,68 @@
+#image404 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    display: block;
+    z-index: 4;
+}
+
+#image404 img {
+    border: 1px solid #ffffff;
+}
+
+#image500 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    display: block;
+}
+
+#image500 img {
+    border: 1px solid #ffffff;
+}
+
+#text404 {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    display: block;
+    color: #ffffff;
+}
+
+div p {
+    font-family: "Josefin Sans";
+    font-size: 500%;
+}
+
+#redirect {
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    display: block;
+}
+
+#redirect p {
+    font-family: "Josefin Sans";
+    color: #ffffff;
+    font-size: 125%;
+    text-align: center;
+    width: 100%;
+}
+
+p a {
+    font-family: "Josefin Sans";
+    color: #ffffff;
+}
+
+body {
+    background-color: #000000;
+    margin: 0;
+}
