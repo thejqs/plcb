@@ -20,7 +20,7 @@ from main.forms import SearchBoozicornForm
 #     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
-today = datetime.date.today()  # .strftime('%Y-%m-%d')
+today = datetime.date.today()
 yesterday = (today - datetime.timedelta(days=1))
 
 
@@ -116,6 +116,8 @@ class UnicornView(View):
         gin = []
         fancy = []
 
+        sorted_by_price = self.sort_by_price(boozicorns)
+
         # could be separate function
         all_prices = [u.price for u in boozicorns]
         most_common_price = Counter(all_prices).most_common()[0]
@@ -147,12 +149,12 @@ class UnicornView(View):
             if 'Mezcal' in name and unicorn not in agave:
                 agave.append(unicorn)
             # excluding 'Ginger' and 'Ginjo'
-            if 'Gin ' in name and unicorn not in gin:
+            if 'Gin' in name and 'Ginjo' not in name and 'Ginger' not in name and unicorn not in gin:
                 gin.append(unicorn)
 
-            if (min_price is None or min_price > price) and price > 1 and unicorn.bottle_size != 'EACH':
-                min_price = price
-                min_name = name
+            # if (min_price is None or min_price > price) and price > 1 and unicorn.bottle_size != 'EACH':
+            #     min_price = price
+            #     min_name = name
             if most_bottles is None or most_bottles < num_bottles:
                 most_bottles = num_bottles
                 most_bottles_name = name
@@ -178,7 +180,7 @@ class UnicornView(View):
         unicorns_dict['data_date'] = '{}'.format(boozicorns[0].scrape_date.strftime('%d %B %Y'))
         unicorns_dict['discounted'] = self.top_10_price_minus_sale_price(boozicorns)
         unicorns_dict['percent_discount'] = self.top_10_percent_discount(boozicorns)
-        unicorns_dict['min'] = [min_name.lower(), '${}'.format(min_price)]
+        unicorns_dict['min'] = sorted_by_price[-10:]
         unicorns_dict['mode'] = most_common_price
         unicorns_dict['median'] = median_price
         unicorns_dict['bottles'] = [most_bottles_name.lower(),
@@ -208,10 +210,14 @@ class UnicornView(View):
         context['form'] = form
 
         if form.is_valid():
-            search = ' ' + form.cleaned_data['name'] + ' '
-            context['unicorn_response'] = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
+            search = form.cleaned_data['name']
+            response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
+            clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
+            context['unicorn_response'] = clean_response
             if not context['unicorn_response']:
-                context['unicorn_response'] = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+                response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+                clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
+                context['unicorn_response'] = clean_response
             if context['unicorn_response']:
                 context['message'] = "WOO BOOZICORNS"
             else:
