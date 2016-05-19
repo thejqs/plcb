@@ -1,0 +1,44 @@
+body {
+    background-color: #FDF5E6;
+    background-size: 125vw;
+    background-repeat: no-repeat;
+    background-position: 15vw 2vh;
+    z-index: -2;
+    background-image: url('../js/lib/images/bottle2.svg')
+}
+
+#boozicorn-image img {
+    width: 20vw;
+    display: inline-block;
+    align: center;
+    margin-left: 39vw;
+    margin-bottom: 3vw;
+    /*position: fixed;*/
+}
+
+.button {
+    background-color: #4682B4;
+    font-family: 'Quattrocento', serif;
+    border: none;
+    color: white;
+    padding: 1vw 2vw;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 45vw;
+    font-size: 2vw;
+}
+
+.search-results {
+    font-family: 'Quattrocento', serif;
+    font-size: 3vw;
+    color: #000000;
+}
+
+.message {
+    text-align: center;
+}
+
+label {
+    display: none;
+}

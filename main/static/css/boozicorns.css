@@ -131,7 +131,7 @@ label {
     height: 3vw;
 }
 
-.search {
+#search {
     display: block;
     margin-left: 40vw;
 }
@@ -225,10 +225,9 @@ label {
     /*border: 2px solid red;*/
 }
 
-.summary:hover .unicorn-dive, .summary:active .unicorn-dive {
+.summary:hover .unicorn-dive {
     display: inline-block;
     margin-left: 0;
-    /*width: 30vw;*/
 }
 
 #about {
