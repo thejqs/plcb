@@ -1,6 +1,6 @@
 body {
     background-color: #FDF5E6;
-    background-size: 125vw;
+    background-size: 150vw;
     background-repeat: no-repeat;
     background-position: 15vw 2vh;
     z-index: -2;
@@ -8,10 +8,10 @@ body {
 }
 
 #boozicorn-image img {
-    width: 20vw;
+    width: 30vw;
     display: inline-block;
     align: center;
-    margin-left: 39vw;
+    margin-left: 35vw;
     margin-bottom: 3vw;
     /*position: fixed;*/
 }
@@ -29,6 +29,10 @@ body {
     font-size: 2vw;
 }
 
+#total {
+    text-align: center;
+}
+
 .search-results {
     font-family: 'Quattrocento', serif;
     font-size: 3vw;
@@ -41,4 +45,40 @@ body {
 
 label {
     display: none;
+}
+
+@media only screen and (max-width: 450px) {
+    ul {
+        padding: 0;
+        margin-left: 5vw;
+    }
+
+    .search-results {
+        font-size: 6vw;
+        margin-left: 0;
+    }
+
+    .form-control {
+        width: 73vw;
+        height: 20vw;
+        display: block;
+        margin-left: 7vw;
+    }
+
+    input {
+        font-family: 'Quattrocento', serif;
+        font-size: 7vw;
+    }
+
+    .button {
+        width: 80vw;
+        height: 15vw;
+        font-size: 6vw;
+        margin-left: 7vw;
+        margin-bottom: 2vw;
+    }
+
+    ul {
+        list-style: none;
+    }
 }
