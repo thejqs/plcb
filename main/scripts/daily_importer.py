@@ -120,17 +120,21 @@ def import_unicorns(filepath):
         u.scrape_date = unicorn['scrape_date']
         # this is super ugly. for now it just needs to work
         try:
-            u.store = Store.objects.get(store_id=str(unicorn['store_id']), store_data_date='2016-04-10')
+            u.store = Store.objects.get(store_id=str(unicorn['store_id']),
+                                        store_data_date='2016-04-10')
         except Store.DoesNotExist:
             try:
-                u.store = Store.objects.get(store_id=str(unicorn['store_id']), store_data_date='2016-05-15')
+                u.store = Store.objects.get(store_id=str(unicorn['store_id']),
+                                            store_data_date='2016-05-15')
             except Store.DoesNotExist:
                 try:
-                    u.store = Store.objects.get(store_id=str(unicorn['store_id']), store_data_date__lte=datetime.date.today().strftime('%Y-%m-%d'))
+                    u.store = Store.objects.get(store_id=str(unicorn['store_id']),
+                                                store_data_date__gt='2016-05-15')
                 except Store.DoesNotExist:
                     print 'making a new store ....'
                     make_new_store(unicorn)
-                    u.store = Store.objects.get(store_id=unicorn['store_id'], store_data_date=datetime.date.today().strftime('%Y-%m-%d'))
+                    u.store = Store.objects.get(store_id=unicorn['store_id'],
+                                                store_data_date=datetime.date.today().strftime('%Y-%m-%d'))
 
         u.save()
 
