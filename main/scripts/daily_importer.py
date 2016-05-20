@@ -10,6 +10,7 @@ import requests
 from lxml import etree
 import StringIO
 import json
+import datetime
 from main.models import Store, Unicorn
 from project.settings_local import geojson_key
 django.setup()
@@ -116,6 +117,7 @@ def import_unicorns(filepath):
         u.on_sale_price = unicorn['on_sale']
         u.scrape_date = unicorn['scrape_date']
         if not Store.objects.filter(store_id=str(unicorn['store_id']), store_data_date__lte='2016-05-15').exists():
+            print 'making a new store ....'
             u.store = make_new_store(unicorn)
         else:
             try:
