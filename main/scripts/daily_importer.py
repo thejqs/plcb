@@ -7,7 +7,6 @@ sys.path.append("../..")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
 
 import requests
-import urllib
 from lxml import etree
 import StringIO
 import json
