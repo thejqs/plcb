@@ -139,23 +139,6 @@ def import_unicorns(filepath):
         u.save()
 
 
-# def import_stores(filepath):
-#     '''
-#     a function to use infrequently, whenever we need to update stores data
-#     '''
-#     Store.objects.all().delete()
-#
-#     j = json.load(open(filepath, 'r'))
-#     for store in j:
-#         s = Store.objects.get_or_create(store_id=store['id'],
-#                                         address=store['address'],
-#                                         hours=store['hours'],
-#                                         latitude=store['latitude'],
-#                                         longitude=store['longitude'],
-#                                         phone=store['phone'],
-#                                         store_type=store['store_type'])
-
-
 def migrate():
     # import_stores()
     import_unicorns()
