@@ -8,12 +8,25 @@ body {
 }
 
 #boozicorn-image img {
-    width: 30vw;
+    width: 15vw;
     display: inline-block;
     align: center;
-    margin-left: 35vw;
+    margin-left: 41vw;
     margin-bottom: 3vw;
-    /*position: fixed;*/
+}
+
+.search-response {
+    display: block;
+    list-style: none;
+}
+
+.form-control {
+    font-family: 'Quattrocento', serif;
+    font-size: 1.5vw;
+    width: 15vw;
+    height: 5vw;
+    display: inline-block;
+    margin-left: 40vw;
 }
 
 .button {
@@ -25,8 +38,13 @@ body {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin-left: 45vw;
+    margin-left: 40vw;
     font-size: 2vw;
+}
+
+.back-button {
+    margin-top: 2vw;
+    margin-left: 3vw;
 }
 
 #total {
@@ -48,6 +66,11 @@ label {
 }
 
 @media only screen and (max-width: 450px) {
+    #boozicorn-image img {
+        width: 30vw;
+        margin-left: 35vw;
+    }
+
     ul {
         padding: 0;
         margin-left: 5vw;
@@ -76,9 +99,5 @@ label {
         font-size: 6vw;
         margin-left: 7vw;
         margin-bottom: 2vw;
-    }
-
-    ul {
-        list-style: none;
     }
 }

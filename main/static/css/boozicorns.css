@@ -229,7 +229,7 @@ label {
 
 #caveat-percentage {
     font-family: 'Quattrocento', serif;
-    font-size: 5vw;
+    font-size: 2vw;
     color: #000000;
     margin-bottom: 5%;
     margin-left: 4vw;
@@ -238,7 +238,7 @@ label {
 
 #about {
     font-family: 'Quattrocento', serif;
-    font-size: 5vw;
+    font-size: 2vw;
     color: #582335;
     text-align: center;
     margin-bottom: 5%;
@@ -275,7 +275,7 @@ a {
 
 #caveats {
     font-family: 'Quattrocento', serif;
-    font-size: 1vw;
+    font-size: 1.5vw;
     border: 1px dotted;
     width: 88vw;
     padding: 1%;
@@ -409,5 +409,13 @@ a {
         width: 90vw;
         margin-left: 3vw;
         font-size: 4vw;
+    }
+
+    #caveat-percentage {
+        font-size: 5vw;
+    }
+
+    #about {
+        font-size: 2vw;
     }
 }
