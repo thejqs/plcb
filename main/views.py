@@ -90,7 +90,6 @@ class UnicornView(View):
         s = (c for c in lst_of_objs if c.on_sale_price > 0 and c.price > 20)
         return sorted(s, key=lambda k: 1 - (k.on_sale_price / k.price), reverse=True)[:10]
 
-
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -124,7 +123,7 @@ class UnicornView(View):
 
         median_price = self.find_median(all_prices)
 
-        # capturing various summary data in one loop through the JSON objects
+        # capturing as much as we can in one loop through the objects
         for unicorn in boozicorns:
             name = unicorn.name
             num_bottles = int(unicorn.num_bottles)
@@ -162,9 +161,9 @@ class UnicornView(View):
                 most_bottles_on_sale = 'Sale price: ${}'.format(unicorn.on_sale_price) if unicorn.on_sale_price else None
                 most_bottles_store = unicorn.store
 
-        # gives me the top 10 store ids
+        # returns the top 10 store ids
         top_stores = self.find_top_stores(stores)
-        # separates the ids from the number of occurrences
+        # separates the ids from the number of occurrences;
         # also could be its own function
         top_store_ids = [store[0] for store in top_stores]
         top_store_contents = []
@@ -173,6 +172,7 @@ class UnicornView(View):
             top_store_contents.append({contents[0].store.address: (len(contents),
                                                                    contents)})
 
+        unicorns_dict['num_stores'] = len(Store.objects.filter(store_data_date__gte='2016-05-15'))
         unicorns_dict['top_stores'] = top_store_contents
         # formatted thus to work with a JavaScript function and Ajax call to set the map
         unicorns_dict['scrape_date'] = str(boozicorns[0].scrape_date)
@@ -180,7 +180,8 @@ class UnicornView(View):
         unicorns_dict['data_date'] = '{}'.format(boozicorns[0].scrape_date.strftime('%d %B %Y'))
         unicorns_dict['discounted'] = self.top_10_price_minus_sale_price(boozicorns)
         unicorns_dict['percent_discount'] = self.top_10_percent_discount(boozicorns)
-        unicorns_dict['min'] = sorted_by_price[-10:]
+        unicorns_dict['max'] = sorted_by_price[:10]
+        unicorns_dict['min'] = list(reversed([p for p in sorted_by_price if p.bottle_size != 'EACH'][-10:]))
         unicorns_dict['mode'] = most_common_price
         unicorns_dict['median'] = median_price
         unicorns_dict['bottles'] = [most_bottles_name.lower(),
@@ -199,7 +200,6 @@ class UnicornView(View):
         top_prices = self.sort_by_price(fancy)
         unicorns_dict['fancy'] = [len(fancy),
                                   top_prices]
-        unicorns_dict['max'] = top_prices[:10]
 
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context)
@@ -210,15 +210,21 @@ class UnicornView(View):
         context['form'] = form
 
         if form.is_valid():
+            # so the search box will allow extra spaces but they won't make it
+            # into the queries
             search = form.cleaned_data['name'].strip()
+            # there are jokesters in this world
             if search.isalnum():
                 response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
+                # if we have a match, we want the whole object available,
+                # not just the matching portion
                 clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
                 context['unicorn_response'] = clean_response
                 if not context['unicorn_response']:
                     response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
                     clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
                     context['unicorn_response'] = clean_response
+
                 if context['unicorn_response']:
                     context['message'] = "WOO BOOZICORNS"
                 else:
@@ -226,6 +232,6 @@ class UnicornView(View):
             else:
                 context['message'] = 'That\'s not a valid search.\nC\'mon now.'
         else:
-            context['message'] = 'That\'s not a valid search. C\'mon now.'
+            context['message'] = 'That\'s not a valid search.\nC\'mon now.'
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
