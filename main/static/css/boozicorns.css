@@ -1,8 +1,8 @@
 body {
     background-color: #FDF5E6;
-    background-size: 300vw;
+    background-size: 400vw;
     background-repeat: no-repeat;
-    background-position: -65vw 2vh;
+    background-position: -115vw 2vh;
     z-index: -2;
     background-image: url('../js/lib/images/bottle2.svg')
 }
@@ -30,11 +30,11 @@ p {
     font-family: 'Quattrocento', serif;
     border: none;
     color: white;
-    padding: 15px 32px;
+    padding: 1.5vw 2.1vw;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 1.3vw;
 }
 
 #aggregate {
@@ -129,6 +129,7 @@ label {
 .form-control {
     width: 19vw;
     height: 3vw;
+    margin-bottom: 1vw;
 }
 
 #search {
@@ -290,8 +291,8 @@ a {
 
 @media only screen and (max-width: 450px) {
     body {
-        background-position: center 75vh;
-        background-size: 700vw;
+        background-position: center 315vh;
+        background-size: 650vw;
         padding: 0;
         margin: 0;
     }
