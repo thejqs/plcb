@@ -42,9 +42,13 @@ body {
     font-size: 2vw;
 }
 
-.back-button {
+.errorlist {
+    display: none;
+}
+
+#back-button {
     margin-top: 2vw;
-    margin-left: 3vw;
+    margin-left: 3.5vw;
 }
 
 #total {
