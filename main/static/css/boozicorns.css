@@ -2,13 +2,17 @@ body {
     background-color: #FDF5E6;
     background-size: 400vw;
     background-repeat: no-repeat;
-    background-position: -115vw 2vh;
+    background-position: -115vw -3vw;
     z-index: -2;
     background-image: url('../js/lib/images/bottle2.svg')
 }
 
 p {
     margin-bottom: 0;
+}
+
+ol, ul {
+    list-style: none;
 }
 
 #map {
@@ -44,7 +48,7 @@ p {
 
 #unicorns-categories {
     width: 35vw;
-    margin-top: 3vw;
+    margin-top: 10vw;
     margin-left: 5vw;
     padding-left: 4vw;
 }
@@ -167,14 +171,62 @@ label {
 .summary {
     font-size: 2.5vw;
     font-family: 'Quattrocento', serif;
-    text-align: center;
-    width: 23vw;
+    text-align: right;
+    width: 70vw;
     margin-bottom: 3vw;
     margin-left: 2vw;
     border-bottom: 2px dotted;
     display: inline-block;
     white-space: nowrap;
 }
+
+.unicorn-dive {
+    font-size: 1.5vw;
+    text-align: left;
+    background-color: #FDF5E6;
+    display: none;
+    margin-top: 2vw;
+    padding: 1vw;
+}
+
+.summary:hover .unicorn-dive {
+    display: inline-block;
+    margin-left: 0;
+}
+
+.summary-store {
+    font-size: 2.5vw;
+    font-family: 'Quattrocento', serif;
+    text-align: right;
+    width: 70vw;
+    margin-bottom: 3vw;
+    margin-left: 2vw;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.store-dive {
+    font-size: 1.5vw;
+    width: 90vw;
+    text-align: left;
+    display: none;
+    margin-top: 2vw;
+    padding: 1vw;
+}
+
+li:nth-child(odd) {
+    background: #FDF5E6;
+}
+
+li:nth-child(even) {
+    background: #ffffff;
+}
+
+.summary-store:hover .store-dive {
+    display: inline-block;
+}
+
+
 
 .big-summary-num {
     font-family: 'Quattrocento', serif;
@@ -214,18 +266,8 @@ label {
     clear: both;
 }
 
-.unicorn-dive {
-    font-size: 1.5vw;
-    text-align: left;
-    background-color: #4682B4;
-    display: none;
-    margin-top: 2vw;
-    padding: 1vw;
-}
-
-.summary:hover .unicorn-dive {
-    display: inline-block;
-    margin-left: 0;
+.num-bottles {
+    color: #4682B4;
 }
 
 #caveat-percentage {

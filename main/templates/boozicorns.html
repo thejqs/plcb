@@ -64,7 +64,7 @@
                 <ul>
                     {% for unicorn in unicorns.whiskey.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
                             ${{ unicorn.price }}
                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
@@ -82,7 +82,7 @@
                 <ul>
                     {% for unicorn in unicorns.gin.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
                             ${{ unicorn.price }}
                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
@@ -100,7 +100,7 @@
                 <ul>
                     {% for unicorn in unicorns.rum.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
                             ${{ unicorn.price }}
                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
@@ -118,7 +118,7 @@
                 <ul>
                     {% for unicorn in unicorns.agave.1 %}
                         <li>
-                            {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                            <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                             {{ unicorn.bottle_size }} ::
                             ${{ unicorn.price }}
                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
@@ -137,7 +137,7 @@
             <ul>
                 {% for unicorn in unicorns.max  %}
                     <li>
-                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                        <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                         ${{ unicorn.price }}
                         {% if unicorn.on_sale_price_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
                         {{ unicorn.store.address|lower }}
@@ -152,7 +152,8 @@
             <ul>
                 {% for unicorn in unicorns.min  %}
                     <li>
-                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                        <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
+                        {{ unicorn.bottle_size }} ::
                         ${{ unicorn.price }}
                         {% if unicorn.on_sale_price_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
                         {{ unicorn.store.address|lower }}
@@ -168,7 +169,7 @@
             <ul>
                 {% for unicorn in unicorns.fancy.1  %}
                     <li>
-                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
+                        <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
                         ${{ unicorn.price }}
                         {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
                         {{ unicorn.store.address|lower }}
@@ -178,14 +179,14 @@
         </div>
     </div>
     <div id="discounted-dollars" class="summary">
-        <p><span class="num summary-num top10">Top 10 most discounted (dollars)</span></p>
+        <p><span class="num summary-num top10">Top 10 most discounted by $</span></p>
         <div class="unicorn-dive">
             <ul>
                 {% for unicorn in unicorns.discounted  %}
                     <li>
-                        {{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
-                        ${{ unicorn.price }}
-                        {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }} {% endif %} ::
+                        <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
+                        ${{ unicorn.price }} ::
+                        sale price: ${{ unicorn.on_sale_price }} ::
                         {{ unicorn.store.address|lower }}
                     </li>
                 {% endfor %}
@@ -193,14 +194,14 @@
         </div>
     </div>
     <div id="discounted-percentage" class="summary">
-        <p><span class="num summary-num top10">Top 10 most discounted (percentage)<a class="asterisk" href="#caveat-percentage">*</a></span></p>
+        <p><span class="num summary-num top10">Top 10 most discounted by %<a class="asterisk" href="#caveat-percentage">*</a></span></p>
         <div class="unicorn-dive">
             <ul>
                 {% for unicorn in unicorns.percent_discount %}
                     <li>
-                        {{ unicorn.name }} ({{ unicorn.num_bottles }}) ::
-                        {{ unicorn.price }} ::
-                        {{ unicorn.on_sale_price }} ::
+                        <strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
+                        ${{ unicorn.price }} ::
+                        sale price: ${{ unicorn.on_sale_price|floatformat:2 }} ::
                         {{ unicorn.store.address|lower }} ::
                         {{ unicorn.store.phone }}
                     </li>
@@ -232,24 +233,24 @@
     <div id="top-store">
         <p><span class="num summary-num top10">top 10 stores</span></p>
         <div class="summary-context">
-            <ul>
-                {% for stores in unicorns.top_stores %}
-                 {% for store, unicorns in stores.items %}
-                    <p class="summary-store">
-                        {{ store|lower }} ::
-                        {{ unicorns.0 }}
-                    </p>
-                    <div class="unicorn-dive">
-                         {% for unicorn in unicorns.1 %}
-                         <li>{{ unicorn.name|lower }} ({{ unicorn.num_bottles }}) ::
-                             {{ unicorn.price }}
-                             {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }}{% endif %} ::
-                             {{ unicorn.store.address|lower }}</li>
-                         {% endfor %}
+            {% for stores in unicorns.top_stores %}
+             {% for store, unicorns in stores.items %}
+                <div class="summary-store">
+                    <p>{{ store|lower }} ::
+                    <span class="num-bottles">{{ unicorns.0 }}</span></p>
+                    <div class="store-dive">
+                        <ol>
+                            {% for unicorn in unicorns.1 %}
+                                <li><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }}) ::
+                                    ${{ unicorn.price }}
+                                    {% if unicorn.on_sale_price %} :: sale price: ${{ unicorn.on_sale_price }}{% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
                     </div>
-                {% endfor %}
-               {% endfor %}
-            </ul>
+                </div>
+            {% endfor %}
+           {% endfor %}
         </div>
     </div>
 </div>
@@ -273,9 +274,10 @@
         Which brings us to the boozicorns themselves. Sometimes a product is unique
         because of its size. Or maybe because of its vintage. In the PLCB's system,
         each vintage of a wine is a separate product. A bourbon at 200 ML is
-        a different product than the same bourbon at 750 ML. Or maybe it's a fluke:
-        something terrifically common that for whatever reason is nearly out of stock
-        in all of Pennsylvania that day.
+        a different product than the same bourbon at 750 ML. A rum at 750 ML is
+        different than the same rum at 750 ML if it's packaged with glassware. Or maybe
+        it's a fluke: a terrifically common product that for whatever reason is nearly
+        out of stock in all of Pennsylvania that day.
     </p>
     <p>
         There isn't necessarily an inherent specialness in any of these products --
