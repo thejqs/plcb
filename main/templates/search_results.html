@@ -8,15 +8,9 @@
 {% block content %}
 <div id="boozicorn-image"><a href="{% url 'unicorns' %}"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></a></div>
     <div class="search-results">
-        <div class="message">
-            {{ message }}
-        </div>
-        <div id="total">
-            <p>
-                Found {{ unicorn_response|length }}
-            </p>
-        </div>
-        <div id="search">
+        <div class="message">{{ message }}</div>
+        <div id="total"><p>Found {{ unicorn_response|length }}</p></div>
+        <div id="search-form">
             <form method="POST" action='{% url "unicorns" %}'>
                 {% csrf_token %}
                 <p>{{ form }}</p>
@@ -27,15 +21,15 @@
         </div>
         <div>
             {% for unicorn in unicorn_response %}
-                <ul><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})
+                <ul class="search-response"><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})
                     <li>${{ unicorn.price }}</li>
                     {% if unicorn.on_sale_price %}<li> sale price: ${{ unicorn.on_sale_price }}</li>{% endif %}
                     <li>{{ unicorn.bottle_size }}</li>
                     <li>{{ unicorn.store.address|lower }}</li>
-                    <li>{{ unicorn.store.phone }}</li>
+                    <li>{{ unicorn.store.phone }} :: {{ unicorn.store.store_type|lower }}</li>
                 </ul>
             {% endfor %}
         </div>
-        <div class="back-button"><a href='javascript:history.back()'><button class="button" method="get" type="submit"> Back</button></a></div>
+        <div id="back-button"><a href='javascript:history.back()'><button class="button" method="get" type="submit"> Back</button></a></div>
     </div>
 {% endblock %}
