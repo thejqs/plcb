@@ -26,7 +26,7 @@ body {
     width: 15vw;
     height: 5vw;
     display: inline-block;
-    margin-left: 40vw;
+    margin-left: 41.5vw;
 }
 
 .button {
@@ -38,7 +38,7 @@ body {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin-left: 40vw;
+    margin-left: 41.5vw;
     font-size: 2vw;
 }
 
@@ -75,7 +75,7 @@ label {
         margin-left: 35vw;
     }
 
-    ul {
+    ol {
         padding: 0;
         margin-left: 5vw;
     }
