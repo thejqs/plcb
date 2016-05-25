@@ -99,15 +99,7 @@ class UnicornView(View):
         if not boozicorns:
             boozicorns = Unicorn.objects.filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
         # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
-        max_price = None
-        min_price = None
-        min_name = None
-        max_name = None
         most_bottles = None
-        most_bottles_price = None
-        most_bottles_on_sale = None
-        most_bottles_name = None
-        most_bottles_store = None
         stores = []
         whiskey = []
         rum = []
@@ -127,11 +119,14 @@ class UnicornView(View):
         for unicorn in boozicorns:
             name = unicorn.name
             num_bottles = int(unicorn.num_bottles)
+            num_bottles_unicorn = None
             price = unicorn.price
-            on_sale = unicorn.on_sale_price
             # we'll count these later to see which store has the most
             stores.append(unicorn.store.store_id)
 
+            if most_bottles is None or most_bottles < num_bottles:
+                most_bottles = num_bottles
+                most_bottles_unicorn = unicorn
             if price > 100:
                 fancy.append(unicorn)
 
@@ -150,16 +145,6 @@ class UnicornView(View):
             # excluding 'Ginger' and 'Ginjo'
             if 'Gin' in name and 'Ginjo' not in name and 'Ginger' not in name and unicorn not in gin:
                 gin.append(unicorn)
-
-            # if (min_price is None or min_price > price) and price > 1 and unicorn.bottle_size != 'EACH':
-            #     min_price = price
-            #     min_name = name
-            if most_bottles is None or most_bottles < num_bottles:
-                most_bottles = num_bottles
-                most_bottles_name = name
-                most_bottles_price = price
-                most_bottles_on_sale = 'Sale price: ${}'.format(unicorn.on_sale_price) if unicorn.on_sale_price else None
-                most_bottles_store = unicorn.store
 
         # returns the top 10 store ids
         top_stores = self.find_top_stores(stores)
@@ -184,11 +169,7 @@ class UnicornView(View):
         unicorns_dict['min'] = list(reversed([p for p in sorted_by_price if p.bottle_size != 'EACH'][-10:]))
         unicorns_dict['mode'] = most_common_price
         unicorns_dict['median'] = median_price
-        unicorns_dict['bottles'] = [most_bottles_name.lower(),
-                                    most_bottles,
-                                    '${}'.format(most_bottles_price),
-                                    most_bottles_on_sale,
-                                    most_bottles_store]
+        unicorns_dict['bottles'] = (most_bottles, most_bottles_unicorn)
         unicorns_dict['whiskey'] = [len(whiskey),
                                     self.sort_by_price(whiskey)]
         unicorns_dict['rum'] = [len(rum),
@@ -216,14 +197,22 @@ class UnicornView(View):
             # there are jokesters in this world
             if search.isalnum():
                 response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
-                # if we have a match, we want the whole object available,
-                # not just the matching portion
-                clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
-                context['unicorn_response'] = clean_response
-                if not context['unicorn_response']:
+                # no matches returns an empty list;
+                # no matches could mean the day's data isn't yet available and
+                # that's no reason to break
+                if not response:
                     response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+
+                # if we have a match, we want the whole object available,
+                # not just the matching portion;
+                # if statement here because why bother with operations on
+                # an empty list
+                if response:
                     clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
-                    context['unicorn_response'] = clean_response
+                    ordered_clean_response = sorted(clean_response, key=lambda k: k.name)
+                    context['unicorn_response'] = ordered_clean_response
+                else:
+                    context['unicorn_response'] = response
 
                 if context['unicorn_response']:
                     context['message'] = "WOO BOOZICORNS"
