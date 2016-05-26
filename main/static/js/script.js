@@ -13,32 +13,32 @@ map.addLayer(layer)
 
 var width = document.documentElement.clientWidth;
 
-if (width < 350) {
-  var summary = document.getElementsByClassName('summary');
-  var shown = false;
+// if (width < 450) {
 
-  for (var i = 0; i < summary.length; i++) {
-    var data = summary[i];
-    if (!(shown)) {
-      data.onclick = function () {
-        data.style.display = 'inline-block';
-        shown = true;
-        return;
-      }
-    } else if (shown) {
-      data.onclick = function () {
-        data.style.display = 'none';
-        shown = false;
-        return;
-      }
-    };
-  };
-};
+var summary = Array.from(document.getElementsByClassName('summary'));
+var dive = Array.from(document.getElementsByClassName('unicorn-dive'));
+var shown = false;
+
+dive.forEach(function (v, idx) {
+  summary[idx].addEventListener('click', function(e) {
+    e.preventDefault();
+    if (v && !(shown)) {
+      v.style.display = 'inline-block';
+      shown = true;
+      return;
+    } else if (v && shown) {
+      v.style.display = 'none';
+      shown = false;
+      return;
+    }
+  })
+})
+
 
 // listen for screen resize
 window.addEventListener('load', function(e) {
   // get screen width after resize
-  if (width < 350) {
+  if (width < 450) {
     map.minZoom(6);
     map.setZoom(6);
   } else {
