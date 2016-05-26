@@ -10,21 +10,41 @@ var map = new L.Map('map', {maxBounds: bounds, minZoom: 7, scrollWheelZoom: fals
     .setView([41, -77.5], 8)
     .locate({setView: true, maxZoom: 10})
 map.addLayer(layer)
-// listen for screen resize events
-// window.addEventListener('load', function (e) {
-//   // get the width of the screen after the resize event
-//   var width = document.documentElement.clientWidth
-//   // tablets are between 768 and 922 pixels wide
-//   // phones are less than 768 pixels wide
-//   if (width < 400) {
-//     // set the zoom level to 10
-//     map.minZoom(5)
-//     map.setZoom(5)
-//   } else {
-//         // set the zoom level to 8
-//     map.setZoom(8)
-//   }
-// })
+
+var width = document.documentElement.clientWidth;
+
+if (width < 350) {
+  var summary = document.getElementsByClassName('summary');
+  var shown = false;
+
+  for (var i = 0; i < summary.length; i++) {
+    var data = summary[i];
+    if (!(shown)) {
+      data.onclick = function () {
+        data.style.display = 'inline-block';
+        shown = true;
+        return;
+      }
+    } else if (shown) {
+      data.onclick = function () {
+        data.style.display = 'none';
+        shown = false;
+        return;
+      }
+    };
+  };
+};
+
+// listen for screen resize
+window.addEventListener('load', function(e) {
+  // get screen width after resize
+  if (width < 350) {
+    map.minZoom(6);
+    map.setZoom(6);
+  } else {
+    map.setZoom(8);
+  }
+});
 
 
 function populateMap () {
@@ -39,8 +59,14 @@ function populateMap () {
         var store_type = store['store_type'];
 
         var marker = L.marker([storeLat, storeLong]).addTo(map);
-        var popupHtml = '<h2>' + store_address + '</h2>';
-        popupHtml += '<h4>' + store_type + ', ' + store_phone + '</h4>';
+        var popupHtml = '<h2>' +
+                        store_address +
+                        '</h2>';
+        popupHtml += '<h4>' +
+                     store_type +
+                     ', ' +
+                     store_phone +
+                     '</h4>';
 
       var product_info = [];
 
@@ -54,19 +80,19 @@ function populateMap () {
           var on_sale = unicorn['on_sale'] ? 'Sale price: $' + unicorn['on_sale'] : false;
 
           product_info += '<div><strong>' +
-            unicorn_name +
-            '</strong>: ' +
-            unicorn_bottles + (unicorn_bottles > 1 ? ' units' : ' unit') +
-            ' :: ' +
-            unicorn_size +
-            ' :: ' +
-            unicorn_price
-            if (on_sale) {
-              + ' :: ' +
-              on_sale + '</div>'
-            } else {
-              + ''
-            }
+                          unicorn_name +
+                          '</strong>: ' +
+                          unicorn_bottles + (unicorn_bottles > 1 ? ' units' : ' unit') +
+                          ' :: ' +
+                          unicorn_size +
+                          ' :: ' +
+                          unicorn_price
+                          if (on_sale) {
+                            + ' :: ' +
+                            on_sale + '</div>'
+                          } else {
+                            + ''
+                          }
         };
         marker.bindPopup(popupHtml + product_info, {maxWidth: 300, maxHeight: 250});
       }
@@ -82,13 +108,13 @@ function secondAjax () {
     if (stores_xhr.status === 200) {
       stores = JSON.parse(stores_xhr.responseText);
       // better to do this through Django views because of the delay
-      // in calculating it
+      // in calculating it:
       // var numStores = stores.length
       // document.getElementById('num-stores').innerHTML = numStores
       var stores_percentage = ((uniques.size / stores.length) * 100).toFixed(1);
       document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage;
       populateMap()
-    }
+    };
   };
   stores_xhr.send()
 };
@@ -117,19 +143,3 @@ function firstAjax () {
 };
 
 window.onload = firstAjax();
-
-// var summary = document.getElementsByClassName('summary')
-// var shown = false
-//
-// for (var i = 0; i < summary.length; i++) {
-//   var data = summary[i]
-//   if (!(shown)) {
-//     data.onclick = function () {
-//       data.style.display = 'inline-block'
-//       shown = true
-//     } else {
-//       data.style.display = 'none'
-//       shown = false
-//     }
-//   }
-// }
