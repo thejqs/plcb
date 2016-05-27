@@ -72,8 +72,9 @@ def make_new_store(unicorn):
     store = Store()
     tree = get_store_tree(unicorn)
     store_type = tree.xpath('//*/table[3]/tr[4]/*/font/text()')
-    hours = [s.strip() for s in tree.xpath('/html/body/table[3]/tr[4]/td[3]/table/tr/td/font/text()')]
+    hours = [s.strip() for s in tree.xpath('//*/table[3]/tr[4]/td[3]/table/tr/td/font/text()')]
     address_and_phone = [s.strip() for s in tree.xpath('//*/table[3]/tr[4]/td[2]/text()')]
+    print address_and_phone
     store.store_id = tree.xpath('//*/tr[4]/td/text()')[0].strip()
 
     address = ''
@@ -85,10 +86,10 @@ def make_new_store(unicorn):
         else:
             entry += ' '
             address += entry
-            print address
-        address = address.strip()
-        print address
-        store.address = address
+
+    address = address.strip()
+    print address
+    store.address = address
 
     store.latitude, store.longitude = get_lat_long(address)
     if store_type and 'Premium' in store_type[1]:
@@ -96,8 +97,9 @@ def make_new_store(unicorn):
     else:
         store.store_type = 'Regular-ass store'
     store.hours = [{day: hours_range} for (day, hours_range) in format_hours(hours)]
-    store_data_date = datetime.date.today().strftime('%Y-%m-%d')
+    store.store_data_date = datetime.date.today().strftime('%Y-%m-%d')
     store.save()
+    return
 
 
 def import_unicorns(filepath):
@@ -131,10 +133,16 @@ def import_unicorns(filepath):
                     u.store = Store.objects.get(store_id=str(unicorn['store_id']),
                                                 store_data_date__gt='2016-05-15')
                 except Store.DoesNotExist:
-                    print 'making a new store ....'
-                    make_new_store(unicorn)
-                    u.store = Store.objects.get(store_id=unicorn['store_id'],
+                    try:
+                        print 'making a new store ....'
+                        print unicorn
+                        make_new_store(unicorn)
+                        u.store = Store.objects.get(store_id=str(unicorn['store_id']),
                                                 store_data_date=datetime.date.today().strftime('%Y-%m-%d'))
+                        print u.store
+
+                    except Store.DoesNotExist as e:
+                        print unicorn, e
 
         u.save()
 
