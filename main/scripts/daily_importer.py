@@ -74,7 +74,6 @@ def make_new_store(unicorn):
     store_type = tree.xpath('//*/table[3]/tr[4]/*/font/text()')
     hours = [s.strip() for s in tree.xpath('//*/table[3]/tr[4]/td[3]/table/tr/td/font/text()')]
     address_and_phone = [s.strip() for s in tree.xpath('//*/table[3]/tr[4]/td[2]/text()')]
-    print address_and_phone
     store.store_id = tree.xpath('//*/tr[4]/td/text()')[0].strip()
 
     address = ''
@@ -88,7 +87,6 @@ def make_new_store(unicorn):
             address += entry
 
     address = address.strip()
-    print address
     store.address = address
 
     store.latitude, store.longitude = get_lat_long(address)
@@ -135,7 +133,6 @@ def import_unicorns(filepath):
                 except Store.DoesNotExist:
                     try:
                         print 'making a new store ....'
-                        print unicorn
                         make_new_store(unicorn)
                         u.store = Store.objects.get(store_id=str(unicorn['store_id']),
                                                 store_data_date=datetime.date.today().strftime('%Y-%m-%d'))
