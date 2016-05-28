@@ -10,9 +10,9 @@ import requests
 from lxml import etree
 import StringIO
 import json
-import datetime
+# import datetime
 from main.models import Store, Unicorn
-from project.settings_local import geojson_key
+from project.settings_local import geojson_key, day_switcher
 django.setup()
 
 
@@ -88,17 +88,17 @@ def make_new_store(unicorn):
 
     address = address.strip()
     store.address = address
-
     store.latitude, store.longitude = get_lat_long(address)
     if store_type and 'Premium' in store_type[1]:
         store.store_type = [s.strip() for s in store_type][1][:-6]
+    elif store_type and 'Shoppe' in store_type:
+        store.store_type = store_type[1]
     else:
         store.store_type = 'Regular-ass store'
     store.hours = [{day: hours_range} for (day, hours_range) in format_hours(hours)]
-    store.store_data_date = datetime.date.today().strftime('%Y-%m-%d')
+    store.store_data_date = day_switcher['today'].strftime('%Y-%m-%d')
     store.save()
     return
-
 
 def import_unicorns(filepath):
     '''
@@ -118,7 +118,8 @@ def import_unicorns(filepath):
         u.on_sale = unicorn['on_sale']
         u.on_sale_price = unicorn['on_sale']
         u.scrape_date = unicorn['scrape_date']
-        # this is super ugly. for now it just needs to work
+        # this is super ugly. like large marge from pee-wee's
+        # big adventure ugly. for now it just needs to work
         try:
             u.store = Store.objects.get(store_id=str(unicorn['store_id']),
                                         store_data_date='2016-04-10')
@@ -135,7 +136,7 @@ def import_unicorns(filepath):
                         print 'making a new store ....'
                         make_new_store(unicorn)
                         u.store = Store.objects.get(store_id=str(unicorn['store_id']),
-                                                store_data_date=datetime.date.today().strftime('%Y-%m-%d'))
+                                                store_data_date=day_switcher['today'].strftime('%Y-%m-%d'))
                         print u.store
 
                     except Store.DoesNotExist as e:
