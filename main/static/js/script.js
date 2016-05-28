@@ -13,8 +13,6 @@ map.addLayer(layer)
 
 var width = document.documentElement.clientWidth;
 
-// if (width < 450) {
-
 var summary = Array.from(document.getElementsByClassName('summary'));
 var dive = Array.from(document.getElementsByClassName('unicorn-dive'));
 var shown = false;
@@ -106,14 +104,8 @@ function secondAjax () {
   stores_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/retail_stores-2016-04-10.json', true);
   stores_xhr.onload = function () {
     if (stores_xhr.status === 200) {
-      stores = JSON.parse(stores_xhr.responseText);
-      // better to do this through Django views because of the delay
-      // in calculating it:
-      // var numStores = stores.length
-      // document.getElementById('num-stores').innerHTML = numStores
-      var stores_percentage = ((uniques.size / stores.length) * 100).toFixed(1);
-      document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage;
-      populateMap()
+      getStores(stores_xhr);
+      populateMap();
     };
   };
   stores_xhr.send()
@@ -124,22 +116,36 @@ function firstAjax () {
   unicorns_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/unicorns-' + scrapeDate + '.json', true);
   unicorns_xhr.onload = function () {
     if (unicorns_xhr.status === 200) {
-      unicorns = JSON.parse(unicorns_xhr.responseText);
-      var numBoozicorns = unicorns.length;
-      document.getElementById('boozicorns').innerHTML = numBoozicorns.toLocaleString();
-      for (var i = 0; i < unicorns.length; i++) {
-        var unicorn = unicorns[i];
-        var unicorn_store_id = unicorn['store_id'];
-        if (!(unicorn_store_id in uniques)) {
-          uniques.add(unicorn_store_id);
-        }
-      };
-      var numBoozicornStores = uniques.size;
-      document.getElementById('boozicorns-stores').innerHTML = numBoozicornStores;
-      secondAjax()
+      getUnicorns(unicorns_xhr);
+      secondAjax();
     }
   }
   unicorns_xhr.send()
+};
+
+function getUnicorns(unicorns_xhr) {
+  unicorns = JSON.parse(unicorns_xhr.responseText);
+  var numBoozicorns = unicorns.length;
+  document.getElementById('boozicorns').innerHTML = numBoozicorns.toLocaleString();
+  for (var i = 0; i < unicorns.length; i++) {
+    var unicorn = unicorns[i];
+    var unicorn_store_id = unicorn['store_id'];
+    if (!(unicorn_store_id in uniques)) {
+      uniques.add(unicorn_store_id);
+    }
+  };
+  var numBoozicornStores = uniques.size;
+  document.getElementById('boozicorns-stores').innerHTML = numBoozicornStores;
+};
+
+function getStores(stores_xhr) {
+  stores = JSON.parse(stores_xhr.responseText);
+  // better to do this through Django views because of the delay
+  // in calculating it:
+  // var numStores = stores.length
+  // document.getElementById('num-stores').innerHTML = numStores
+  var stores_percentage = ((uniques.size / stores.length) * 100).toFixed(1);
+  document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage;
 };
 
 window.onload = firstAjax();
