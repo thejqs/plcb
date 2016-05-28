@@ -299,6 +299,10 @@ label {
     color: #000000
 }
 
+#low-price {
+    margin-bottom: 0;
+}
+
 /*.store-dive {
     font-size: 1vw;
     display: none;
