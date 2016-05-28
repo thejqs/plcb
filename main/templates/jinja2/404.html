@@ -1,0 +1,23 @@
+{% load staticfiles %}
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/404.css' %}" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Josefin+Sans">
+</head>
+
+<body>
+
+<div id="text404"><p>404</p></div>
+
+
+<div id="image404">
+    <img src="{% static 'media/ain't_found.gif' %}" alt="From the movie Spaceballs, a gif of a poor trooper in the desert saying \'We ain't found shit!\'">
+</div>
+
+<div id="redirect">
+    <p>This, um. This doesn't look like the right place.</p>
+    <p>Maybe you should start over on the <a href="{% url 'unicorns' %}">Boozicorns main page</a>.</p>
+</div>
+
+
+</body>
