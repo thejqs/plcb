@@ -15,6 +15,41 @@ body {
     margin-bottom: 3vw;
 }
 
+ol, ul {
+    list-style: none;
+    margin-top: 0;
+}
+
+li {
+    margin-bottom: 0;
+}
+
+li p {
+    margin: 0;
+}
+
+li:last-child {
+    margin-bottom: 2vw;
+}
+
+.store-locator {
+    font-size: 4vw;
+    text-align: center;
+    margin-bottom: 1vw;
+}
+
+.store-locator strong {
+    color: #4682B4;
+}
+
+.store-locator span {
+    color: #4682B4;
+}
+
+.store-dive {
+    margin-bottom: 5vw;
+}
+
 .search-response {
     display: block;
     list-style: none;
@@ -38,17 +73,20 @@ body {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin-left: 41.5vw;
+    margin-left: 44vw;
     font-size: 2vw;
+    margin-bottom: 3vw;
 }
 
 .errorlist {
     display: none;
 }
 
-#back-button {
+#back-button a button {
+    background-color: #FDF5E6;
+    color: #000000;
     margin-top: 2vw;
-    margin-left: 3.5vw;
+    margin-left: 45vw;
 }
 
 #total {
@@ -57,7 +95,7 @@ body {
 
 .search-results {
     font-family: 'Quattrocento', serif;
-    font-size: 3vw;
+    font-size: 2.5vw;
     color: #000000;
 }
 
@@ -72,12 +110,16 @@ label {
 @media only screen and (max-width: 450px) {
     #boozicorn-image img {
         width: 30vw;
-        margin-left: 35vw;
+        margin-left: 34vw;
     }
 
     ol {
         padding: 0;
         margin-left: 5vw;
+    }
+
+    li:last-child {
+        margin-bottom: 3vw;
     }
 
     .search-results {
@@ -90,18 +132,37 @@ label {
         height: 20vw;
         display: block;
         margin-left: 7vw;
+        font-size: 7vw;
     }
 
     input {
         font-family: 'Quattrocento', serif;
+        font-size: 12vw;
+    }
+
+    .store-locator {
         font-size: 7vw;
     }
 
     .button {
-        width: 80vw;
+        /*width: 75vw;*/
         height: 15vw;
         font-size: 6vw;
         margin-left: 7vw;
-        margin-bottom: 2vw;
+        margin-bottom: 5vw;
+    }
+
+    #back-button {
+        width: 40vw;
+        margin-left: 30vw;
+    }
+
+    #back-button a button {
+        margin-left: 7vw;
+    }
+
+    #search-button {
+        width: 60vw;
+        margin-left: 28vw;
     }
 }
