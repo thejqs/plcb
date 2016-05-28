@@ -15,23 +15,26 @@ var width = document.documentElement.clientWidth;
 
 var summary = Array.from(document.getElementsByClassName('summary'));
 var dive = Array.from(document.getElementsByClassName('unicorn-dive'));
-var shown = false;
 
 dive.forEach(function (v, idx) {
+  var shown = false;
   summary[idx].addEventListener('click', function(e) {
     e.preventDefault();
+
     if (v && !(shown)) {
-      v.style.display = 'inline-block';
       shown = true;
+      console.log(shown)
+      v.style.display = 'inline-block';
       return;
     } else if (v && shown) {
-      v.style.display = 'none';
       shown = false;
+      console.log(shown)
+      v.style.display = 'none';
       return;
     }
+    console.log(shown)
   })
 })
-
 
 // listen for screen resize
 window.addEventListener('load', function(e) {
