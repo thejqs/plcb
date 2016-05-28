@@ -7,12 +7,19 @@ Pennsylvania Liquor Control Board operates. All 597 of them.
 Needs to run only infrequently, as there is only infrequently a new store
 '''
 
+import django
+import os, sys
+
+sys.path.append("../..")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
+
 import requests
 import lxml.html
 from lxml.cssselect import CSSSelector
 import json
-import datetime
-
+# import datetime
+from project.settings_local import day_switcher
+django.setup()
 
 def open_url(url):
     '''
@@ -158,7 +165,7 @@ def write_json_to_file(data):
     '''
     print 'writing json ....'
     j = json.dumps(data, sort_keys=True, indent=4)
-    with open('../data/stores/retail_stores-{}.json'.format(datetime.date.today()), 'w') as f:
+    with open('../data/stores/retail_stores-{}.json'.format(day_switcher['today']), 'w') as f:
         print >> f, j
 
 
