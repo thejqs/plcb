@@ -5,6 +5,8 @@ Boozicorns
 
 This project exists to collect and illuminate all of the products available for sale in only one store of the hundreds the Pennsylvania Liquor Control Board runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
 
+This kind of data isn't available in every state. That's part of the fun here. Pennsylvania's weirdness allows us to explore something we otherwise couldn't.
+
 Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
 
 The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.
