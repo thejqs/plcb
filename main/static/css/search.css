@@ -28,6 +28,10 @@ li p {
     margin: 0;
 }
 
+.store-dive li {
+    margin-bottom: 2vw;
+}
+
 li:last-child {
     margin-bottom: 2vw;
 }
