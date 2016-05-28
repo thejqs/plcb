@@ -545,7 +545,7 @@ a {
     }
 }
 
- {
+@media only screen and (max-width: 450px) {
     body {
         background-position: center 365vw;
         background-size: 650vw;
