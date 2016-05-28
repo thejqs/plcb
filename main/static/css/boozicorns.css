@@ -514,7 +514,38 @@ a {
     font-family: 'Rye';
 }
 
-@media only screen and (max-width: 450px) {
+@media only screen and (max-width: 630px) {
+    #mode {
+        width: 90vw;
+        /*margin-right: 2vw;*/
+        font-size: 5vw;
+        text-align: center;
+        margin-bottom: 10vw;
+    }
+
+    #median {
+        width: 90vw;
+        /*margin-right: 2vw;*/
+        font-size: 5vw;
+        text-align: center;
+        margin-bottom: 10vw;
+    }
+
+    #most-bottles {
+        width: 90vw;
+        /*margin-right: 4vw;*/
+        font-size: 5vw;
+        text-align: center;
+    }
+
+    #most-bottles-detail {
+        width: 90vw;
+        font-size: 5vw;
+        text-align: center;
+    }
+}
+
+ {
     body {
         background-position: center 365vw;
         background-size: 650vw;
@@ -706,35 +737,6 @@ a {
 
     .summary-black span {
         font-size: 10vw;
-    }
-
-    #mode {
-        width: 90vw;
-        /*margin-right: 2vw;*/
-        font-size: 5vw;
-        text-align: center;
-        margin-bottom: 10vw;
-    }
-
-    #median {
-        width: 90vw;
-        /*margin-right: 2vw;*/
-        font-size: 5vw;
-        text-align: center;
-        margin-bottom: 10vw;
-    }
-
-    #most-bottles {
-        width: 90vw;
-        /*margin-right: 4vw;*/
-        font-size: 5vw;
-        text-align: center;
-    }
-
-    #most-bottles-detail {
-        width: 90vw;
-        font-size: 5vw;
-        text-align: center;
     }
 
     #caveats {
