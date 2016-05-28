@@ -6,98 +6,35 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.conf import settings
 from collections import Counter
-import datetime
+# import datetime
 import json
 import re
 from operator import itemgetter
 
 from main.models import Store, Unicorn
 from main.forms import SearchBoozicornForm
-
+from main.scripts import view_helpers as vh
+from project.settings_local import day_switcher
 
 # Create your views here.
 # def ascii_encode_dict(data):
 #     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
-today = datetime.date.today()
-yesterday = (today - datetime.timedelta(days=1))
 
-
-class UnicornView(View):
+class AllUnicornsView(View):
     '''
     handles data and object assembly for GET and POST requests
     '''
-
-    # TODO: pull out these helper functions into a separate file. they
-    # inform the view but are not themselves views
-    def find_median(self, lst):
-        '''
-        given a list, we find or compute the median value
-        '''
-        l = sorted(lst)
-        len_l = len(lst)
-        if len_l < 1:
-            return 'you are a silly person. nothing in this list'
-        idx = (len_l - 1) // 2
-        if len_l % 2:
-            return l[idx]
-        else:
-            return (l[idx] + l[idx + 1]) / 2.0
-
-    def sort_by_price(self, lst):
-        '''
-        a one-liner, but one we'll use repeatedly.
-        would otherwise be a lambda
-
-        Args:
-        a list of dictionaries, which each contain 'price' keys
-        '''
-        return sorted(lst, key=lambda k: k.price, reverse=True)
-
-    def find_top_stores(self, lst):
-        '''
-        given a list, finds the number of occurrences of each item, returning
-        the most-common value
-        '''
-        return Counter(lst).most_common(10)
-        # return max([(x, lst.count(x)) for x in lst], key=itemgetter(1))
-
-    def top_10_price_minus_sale_price(self, lst_of_objs):
-        '''
-        given a list of Django objects, each of which contains 'price' and
-        'on_sale_price' attributes, finds the largest gaps between retail
-        price and sale price -- in other words, the most deeply discounted
-        products in real dollars
-
-        Returns:
-        the top 10
-        '''
-        s = (c for c in lst_of_objs if c.on_sale_price > 0)
-        return sorted(s, key=lambda k: k.price - k.on_sale_price, reverse=True)[:10]
-
-    def top_10_percent_discount(self, lst_of_objs):
-        '''
-        given a list of Django objects, each of which contains 'price' and
-        'on_sale_price' attributes, finds the largest percentage gaps between
-        retail price and sale price for products retailing for at least $20 --
-        in other words, the most deeply discounted products by percentage
-        in that range
-
-        Returns:
-        the top 10
-        '''
-        s = (c for c in lst_of_objs if c.on_sale_price > 0 and c.price > 20)
-        return sorted(s, key=lambda k: 1 - (k.on_sale_price / k.price), reverse=True)[:10]
-
     def get(self, request):
         context = {}
         unicorns_dict = {}
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=today.strftime('%Y-%m-%d'))
+        # one trip to the database, please
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
         if not boozicorns:
-            boozicorns = Unicorn.objects.filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
         # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
         most_bottles = None
         stores = []
@@ -107,13 +44,13 @@ class UnicornView(View):
         gin = []
         fancy = []
 
-        sorted_by_price = self.sort_by_price(boozicorns)
+        sorted_by_price = vh.sort_by_price(boozicorns)
 
         # could be separate function
         all_prices = [u.price for u in boozicorns]
         most_common_price = Counter(all_prices).most_common()[0]
 
-        median_price = self.find_median(all_prices)
+        median_price = vh.find_median(all_prices)
 
         # capturing as much as we can in one loop through the objects
         for unicorn in boozicorns:
@@ -142,20 +79,18 @@ class UnicornView(View):
                 agave.append(unicorn)
             if 'Mezcal' in name and unicorn not in agave:
                 agave.append(unicorn)
-            # excluding 'Ginger' and 'Ginjo'
             if 'Gin' in name and 'Ginjo' not in name and 'Ginger' not in name and unicorn not in gin:
                 gin.append(unicorn)
 
         # returns the top 10 store ids
-        top_stores = self.find_top_stores(stores)
+        top_stores = vh.find_top_stores(stores)
         # separates the ids from the number of occurrences;
         # also could be its own function
         top_store_ids = [store[0] for store in top_stores]
         top_store_contents = []
-        for store_id in top_store_ids:
+        for idx, store_id in enumerate(top_store_ids):
             contents = boozicorns.filter(store__store_id=store_id)
-            top_store_contents.append({contents[0].store.address: (len(contents),
-                                                                   contents)})
+            top_store_contents.append({(idx, contents[0].store.address.lower().replace(', pa', '')): len(contents)})
 
         unicorns_dict['num_stores'] = len(Store.objects.filter(store_data_date__gte='2016-05-15'))
         unicorns_dict['top_stores'] = top_store_contents
@@ -163,64 +98,101 @@ class UnicornView(View):
         unicorns_dict['scrape_date'] = str(boozicorns[0].scrape_date)
         # formatted thus for display
         unicorns_dict['data_date'] = '{}'.format(boozicorns[0].scrape_date.strftime('%d %B %Y'))
-        unicorns_dict['discounted'] = self.top_10_price_minus_sale_price(boozicorns)
-        unicorns_dict['percent_discount'] = self.top_10_percent_discount(boozicorns)
+        unicorns_dict['discounted'] = vh.top_10_price_minus_sale_price(boozicorns)
+        unicorns_dict['percent_discount'] = vh.top_10_percent_discount(boozicorns)
         unicorns_dict['max'] = sorted_by_price[:10]
         unicorns_dict['min'] = list(reversed([p for p in sorted_by_price if p.bottle_size != 'EACH'][-10:]))
         unicorns_dict['mode'] = most_common_price
         unicorns_dict['median'] = median_price
         unicorns_dict['bottles'] = (most_bottles, most_bottles_unicorn)
         unicorns_dict['whiskey'] = [len(whiskey),
-                                    self.sort_by_price(whiskey)]
+                                    vh.sort_by_price(whiskey)]
         unicorns_dict['rum'] = [len(rum),
-                                self.sort_by_price(rum)]
+                                vh.sort_by_price(rum)]
         unicorns_dict['agave'] = [len(agave),
-                                  self.sort_by_price(agave)]
+                                  vh.sort_by_price(agave)]
         unicorns_dict['gin'] = [len(gin),
-                                self.sort_by_price(gin)]
-        top_prices = self.sort_by_price(fancy)
-        unicorns_dict['fancy'] = [len(fancy),
-                                  top_prices]
+                                vh.sort_by_price(gin)]
+        top_prices = vh.sort_by_price(fancy)
+        unicorns_dict['fancy'] = [len(top_prices)]
 
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context)
 
     def post(self, request):
+        '''
+        cleans and handles search input
+
+        returns:
+        search response data to the correct template
+        '''
         context = {}
         form = SearchBoozicornForm(request.POST)
         context['form'] = form
 
         if form.is_valid():
-            # so the search box will allow extra spaces but they won't make it
-            # into the queries
-            search = form.cleaned_data['name'].strip()
-            # there are jokesters in this world
-            if search.isalnum():
-                response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=today.strftime('%Y-%m-%d'))
-                # no matches returns an empty list;
-                # no matches could mean the day's data isn't yet available and
-                # that's no reason to break
-                if not response:
-                    response = Unicorn.objects.filter(name__icontains=search).filter(scrape_date=yesterday.strftime('%Y-%m-%d'))
+            context['unicorn_response'] = vh.search_boozicorns(form, context)
 
-                # if we have a match, we want the whole object available,
-                # not just the matching portion;
-                # if statement here because why bother with operations on
-                # an empty list
-                if response:
-                    clean_response = [r for r in response for m in [re.search(r'(?<=\b)({0}\b)'.format(search.lower()), r.name.lower())] if m]
-                    ordered_clean_response = sorted(clean_response, key=lambda k: k.name)
-                    context['unicorn_response'] = ordered_clean_response
-                else:
-                    context['unicorn_response'] = response
-
-                if context['unicorn_response']:
-                    context['message'] = "WOO BOOZICORNS"
-                else:
-                    context['message'] = 'Ain\'t got none o\' them.'
+            if context['unicorn_response']:
+                context['message'] = "WOO BOOZICORNS"
             else:
-                context['message'] = 'That\'s not a valid search.\nC\'mon now.'
+                context['message'] = 'Ain\'t got none o\' them.'
         else:
             context['message'] = 'That\'s not a valid search.\nC\'mon now.'
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
+
+
+class TopStoresView(View):
+    def get(self, request):
+        context = {}
+        unicorns_dict = {}
+        form = SearchBoozicornForm()
+        context['form'] = form
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
+        if not boozicorns:
+            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+
+        stores = [unicorn.store.store_id for unicorn in boozicorns]
+        # returns the top 10 store ids
+        top_stores = vh.find_top_stores(stores)
+        # separates the ids from the number of occurrences;
+        # also could be its own function
+        top_store_ids = [store[0] for store in top_stores]
+        top_store_contents = []
+        for idx, store_id in enumerate(top_store_ids):
+            contents = boozicorns.filter(store__store_id=store_id)
+            top_store_contents.append({(idx,
+                                        contents[0].store.address.lower().replace(', pa', '')):
+                                       (len(contents),
+                                        sorted(contents, key=lambda k: k.name))})
+        unicorns_dict['store_contents'] = top_store_contents
+        context['unicorns'] = unicorns_dict
+        context['id_stub'] = 'store-'
+
+        return render(request, 'top_stores.html', context)
+
+    def post(self, request):
+        AllUnicornsView(View).post(request)
+
+
+class FancyView(View):
+    def get(self, request):
+        context = {}
+        unicorns_dict = {}
+        form = SearchBoozicornForm()
+        context['form'] = form
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
+        if not boozicorns:
+            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+
+        fancy = [unicorn for unicorn in boozicorns if unicorn.price > 100]
+        top_prices = vh.sort_by_price(fancy)
+
+        unicorns_dict['fancy'] = (len(top_prices), top_prices)
+        context['unicorns'] = unicorns_dict
+
+        return render(request, 'fancy.html', context)
+
+    def post(self, request):
+        AllUnicornsView(View).post(request)
