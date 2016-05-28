@@ -27,8 +27,6 @@ li:last-child {
     margin-bottom: 0;
 }
 
-
-
 #map {
     width: 90vw;
     height: 650px;
@@ -55,7 +53,7 @@ li:last-child {
     font-size: 1.3vw;
 }
 
-#aggregate {
+.aggregate {
     width: 90vw;
     margin-left: 5vw;
 }
@@ -113,12 +111,16 @@ li:last-child {
     font-size: 6vw;
     display: block;
     text-align: center;
-    margin-bottom: 1vw;
+    margin-bottom: 5vw;
 }
 
 #date h4 {
     margin-top: 4vw;
-    margin-bottom: 4vw;
+    margin-bottom: 8vw;
+}
+
+.big-summary-num {
+    line-height: 80%;
 }
 
 form {
@@ -154,7 +156,7 @@ label {
     font-size: 4vw;
 }*/
 
-.aggregated-summary {
+.aggregate-summary {
     font-size: 7vw;
     font-family: 'Quattrocento', serif;
     text-align: center;
@@ -163,10 +165,23 @@ label {
     display: inline-block;
     width: 35vw;
     border-bottom: 2px dotted;
+    line-height: 90%;
 }
 
-.aggregated-summary p {
+.aggregate-summary {
+    margin-bottom: 5vw;
+}
+
+.aggregate-summary p {
+    line-height: 7vw;
     margin-bottom: 0;
+}
+
+.aggregate-context {
+    font-size: 1.5vw;
+    text-align: center;
+    margin-top: 1vw;
+    padding-bottom: 1vw;
 }
 
 .unicorn-name {
@@ -175,23 +190,52 @@ label {
 }
 
 .unicorn-name ~ p {
-    margin-top: 0 !important;
+    margin-top: 0;
 }
 
 #top-store {
     margin-bottom: 3vw;
+    /*color: #000000*/
 }
 
 .summary {
     font-size: 2.5vw;
     font-family: 'Quattrocento', serif;
     text-align: center;
-    width: 70vw;
+    width: 90vw;
     margin-bottom: 3vw;
-    margin-left: 5vw;
+    /*margin-left: 5vw;*/
+    /*padding-bottom: 2vw;*/
+    display: inline-block;
+    /*white-space: nowrap;*/
+}
+
+.fancy-summary {
+    font-size: 2.5vw;
+    font-family: 'Quattrocento', serif;
+    text-align: center;
+    width: 90vw;
+    margin-bottom: 3vw;
+    /*margin-left: 5vw;*/
     /*padding-bottom: 2vw;*/
     display: inline-block;
     white-space: nowrap;
+}
+
+.summary-black {
+    font-size: 2.5vw;
+    font-family: 'Quattrocento', serif;
+    text-align: center;
+    width: 90vw;
+    margin-bottom: 3vw;
+    /*margin-left: 5vw;*/
+    /*padding-bottom: 2vw;*/
+    display: inline-block;
+    /*white-space: nowrap;*/
+}
+
+.summary-black p {
+    margin: 0;
 }
 
 .unicorn-dive {
@@ -200,7 +244,7 @@ label {
     /*background-color: #FDF5E6;*/
     display: none;
     margin-top: 2vw;
-    width: 65vw;
+    width: 70vw;
     text-align: right;
     white-space: normal;
     -moz-column-count: 2;
@@ -215,10 +259,10 @@ label {
     overflow: hidden;
 }
 
-.summary:hover .unicorn-dive {
+/*.summary:hover .unicorn-dive {
     display: inline-block;
     margin-left: 0;
-}
+}*/
 
 .stores {
     text-align: center;
@@ -227,17 +271,36 @@ label {
 }
 
 .summary-store {
-    font-size: 1.75vw;
+    font-size: 2vw;
     font-family: 'Quattrocento', serif;
-    text-align: left;
-    width: 90vw;
-    display: inline-flex;
-    margin-right: 0;
-    white-space: nowrap;
+    text-align: right;
+    /*width: 90vw;*/
+    display: inline-block;
+    /*margin-right: 0;*/
+    /*white-space: nowrap;*/
+    overflow: hidden;
 }
 
-.store-dive {
-    font-size: 1.5vw;
+.store-container {
+    width: 80vw;
+    text-align: right;
+    -moz-column-count: 2;
+    -moz-column-gap: 2vw;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 2vw;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    column-count: 2;
+    column-gap: 2vw;
+}
+
+.summary-store a {
+    color: #000000
+}
+
+/*.store-dive {
+    font-size: 1vw;
     display: none;
     margin-left: 1vw;
     width: 70vw;
@@ -250,32 +313,38 @@ label {
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
     break-inside: avoid;
-    column-count: 2;
+    column-count: 3;
     column-gap: 3vw;
     overflow: hidden;
-}
+}*/
+
+/*.store-dive .unicorn-name {
+    font-size: 1vw;
+}*/
 
 .summary-store p {
     margin-top: 0;
+    display: inline-block;
 }
 
-.store-dive p {
+/*.store-dive p {
     margin-bottom: 0;
-}
+}*/
 
-.summary-store:hover {
+.summary-store a:hover {
     color: #4682B4;
 }
 
-.summary-store p:hover ~ .store-dive {
+/*.summary-store p:hover ~ .store-dive {
     display: inline-block;
     color: #000000;
-}
+    /*background-color: #4682B4;*/
+    /*opacity: .7;*/
+}*/
 
 .no-click {
     font-size: 5vw;
     color: #000000;
-    border-bottom: 2px dotted #000000;
 }
 
 .big-summary-num {
@@ -301,10 +370,10 @@ label {
     border-bottom: 0;
 }
 
-.summary > p {
+/*.summary > p {
     margin-left: 35vw;
     width: 10vw;
-}
+}*/
 
 .summary p {
     margin-top: 0;
@@ -315,12 +384,16 @@ label {
     font-size: 1.5vw;
     text-align: center;
     margin-top: 1vw;
-    margin-left: 10vw;
+    margin-right: 5vw;
     padding-bottom: 1vw;
 }
 
 .summary-context p {
     margin-top: 0;
+}
+
+.summary-context p:first-child {
+    margin-left: 5vw;
 }
 
 .summary:nth-child(4n) {
@@ -334,6 +407,42 @@ label {
 
 .num-bottles {
     color: #4682B4;
+}
+
+.mean-median-mode {
+    width: 90vw;
+    white-space: normal;
+}
+
+.summary-black span {
+    font-size: 5vw;
+}
+
+#mode {
+    width: 21vw;
+    /*margin-right: 2vw;*/
+    font-size: 1.5vw;
+    text-align: left;
+}
+
+#median {
+    width: 21vw;
+    /*margin-right: 2vw;*/
+    font-size: 1.5vw;
+    text-align: left;
+}
+
+#most-bottles {
+    width: 21vw;
+    margin-right: 4vw;
+    font-size: 1.5vw;
+    text-align: right;
+}
+
+#most-bottles-detail {
+    width: 21vw;
+    font-size: 1.5vw;
+    text-align: right;
 }
 
 #caveat-percentage {
@@ -425,10 +534,9 @@ a {
         font-size: 5.5vw;
         margin-left: 7vw;
     }
-
     #date {
         font-size: 10vw;
-        margin-left: 5vw;
+        /*margin-left: 5vw;*/
     }
 
     #unicorns-data {
@@ -456,13 +564,14 @@ a {
     }
 
     .form-control {
-        width: 72vw;
+        width: 75vw;
         height: 20vw;
         display: block;
     }
 
     .button {
-        margin-left: 0;
+        width: 60vw;
+        margin-left: 11vw;
         font-size: 8vw;
         display: block;
         padding: 2vw;
@@ -473,11 +582,19 @@ a {
         font-size: 7vw;
     }
 
-    .aggregated-summary {
+    .aggregate-summary {
         display: block;
-        width: auto;
+        width: 90vw;
         margin-left: 0;
         border-bottom: none;
+        margin-bottom: 15vw;
+    }
+
+    .aggregate-context {
+        font-size: 6vw;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 5vw;
     }
 
     .summary {
@@ -487,20 +604,26 @@ a {
         text-align: center;
         margin-bottom: 5vw;
         border-bottom: none;
-        margin-left: 5vw;
+        /*margin-left: 5vw;*/
         display: block;
         float: none;
         white-space: normal;
     }
 
+    li p {
+        text-align: left;
+    }
+
     .stores {
         width: 95vw;
         margin-left: 2.5vw;
+        margin-top: 15vw;
+        margin-bottom: 10vw;
     }
 
     .summary-store {
-        font-size: 4vw;
-        margin-bottom: 4vw;
+        font-size: 6vw;
+        margin-bottom: 2vw;
         text-align: left;
     }
 
@@ -519,25 +642,36 @@ a {
 
     .summary-num {
         font-family: 'Quattrocento', serif;
+        text-align: center;
         weight: bold;
         font-size: 18vw;
         margin-bottom: 5vw;
+        margin-left: 4vw;
     }
 
     .summary-context {
-        font-size: 6vw;
+        font-size: 7vw;
         text-align: center;
-        margin-top: 0;
-        margin-bottom: 5vw;
+        margin-top: 3vw;
+        margin-right: 0;
+        margin-bottom: 10vw;
+    }
+
+    .summary-context p {
+        /*margin-top: 3vw;*/
+        margin-left: 5vw;
+        margin-bottom: 0;
     }
 
     .top10 {
         font-size: 12vw;
-        padding-bottom: 0;
+        padding-bottom: 3vw;
+        border-bottom: none;
     }
 
     .unicorn-dive {
         width: 85vw;
+        margin-left: 9vw;
         text-align: left;
         -moz-column-count: 1;
         -moz-column-gap: 0vw;
@@ -551,24 +685,52 @@ a {
         font-size: 5vw;
     }
 
-    .store-dive {
-        font-size: 4vw;
+    .store-container {
+        width: 80vw;
+        margin-left: 10vw;
         text-align: left;
-        width: 100vw;
-        background-color: #FDF5E6;
-        display: none;
-        margin-top: 2vw;
-        white-space: normal;
         -moz-column-count: 1;
-        -moz-column-gap: 0;
+        -moz-column-gap: 0vw;
         -webkit-column-count: 1;
-        -webkit-column-gap: 0;
+        -webkit-column-gap: 0vw;
         -webkit-column-break-inside: avoid;
         page-break-inside: avoid;
         break-inside: avoid;
         column-count: 1;
-        column-gap: 0;
-        overflow: hidden;
+        column-gap: 0vw;
+    }
+
+    .summary-black span {
+        font-size: 10vw;
+    }
+
+    #mode {
+        width: 90vw;
+        /*margin-right: 2vw;*/
+        font-size: 5vw;
+        text-align: center;
+        margin-bottom: 10vw;
+    }
+
+    #median {
+        width: 90vw;
+        /*margin-right: 2vw;*/
+        font-size: 5vw;
+        text-align: center;
+        margin-bottom: 10vw;
+    }
+
+    #most-bottles {
+        width: 90vw;
+        /*margin-right: 4vw;*/
+        font-size: 5vw;
+        text-align: center;
+    }
+
+    #most-bottles-detail {
+        width: 90vw;
+        font-size: 5vw;
+        text-align: center;
     }
 
     #caveats {
