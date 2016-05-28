@@ -14,20 +14,20 @@
             <form method="POST" action='{% url "unicorns" %}'>
                 {% csrf_token %}
                 <p>{{ form }}</p>
-                <div class="unicorn-button">
-                    <button class="button" method="post" type="submit"> Search again</button>
+                <div id="search-button">
+                    <button class="button" method="post" type="submit">Search</button>
                 </div>
             </form>
         </div>
         <div>
             {% for unicorn in unicorn_response %}
-                <ul class="search-response"><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})
-                    <li>${{ unicorn.price }}</li>
-                    {% if unicorn.on_sale_price %}<li> sale price: ${{ unicorn.on_sale_price }}</li>{% endif %}
-                    <li>{{ unicorn.bottle_size }}</li>
-                    <li>{{ unicorn.store.address|lower }}</li>
-                    <li>{{ unicorn.store.phone }} :: {{ unicorn.store.store_type|lower }}</li>
-                </ul>
+                <ol class="search-response"><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})
+                    <li><p>${{ unicorn.price }}</p></li>
+                    {% if unicorn.on_sale_price %}<li><p>sale price: ${{ unicorn.on_sale_price }}</p></li>{% endif %}
+                    <li><p>{{ unicorn.bottle_size }}</p></li>
+                    <li><p>{{ unicorn.store.address|lower }}</p></li>
+                    <li><p>{{ unicorn.store.phone }} :: {{ unicorn.store.store_type|lower }}</p></li>
+                </ol>
             {% endfor %}
         </div>
         <div id="back-button"><a href='javascript:history.back()'><button class="button" method="get" type="submit"> Back</button></a></div>
