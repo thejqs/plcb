@@ -1,5 +1,11 @@
 #!usr/env/bin python
 
+import django
+import os, sys
+
+sys.path.append("../..")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
+
 from collections import Counter
 import datetime
 import json
@@ -8,7 +14,7 @@ from operator import itemgetter
 
 from main.models import Store, Unicorn
 from project.settings_local import day_switcher
-
+django.setup()
 
 def find_median(lst):
     '''
