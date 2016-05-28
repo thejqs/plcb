@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/search.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div id="boozicorn-image"><a href="{% url 'unicorns' %}"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></a></div>
+    <div class="search-results">
+        <div id="search-form">
+            <form method="POST" action='{% url "unicorns" %}'>
+                {% csrf_token %}
+                <p>{{ form }}</p>
+                <div class="unicorn-button">
+                    <button class="button" method="post" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            {% for unicorn in unicorns.fancy.1 %}
+                <ol class="search-response"><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})
+                    <li>
+                        <p>${{ unicorn.price }} :: {{ unicorn.bottle_size }}</p>
+                    {% if unicorn.on_sale_price %}<p> sale price: ${{ unicorn.on_sale_price }}</p>{% endif %}
+                    <p>{{ unicorn.store.address|lower|slice:"-4" }}<p>
+                    <p>{{ unicorn.store.phone }} :: {{ unicorn.store.store_type|lower }}<p></li>
+                </ol>
+            {% endfor %}
+        </div>
+        <div id="back-button"><a href='javascript:history.back()'><button class="button" method="get" type="submit"> Back</button></a></div>
+    </div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/search.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div id="boozicorn-image"><a href="{% url 'unicorns' %}"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></a></div>
+    <div class="search-results">
+        <div id="search-form">
+            <form method="POST" action='{% url "unicorns" %}'>
+                {% csrf_token %}
+                <p>{{ form }}</p>
+                <div class="unicorn-button">
+                    <button class="button" method="post" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+        <div id="top-store">
+            {% for stores in unicorns.store_contents %}
+             {% for store, unicorns in stores.items %}
+             <div id="store-{{ store.0 }}"></div>
+                <div class="summary-store">
+                    <p class="store-locator"><strong>{{ store.1 }}</strong> :: <span class="num-bottles">{{ unicorns.0 }}</span></p>
+                    <div class="store-dive">
+                        <ol>
+                            {% for unicorn in unicorns.1 %}
+                                <li>
+                                    <p class="unicorn-name"><strong>{{ unicorn.name|lower }}</strong> ({{ unicorn.num_bottles }})</p>
+                                    <p>${{ unicorn.price }} :: {{ unicorn.bottle_size }}</p>
+                                    {% if unicorn.on_sale_price %}<p>sale price: ${{ unicorn.on_sale_price }}</p>{% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            {% endfor %}
+           {% endfor %}
+        </div>
+        <div id="back-button"><a href='javascript:history.back()'><button class="button" method="get" type="submit"> Back</button></a></div>
+    </div>
+{% endblock %}
