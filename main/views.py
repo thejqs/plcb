@@ -2,8 +2,8 @@ import os, sys
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.conf import settings
 from collections import Counter
@@ -28,10 +28,11 @@ class AllUnicornsView(View):
     handles data and object assembly for primary GET (main page)
     and POST (search) requests
     '''
-    @csrf_exempt
+    # @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
+        request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
         # one trip to the database, please
@@ -120,8 +121,9 @@ class AllUnicornsView(View):
         unicorns_dict['fancy'] = [len(top_prices)]
 
         context['unicorns'] = unicorns_dict
-        return render(request, 'boozicorns.html', context)
+        return render(request, 'boozicorns.html', context, context_instance=request_context)
 
+    # @csrf_protect
     def post(self, request):
         '''
         cleans and handles search input
@@ -130,6 +132,7 @@ class AllUnicornsView(View):
         search response data to the correct template
         '''
         context = {}
+        request_context = RequestContext(request)
         form = SearchBoozicornForm(request.POST)
         context['form'] = form
 
@@ -147,10 +150,12 @@ class AllUnicornsView(View):
 
 
 class TopStoresView(View):
-    @csrf_exempt
+    # @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
+        request_context = RequestContext(request)
+
         form = SearchBoozicornForm()
         context['form'] = form
         boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
@@ -174,17 +179,18 @@ class TopStoresView(View):
         context['unicorns'] = unicorns_dict
         context['id_stub'] = 'store-'
 
-        return render(request, 'top_stores.html', context)
+        return render(request, 'top_stores.html', context, context_instance=request_context)
 
     def post(self, request):
         AllUnicornsView(View).post(request)
 
 
 class FancyView(View):
-    @csrf_exempt
+    # @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
+        request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
         boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
@@ -197,7 +203,7 @@ class FancyView(View):
         unicorns_dict['fancy'] = (len(top_prices), top_prices)
         context['unicorns'] = unicorns_dict
 
-        return render(request, 'fancy.html', context)
+        return render(request, 'fancy.html', context, context_instance=request_context)
 
     def post(self, request):
         AllUnicornsView(View).post(request)
