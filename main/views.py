@@ -23,13 +23,16 @@ from project.settings_local import day_switcher
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(requires_csrf_token, name='post')
 class AllUnicornsView(View):
     '''
     handles data and object assembly for primary GET (main page)
     and POST (search) requests
     '''
+    @method_decorator(csrf_exempt)
+    @method_decorator(requires_csrf_token)
+    def dispatch(self, *args, **kwargs):
+        return super(FancyView, self).dispatch(*args, **kwargs)
+
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -149,9 +152,12 @@ class AllUnicornsView(View):
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(requires_csrf_token, name='post')
 class TopStoresView(View):
+    @method_decorator(csrf_exempt)
+    @method_decorator(requires_csrf_token)
+    def dispatch(self, *args, **kwargs):
+        return super(FancyView, self).dispatch(*args, **kwargs)
+
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -186,9 +192,12 @@ class TopStoresView(View):
         AllUnicornsView(View).post(request)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(requires_csrf_token, name='post')
 class FancyView(View):
+    @method_decorator(csrf_exempt)
+    @method_decorator(requires_csrf_token)
+    def dispatch(self, *args, **kwargs):
+        return super(FancyView, self).dispatch(*args, **kwargs)
+
     def get(self, request):
         context = {}
         unicorns_dict = {}
