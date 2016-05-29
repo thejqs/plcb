@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
 from django.views.generic import View
 from django.conf import settings
 from collections import Counter
@@ -156,9 +156,9 @@ class AllUnicornsView(View):
 class TopStoresView(View):
     # @method_decorator(csrf_exempt)
     # @method_decorator(requires_csrf_token)
-    @cache_page(60 * 60 * 2)
-    def dispatch(self, *args, **kwargs):
-        return super(TopStoresView, self).dispatch(*args, **kwargs)
+    # @cache_page(60 * 60 * 2)
+    # def dispatch(self, *args, **kwargs):
+    #     return super(TopStoresView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
@@ -197,9 +197,9 @@ class TopStoresView(View):
 class FancyView(View):
     # @method_decorator(csrf_exempt)
     # @method_decorator(requires_csrf_token)
-    @cache_page(60 * 60 * 2)
-    def dispatch(self, *args, **kwargs):
-        return super(FancyView, self).dispatch(*args, **kwargs)
+    # @cache_page(60 * 60 * 2)
+    # def dispatch(self, *args, **kwargs):
+    #     return super(FancyView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
