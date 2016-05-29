@@ -2,8 +2,8 @@ import os, sys
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.generic import View
 from django.conf import settings
 from collections import Counter
@@ -28,7 +28,7 @@ class AllUnicornsView(View):
     handles data and object assembly for primary GET (main page)
     and POST (search) requests
     '''
-    # @csrf_exempt
+    @method_decorator(csrf_exempt)
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -123,7 +123,7 @@ class AllUnicornsView(View):
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context, context_instance=request_context)
 
-    # @csrf_protect
+    @method_decorator(csrf_protect)
     def post(self, request):
         '''
         cleans and handles search input
@@ -150,7 +150,7 @@ class AllUnicornsView(View):
 
 
 class TopStoresView(View):
-    # @csrf_exempt
+    @method_decorator(csrf_exempt)
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -181,12 +181,13 @@ class TopStoresView(View):
 
         return render(request, 'top_stores.html', context, context_instance=request_context)
 
+    @method_decorator(csrf_protect)
     def post(self, request):
         AllUnicornsView(View).post(request)
 
 
 class FancyView(View):
-    # @csrf_exempt
+    @method_decorator(csrf_exempt)
     def get(self, request):
         context = {}
         unicorns_dict = {}
@@ -205,5 +206,6 @@ class FancyView(View):
 
         return render(request, 'fancy.html', context, context_instance=request_context)
 
+    @method_decorator(csrf_protect)
     def post(self, request):
         AllUnicornsView(View).post(request)

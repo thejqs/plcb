@@ -24,7 +24,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['boozicorns.com']
 
-
 # Application definition
 
 INSTALLED_APPS = (
