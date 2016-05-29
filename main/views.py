@@ -24,15 +24,17 @@ from project.settings_local import day_switcher
 
 class AllUnicornsView(View):
     '''
-    handles data and object assembly for GET and POST requests
+    handles data and object assembly for primary GET (main page)
+    and POST (search) requests
     '''
+    @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
         form = SearchBoozicornForm()
         context['form'] = form
         # one trip to the database, please
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
         if not boozicorns:
             boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
         # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
@@ -144,12 +146,13 @@ class AllUnicornsView(View):
 
 
 class TopStoresView(View):
+    @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
         if not boozicorns:
             boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
 
@@ -177,12 +180,13 @@ class TopStoresView(View):
 
 
 class FancyView(View):
+    @csrf_exempt
     def get(self, request):
         context = {}
         unicorns_dict = {}
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # today.strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
         if not boozicorns:
             boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
 
