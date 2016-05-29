@@ -3,7 +3,7 @@ from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 from django.views.generic import View
 from django.conf import settings
 from collections import Counter
@@ -31,7 +31,7 @@ class AllUnicornsView(View):
     @method_decorator(csrf_exempt)
     @method_decorator(requires_csrf_token)
     def dispatch(self, *args, **kwargs):
-        return super(FancyView, self).dispatch(*args, **kwargs)
+        return super(AllUnicornsView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
@@ -156,7 +156,7 @@ class TopStoresView(View):
     @method_decorator(csrf_exempt)
     @method_decorator(requires_csrf_token)
     def dispatch(self, *args, **kwargs):
-        return super(FancyView, self).dispatch(*args, **kwargs)
+        return super(TopStoresView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
