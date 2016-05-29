@@ -23,6 +23,12 @@ from project.settings_local import day_switcher
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
 
+# TODO: find better ways to csrf all post requests while still allowing
+# caching on gets. varnish and django cookies -- not so much.
+# possible answer: refactoring into function views to decorate more
+# granularly and with clearer purpose
+
+
 class AllUnicornsView(View):
     '''
     handles data and object assembly for primary GET (main page)
@@ -141,7 +147,6 @@ class AllUnicornsView(View):
 
         if form.is_valid():
             context['unicorn_response'] = vh.search_boozicorns(form, context)
-
             if context['unicorn_response']:
                 context['message'] = "WOO BOOZICORNS"
             else:
@@ -150,7 +155,6 @@ class AllUnicornsView(View):
             context['message'] = 'That\'s not a valid search.\nC\'mon now.'
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
-
 
 class TopStoresView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
@@ -189,8 +193,27 @@ class TopStoresView(View):
         return render(request, 'top_stores.html', context, context_instance=request_context)
 
     def post(self, request):
-        AllUnicornsView(View).post(request)
+        '''
+        cleans and handles search input
 
+        returns:
+        search response data to the correct template
+        '''
+        context = {}
+        request_context = RequestContext(request)
+        form = SearchBoozicornForm(request.POST)
+        context['form'] = form
+
+        if form.is_valid():
+            context['unicorn_response'] = vh.search_boozicorns(form, context)
+            if context['unicorn_response']:
+                context['message'] = "WOO BOOZICORNS"
+            else:
+                context['message'] = 'Ain\'t got none o\' them.'
+        else:
+            context['message'] = 'That\'s not a valid search.\nC\'mon now.'
+
+        return render_to_response('search_results.html', context, context_instance=RequestContext(request))
 
 class FancyView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
@@ -217,4 +240,24 @@ class FancyView(View):
         return render(request, 'fancy.html', context, context_instance=request_context)
 
     def post(self, request):
-        AllUnicornsView(View).post(request)
+        '''
+        cleans and handles search input
+
+        returns:
+        search response data to the correct template
+        '''
+        context = {}
+        request_context = RequestContext(request)
+        form = SearchBoozicornForm(request.POST)
+        context['form'] = form
+
+        if form.is_valid():
+            context['unicorn_response'] = vh.search_boozicorns(form, context)
+            if context['unicorn_response']:
+                context['message'] = "WOO BOOZICORNS"
+            else:
+                context['message'] = 'Ain\'t got none o\' them.'
+        else:
+            context['message'] = 'That\'s not a valid search.\nC\'mon now.'
+
+        return render_to_response('search_results.html', context, context_instance=RequestContext(request))
