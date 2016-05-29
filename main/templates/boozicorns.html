@@ -47,7 +47,7 @@
 <div id="map"></div>
 <div id="search">
     <form method="POST" action='{% url "unicorns" %}'>
-        {% csrf_token %}
+        <!-- {% csrf_token %} -->
         <p>{{ message }}</p>
         <p>{{ form }}</p>
         <div id="unicorn-button">

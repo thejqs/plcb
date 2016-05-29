@@ -10,7 +10,7 @@
     <div class="search-results">
         <div id="search-form">
             <form method="POST" action='{% url "unicorns" %}'>
-                {% csrf_token %}
+                <!-- {% csrf_token %} -->
                 <p>{{ form }}</p>
                 <div class="unicorn-button">
                     <button class="button" method="post" type="submit">Search</button>
