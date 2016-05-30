@@ -5,7 +5,7 @@ Boozicorns
 
 There was this wine. The only store in Pennsylvania that carried it was 60 miles away.
 
-I knew this because Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions. If you know what you want, it's relatively easy to search for it.
+I knew this because Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions. If you know specifically what you want, it's relatively easy to search for it.
 
 But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces are -- let's go with "not good."
 
