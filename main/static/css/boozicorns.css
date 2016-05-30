@@ -255,6 +255,7 @@ label {
     text-align: right;
     display: inline-block;
     overflow: hidden;
+    white-space: nowrap
 }
 
 .store-container {
