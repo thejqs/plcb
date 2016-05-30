@@ -47,7 +47,7 @@ class AllUnicornsView(View):
         context['form'] = form
         # one successful trip to the database, please
         boozicorns = Unicorn.objects.filter(scrape_date=
-                                            '2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
+                                            day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=
@@ -138,6 +138,7 @@ class AllUnicornsView(View):
 
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context, context_instance=request_context)
+        
 
 class SearchView(View):
     @method_decorator(requires_csrf_token)
@@ -181,7 +182,7 @@ class TopStoresView(View):
 
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date='2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
@@ -206,15 +207,6 @@ class TopStoresView(View):
         context['id_stub'] = 'store-'
         return render(request, 'top_stores.html', context, context_instance=request_context)
 
-    # def post(self, request):
-    #     '''
-    #     cleans and handles search input
-    #
-    #     returns:
-    #     search response data to the correct template
-    #     '''
-    #     SearchView(View).post(self, request)
-
 
 class FancyView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
@@ -228,7 +220,7 @@ class FancyView(View):
         request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date='2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
@@ -242,12 +234,3 @@ class FancyView(View):
         context['unicorns'] = unicorns_dict
 
         return render(request, 'fancy.html', context, context_instance=request_context)
-
-    # def post(self, request):
-    #     '''
-    #     cleans and handles search input
-    #
-    #     returns:
-    #     search response data to the correct template
-    #     '''
-    #     SearchView(View).post(self, request)
