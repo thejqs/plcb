@@ -3,8 +3,7 @@ from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt, csrf_protect, requires_csrf_token
-from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 from django.views.generic import View
 from django.conf import settings
 import datetime
@@ -23,7 +22,6 @@ from project.settings_local import day_switcher
 #     ascii_encode = lambda x: x.encode('ascii') if isinstance(x, unicode) else x
 #     return dict(map(ascii_encode, pair) for pair in data.items())
 
-
 # TODO: find better ways to csrf all post requests while still allowing
 # caching on gets. varnish and django cookies -- not so much.
 # possible answer: refactoring into function views to decorate more
@@ -32,8 +30,8 @@ from project.settings_local import day_switcher
 
 class AllUnicornsView(View):
     '''
-    handles data and object assembly for primary GET (main page)
-    and POST (search) requests
+    handles data and object assembly for the site's primary
+    GET request (main page)
     '''
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
@@ -138,9 +136,15 @@ class AllUnicornsView(View):
 
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context, context_instance=request_context)
-        
+
 
 class SearchView(View):
+    '''
+    handles all search requests, regardless of source page
+
+    requires a cross-site request forgery token which is ignored
+    on other pages for caching reasons
+    '''
     @method_decorator(requires_csrf_token)
     def dispatch(self, *args, **kwargs):
         return super(SearchView, self).dispatch(*args, **kwargs)
@@ -170,7 +174,9 @@ class SearchView(View):
 
 
 class TopStoresView(View):
-    # @method_decorator(@cache_page(60 * 60 * 2)) ?
+    '''
+    assembles the data for a page displaying the contents of our top 10 stores
+    '''
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(TopStoresView, self).dispatch(*args, **kwargs)
@@ -209,7 +215,10 @@ class TopStoresView(View):
 
 
 class FancyView(View):
-    # @method_decorator(@cache_page(60 * 60 * 2)) ?
+    '''
+    assembles the content for our faniciest unicorns -- those with a retail
+    price above $100
+    '''
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(FancyView, self).dispatch(*args, **kwargs)

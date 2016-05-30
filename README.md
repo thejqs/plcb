@@ -84,7 +84,11 @@ Once in hand, the data goes into a PostgreSQL database for later time-series and
 
 ![alt text][leaflet]
 
-The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later. The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest. Varnish and its large TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day.
+The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later -- sometimes even 8 p.m.
+
+The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest. Varnish and its large TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day. How well does Varnish play with Django's cross-site forgery request tokens, you ask?
+
+![alt text][puking_rainbows]
 
 The data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
@@ -98,3 +102,4 @@ Thus: *On Python!* *On JavaScript!*
 [finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
 [psearch]: https://github.com/thejqs/plcb/blob/master/interface.png
 [permissions]: https://github.com/thejqs/plcb/blob/master/permissions.png
+[puking_rainbows]: https://github.com/thejqs/plcb/blob/master/main/static/media/puking_rainbows.gif
