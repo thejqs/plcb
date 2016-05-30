@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.cache import cache_page
 from django.views.generic import View
 from django.conf import settings
+import datetime
 from collections import Counter
 import json
 import re
@@ -35,7 +36,6 @@ class AllUnicornsView(View):
     and POST (search) requests
     '''
     @method_decorator(csrf_exempt)
-    # @method_decorator(requires_csrf_token)
     def dispatch(self, *args, **kwargs):
         return super(AllUnicornsView, self).dispatch(*args, **kwargs)
 
@@ -45,10 +45,16 @@ class AllUnicornsView(View):
         request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
-        # one trip to the database, please
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
+        # one successful trip to the database, please
+        boozicorns = Unicorn.objects.filter(scrape_date=
+                                            day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
-            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            try:
+                boozicorns = Unicorn.objects.filter(scrape_date=
+                                                    day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            except Exception:
+                boozicorns = Unicorn.objects.filter(scrape_date=
+                                                    (day_switcher['yesterday'] - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))
         # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
         most_bottles = None
         stores = []
@@ -59,12 +65,6 @@ class AllUnicornsView(View):
         fancy = []
 
         sorted_by_price = vh.sort_by_price(boozicorns)
-
-        # could be separate function
-        all_prices = [u.price for u in boozicorns]
-        most_common_price = Counter(all_prices).most_common()[0]
-
-        median_price = vh.find_median(all_prices)
 
         # capturing as much as we can in one loop through the objects
         for unicorn in boozicorns:
@@ -106,6 +106,12 @@ class AllUnicornsView(View):
             contents = boozicorns.filter(store__store_id=store_id)
             top_store_contents.append({(idx, contents[0].store.address.lower().replace(', pa', '')): len(contents)})
 
+        # could be separate function
+        all_prices = [u.price for u in boozicorns]
+        most_common_price = Counter(all_prices).most_common()[0]
+
+        median_price = vh.find_median(all_prices)
+
         unicorns_dict['num_stores'] = len(Store.objects.filter(store_data_date__gte='2016-05-15'))
         unicorns_dict['top_stores'] = top_store_contents
         # formatted thus to work with a JavaScript function and Ajax call to set the map
@@ -133,6 +139,7 @@ class AllUnicornsView(View):
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context, context_instance=request_context)
 
+    @method_decorator(csrf_protect)
     def post(self, request):
         '''
         cleans and handles search input
@@ -160,7 +167,7 @@ class TopStoresView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
-        return super(FancyView, self).dispatch(*args, **kwargs)
+        return super(TopStoresView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
@@ -169,9 +176,12 @@ class TopStoresView(View):
 
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
-            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            try:
+                boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            except Exception:
+                boozicorns = Unicorn.objects.filter(scrape_date=(day_switcher['yesterday'] - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))
 
         stores = [unicorn.store.store_id for unicorn in boozicorns]
         # returns the top 10 store ids
@@ -189,7 +199,6 @@ class TopStoresView(View):
         unicorns_dict['store_contents'] = top_store_contents
         context['unicorns'] = unicorns_dict
         context['id_stub'] = 'store-'
-
         return render(request, 'top_stores.html', context, context_instance=request_context)
 
     def post(self, request):
@@ -215,6 +224,7 @@ class TopStoresView(View):
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
 
+
 class FancyView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
     @method_decorator(csrf_protect)
@@ -227,9 +237,12 @@ class FancyView(View):
         request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))
+        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
-            boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            try:
+                boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
+            except Exception:
+                boozicorns = Unicorn.objects.filter(scrape_date=(day_switcher['yesterday'] - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))
 
         fancy = [unicorn for unicorn in boozicorns if unicorn.price > 100]
         top_prices = vh.sort_by_price(fancy)
