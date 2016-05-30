@@ -39,6 +39,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+
 #    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
@@ -50,14 +51,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
-    {
-     'BACKEND': 'django.template.backends.jinja2.Jinja2',
-     'DIRS': [
-              os.path.join(BASE_DIR, 'templates/jinja2'), ],
-     'APP_DIRS': True,
-     'OPTIONS': {
-                 'environment': 'project.jinja2.environment', },
-    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -71,14 +64,18 @@ TEMPLATES = [
             ],
         },
     },
+    {
+
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [
+                 os.path.join(BASE_DIR, 'templates/jinja2'), ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+                    'environment': 'project.jinja2.environment', },
+    },
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
