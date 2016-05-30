@@ -47,8 +47,6 @@ Maybe that's not a lot of data if you're one of those millions-of-rows people, b
 
 That's a lot to ask of any human. **I guess I should make a computer do it.**
 
-**Good thing I can write code.** (Well. Ish.)
-
 ```python
 unicorns = []
 for tree in trees:
