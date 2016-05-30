@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['boozicorns.com']
 
@@ -41,7 +41,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -51,14 +51,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
-    {
-     'BACKEND': 'django.template.backends.jinja2.Jinja2',
-     'DIRS': [
-              os.path.join(BASE_DIR, 'templates/jinja2'), ],
-     'APP_DIRS': True,
-     'OPTIONS': {
-                 'environment': 'project.jinja2.environment', },
-    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
@@ -71,6 +63,14 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
+    },
+    {
+     'BACKEND': 'django.template.backends.jinja2.Jinja2',
+     'DIRS': [
+              os.path.join(BASE_DIR, 'templates/jinja2'), ],
+     'APP_DIRS': True,
+     'OPTIONS': {
+                 'environment': 'project.jinja2.environment', },
     },
 ]
 
