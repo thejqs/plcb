@@ -160,7 +160,7 @@ class TopStoresView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
     @method_decorator(csrf_protect)
     def dispatch(self, *args, **kwargs):
-        return super(FancyView, self).dispatch(*args, **kwargs)
+        return super(TopStoresView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         context = {}
