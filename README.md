@@ -78,7 +78,7 @@ for tree in trees:
 return unicorns
 ```
 
-The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with the PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or between an hour and a half and two hours if it's in a more-constrained environment.
+The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with the PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or about an hour and a half with an optimized number of pool workers in a more-constrained environment.
 
 That time savings came with a price: a dramatically CPU- and memory-intensive `load()` operation for the PDF, courtesy of a library sub-module. But the tradeoff seemed worth it.
 
