@@ -29,23 +29,26 @@ It's generally a terrible system for consumers. We as discerning drinkers have t
 
 Searching for that one wine turned into [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
 
+To go through those existing interfaces -- they [really](https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png) are [special](https://github.com/thejqs/plcb/blob/master/interface.png) -- I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
+
+So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
+
+Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
+
+And it's a lot to ask of any human. **I guess I should make a computer do it.**
+
+
+data liberation
+---------------
 There's no API. Surprise, surprise. So a-scraping we go.
 
-That doesn't mean we can't be nice about how we go about acquiring what we want. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
+That doesn't mean we can't be nice about how we go about acquiring what we want. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This is data that can help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
 
 And it's not like the PLCB is actively discouraging this sort of thing.
 
 ![alt text][permissions]
 
 So here we are.
-
-To go through those interfaces -- they [really](https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png) are [special](https://github.com/thejqs/plcb/blob/master/interface.png) -- I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
-
-So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
-
-Maybe that's not a lot of data if you're one of those millions-of-rows people, but it's a lot of get requests to a slow and brittle server.
-
-That's a lot to ask of any human. **I guess I should make a computer do it.**
 
 ```python
 unicorns = []
