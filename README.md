@@ -7,17 +7,7 @@ There was this wine. The only store in Pennsylvania that carried it was 60 miles
 
 I knew this because Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions. If you know what you want, it's relatively easy to search for it.
 
-But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces make it impossible to see everything that's in only one store.
-
-Here's one:
-
-![alt text][finewine]
-
-And here's another:
-
-![alt text][psearch]
-
-Yeah.
+But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces are -- let's go with "not good."
 
 I can't search like I'd want:
 
@@ -49,7 +39,19 @@ And it's not like the PLCB is actively discouraging this sort of thing.
 
 So here we are.
 
-To go through the interfaces provided to me, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
+The interfaces the PLCB provides are not helpful for this sort of thing.
+
+Here's one:
+
+![alt text][finewine]
+
+And here's another:
+
+![alt text][psearch]
+
+Yeah.
+
+To go through those interfaces, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
