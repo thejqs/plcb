@@ -3,27 +3,11 @@
 Boozicorns
 ==========
 
-This project exists to collect and illuminate all of the products available for sale in only one store of the hundreds the Pennsylvania Liquor Control Board runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
+There was this wine. The only store in Pennsylvania that carried it was 60 miles away.
 
-This kind of data isn't available in every state. That's part of the fun here. Pennsylvania's weirdness allows us to explore something we otherwise couldn't.
+I knew this because Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions. If you know what you want, it's relatively easy to search for it.
 
-Inspiration came from writing [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
-
-The state's database can do this for us, but the existing interfaces won't allow it. There's no API. Surprise, surprise.
-
-That doesn't mean we can't be nice about it. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
-
-And it's not like the PLCB is actively discouraging this sort of thing.
-
-![alt text][permissions]
-
-So here we are.
-
-Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions.
-
-It's generally a terrible system for consumers. We as discerning drinkers have to travel to Ohio or Maryland or wherever for even some basics, some staples. **But it works out OK when one wants a bunch of data about booze.**
-
-Also terrible: the interface(s) the state puts on the data. No joke.
+But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces make it impossible to see everything that's only in one store.
 
 Here's one:
 
@@ -45,7 +29,27 @@ I can't search like I'd want:
 
 Oy.
 
-To go through what's provided to me, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
+**The data, however, is there.**
+
+This project exists to collect and illuminate all of the products available for sale in only one store of the hundreds the PLCB runs across the commonwealth. The unicorns, as it were. **The boozicorns.**
+
+This kind of data isn't available in every state. That's part of the fun here. Pennsylvania's weirdness allows us to explore something we otherwise couldn't.
+
+It's generally a terrible system for consumers. We as discerning drinkers have to travel to Ohio or Maryland or wherever for even some basics, some staples. **But it works out OK when one wants a bunch of data about booze.**
+
+Searching for that one wine turned into [this story](http://www.post-gazette.com/life/libations/2015/03/04/A-Croatia-to-Pittsburgh-wine-odyssey-How-an-obscure-bottle-gets-in-the-PLCB-system/stories/201503040013) in early 2015, when I didn't yet have the skills to create this project.
+
+There's no API. Surprise, surprise. So a-scraping we go.
+
+That doesn't mean we can't be nice about how we go about acquiring what we want. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This project exists to help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
+
+And it's not like the PLCB is actively discouraging this sort of thing.
+
+![alt text][permissions]
+
+So here we are.
+
+To go through the interfaces provided to me, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
@@ -74,7 +78,7 @@ for tree in trees:
 return unicorns
 ```
 
-The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with he PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or between an hour and a half and two hours if it's in a more-constrained environment.
+The first, synchronous version of this scraper took eight hours for those 17,000 gets. Multiprocessing got it to about three and a half hours. Now with the PDF parser it's down to about an hour and 15 minutes running with plenty of memory, or between an hour and a half and two hours if it's in a more-constrained environment.
 
 That time savings came with a price: a dramatically CPU- and memory-intensive `load()` operation for the PDF, courtesy of a library sub-module. But the tradeoff seemed worth it.
 
