@@ -589,6 +589,7 @@ a {
         font-size: 6vw;
         margin-bottom: 2vw;
         text-align: left;
+        white-space: normal
     }
 
     .big-summary-num {
