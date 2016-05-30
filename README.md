@@ -1,7 +1,6 @@
 <img src="https://github.com/thejqs/plcb/blob/master/main/static/media/boozicorn_transparent.png" width="350"  />
 
-Boozicorns
-==========
+#Boozicorns#
 
 There was this wine. The only store in Pennsylvania that carried it was 60 miles away.
 
@@ -38,8 +37,7 @@ Maybe that's not a lot of data if you're one of those millions-of-rows people, b
 And it's a lot to ask of any human. **I guess I should make a computer do it.**
 
 
-data liberation
----------------
+###data liberation###
 There's no API. Surprise, surprise. So a-scraping we go.
 
 That doesn't mean we can't be nice about how we go about acquiring what we want. I send my name and email address in headers and limit concurrent requests to the PLCB's server(s). **This is data that can help people be better consumers.** Liberating data from hard-to-navigate interfaces can only help the PLCB's customers. Or at least that's what I'm telling myself.
