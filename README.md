@@ -7,7 +7,7 @@ There was this wine. The only store in Pennsylvania that carried it was 60 miles
 
 I knew this because Pennsylvania is a control state when it comes to adult beverages. It hires the administrative and retail employees, it selects the products, it stores and ships them, it controls point-of-sale transactions. If you know what you want, it's relatively easy to search for it.
 
-But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces make it impossible to see everything that's only in one store.
+But not everyone does. And the Pennsylvania Liquor Control Board's search interfaces make it impossible to see everything that's in only one store.
 
 Here's one:
 
