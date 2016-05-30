@@ -39,19 +39,7 @@ And it's not like the PLCB is actively discouraging this sort of thing.
 
 So here we are.
 
-The interfaces the PLCB provides are not helpful for this sort of thing.
-
-Here's one:
-
-![alt text][finewine]
-
-And here's another:
-
-![alt text][psearch]
-
-Yeah.
-
-To go through those interfaces, I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
+To go through those interfaces -- they [really](https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png) are [special](https://github.com/thejqs/plcb/blob/master/interface.png) -- I'd have to read through roughly 2,500 search pages containing about 60,000 products or comb 680 pages of ugly PDF just to find the 14,000-plus that are sold in retail stores. Then I'd have to go through each of those 14,000 to find the ~2,000 that are sold only in one store on a given day.
 
 So somewhere on the order of 14,000 to 17,000 pages to inspect. Daily.
 
@@ -92,11 +80,11 @@ Once in hand, the data goes into a PostgreSQL database for later time-series and
 
 The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later -- sometimes even 8 p.m.
 
-The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest. Varnish and its large TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day. How well does Varnish play with Django's cross-site forgery request tokens, you ask?
+The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest. Varnish and its fat TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day. How well does Varnish play with Django's cross-site forgery request tokens, you ask?
 
 ![alt text][puking_rainbows]
 
-The data might not change much day to day. But maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
+The data itself might not change much day to day. Maybe something is on sale today that wasn't yesterday. Or the number of bottles available might have gone down from 12 one day to eight the next to two the next.
 
 Guess there's really only one way to find out.
 
@@ -105,7 +93,5 @@ Thus: *On Python!* *On JavaScript!*
 **Let's do this.**
 
 [leaflet]:https://github.com/thejqs/plcb/blob/master/leaflet_screenshot1.png
-[finewine]: https://github.com/thejqs/plcb/blob/master/Screenshot%202016-03-22%2010.46.17.png
-[psearch]: https://github.com/thejqs/plcb/blob/master/interface.png
 [permissions]: https://github.com/thejqs/plcb/blob/master/permissions.png
 [puking_rainbows]: https://github.com/thejqs/plcb/blob/master/main/static/media/puking_rainbows.gif
