@@ -11,7 +11,7 @@
         <div class="message">{{ message }}</div>
         <div id="total"><p>Found {{ unicorn_response|length }}</p></div>
         <div id="search-form">
-            <form method="POST" action='{% url "unicorns" %}'>
+            <form method="POST" action='{% url "search" %}'>
                 {% csrf_token %}
                 <p>{{ form }}</p>
                 <div id="search-button">

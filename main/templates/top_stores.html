@@ -9,7 +9,7 @@
 <div id="boozicorn-image"><a href="{% url 'unicorns' %}"><img src="{% static 'media/boozicorn_transparent.png' %}" alt="The site's logo: A unicorn with a wine bottle for a horn. Pretty great." /></a></div>
     <div class="search-results">
         <div id="search-form">
-            <form method="POST" action='{% url "unicorns" %}'>
+            <form method="POST" action='{% url "search" %}'>
                 {% csrf_token %}
                 <p>{{ form }}</p>
                 <div class="unicorn-button">
