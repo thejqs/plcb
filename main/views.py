@@ -3,7 +3,7 @@ from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, requires_csrf_token
 from django.views.decorators.cache import cache_page
 from django.views.generic import View
 from django.conf import settings
@@ -47,7 +47,7 @@ class AllUnicornsView(View):
         context['form'] = form
         # one successful trip to the database, please
         boozicorns = Unicorn.objects.filter(scrape_date=
-                                            day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
+                                            '2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=
@@ -139,7 +139,11 @@ class AllUnicornsView(View):
         context['unicorns'] = unicorns_dict
         return render(request, 'boozicorns.html', context, context_instance=request_context)
 
-    @method_decorator(csrf_protect)
+class SearchView(View):
+    @method_decorator(requires_csrf_token)
+    def dispatch(self, *args, **kwargs):
+        return super(SearchView, self).dispatch(*args, **kwargs)
+
     def post(self, request):
         '''
         cleans and handles search input
@@ -163,9 +167,10 @@ class AllUnicornsView(View):
 
         return render_to_response('search_results.html', context, context_instance=RequestContext(request))
 
+
 class TopStoresView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(TopStoresView, self).dispatch(*args, **kwargs)
 
@@ -176,7 +181,7 @@ class TopStoresView(View):
 
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date='2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
@@ -201,33 +206,19 @@ class TopStoresView(View):
         context['id_stub'] = 'store-'
         return render(request, 'top_stores.html', context, context_instance=request_context)
 
-    def post(self, request):
-        '''
-        cleans and handles search input
-
-        returns:
-        search response data to the correct template
-        '''
-        context = {}
-        request_context = RequestContext(request)
-        form = SearchBoozicornForm(request.POST)
-        context['form'] = form
-
-        if form.is_valid():
-            context['unicorn_response'] = vh.search_boozicorns(form, context)
-            if context['unicorn_response']:
-                context['message'] = "WOO BOOZICORNS"
-            else:
-                context['message'] = 'Ain\'t got none o\' them.'
-        else:
-            context['message'] = 'That\'s not a valid search.\nC\'mon now.'
-
-        return render_to_response('search_results.html', context, context_instance=RequestContext(request))
+    # def post(self, request):
+    #     '''
+    #     cleans and handles search input
+    #
+    #     returns:
+    #     search response data to the correct template
+    #     '''
+    #     SearchView(View).post(self, request)
 
 
 class FancyView(View):
     # @method_decorator(@cache_page(60 * 60 * 2)) ?
-    @method_decorator(csrf_protect)
+    @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(FancyView, self).dispatch(*args, **kwargs)
 
@@ -237,7 +228,7 @@ class FancyView(View):
         request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
-        boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
+        boozicorns = Unicorn.objects.filter(scrape_date='2016-05-27')  # day_switcher['today'].strftime('%Y-%m-%d')
         if not boozicorns:
             try:
                 boozicorns = Unicorn.objects.filter(scrape_date=day_switcher['yesterday'].strftime('%Y-%m-%d'))
@@ -252,25 +243,11 @@ class FancyView(View):
 
         return render(request, 'fancy.html', context, context_instance=request_context)
 
-    def post(self, request):
-        '''
-        cleans and handles search input
-
-        returns:
-        search response data to the correct template
-        '''
-        context = {}
-        request_context = RequestContext(request)
-        form = SearchBoozicornForm(request.POST)
-        context['form'] = form
-
-        if form.is_valid():
-            context['unicorn_response'] = vh.search_boozicorns(form, context)
-            if context['unicorn_response']:
-                context['message'] = "WOO BOOZICORNS"
-            else:
-                context['message'] = 'Ain\'t got none o\' them.'
-        else:
-            context['message'] = 'That\'s not a valid search.\nC\'mon now.'
-
-        return render_to_response('search_results.html', context, context_instance=RequestContext(request))
+    # def post(self, request):
+    #     '''
+    #     cleans and handles search input
+    #
+    #     returns:
+    #     search response data to the correct template
+    #     '''
+    #     SearchView(View).post(self, request)
