@@ -95,7 +95,7 @@ function populateMap () {
                             + ''
                           }
         };
-        marker.bindPopup(popupHtml + product_info, {maxWidth: 250, maxHeight: 250});
+        marker.bindPopup(popupHtml + product_info, {maxWidth: 250, maxHeight: 200});
       }
       }
     }
