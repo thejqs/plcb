@@ -95,7 +95,7 @@ function populateMap () {
                             + ''
                           }
         };
-        marker.bindPopup(popupHtml + product_info, {maxWidth: 300, maxHeight: 200});
+        marker.bindPopup(popupHtml + product_info, {maxWidth: 250, maxHeight: 200});
       }
       }
     }
@@ -148,7 +148,7 @@ function getStores(stores_xhr) {
   // var numStores = stores.length
   // document.getElementById('num-stores').innerHTML = numStores
   var stores_percentage = ((uniques.size / stores.length) * 100).toFixed(1);
-  document.getElementById('boozicorns-stores-percentage').innerHTML = stores_percentage;
+  document.getElementById('boozicorns-stores-percentage').innerHTML = ', ' + stores_percentage + '% of total';
 };
 
 window.onload = firstAjax();
