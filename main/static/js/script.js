@@ -2,6 +2,7 @@ var stores = []
 var unicorns = []
 var uniques = new Set()
 
+L.preferCanvas = true;
 var layer = new L.StamenTileLayer('toner-background')
 var southWest = L.latLng(39, -81)
 var northEast = L.latLng(44, -74)
