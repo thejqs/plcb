@@ -3,7 +3,10 @@
 '''
 a helper script to make sure the server process updates to account for
 new data and also that the cache refreshes at the right time --
-but only after the scraper completes and exits, reliquishing memory
+but only after the scraper completes and exits, reliquishing memory. crontab
+can run this file instead of the scraper itself and then there is no reason
+to try to, say, track some state change elsewhere to figure out when the scraper
+completes and dumps its data.
 '''
 
 /sites/virtualenvs/plcb/bin/python /sites/projects/plcb/manage.py cron_job >> /sites/projects/plcb/cronlog.txt
