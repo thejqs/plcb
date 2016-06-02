@@ -9,7 +9,7 @@ var northEast = L.latLng(44, -74)
 var bounds = L.latLngBounds(southWest, northEast)
 var map = new L.Map('map', {maxBounds: bounds, minZoom: 7, scrollWheelZoom: false})
     .setView([41, -77.5], 8)
-    .locate({setView: true, maxZoom: 10})
+//    .locate({setView: true, maxZoom: 10})
 map.addLayer(layer)
 
 var width = document.documentElement.clientWidth;
