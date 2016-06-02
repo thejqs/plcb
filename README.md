@@ -79,7 +79,7 @@ Once in hand, the data goes into a PostgreSQL database for later time-series and
 
 The state's database conveniently updates at the close of business each day, which for some reason means about 5 a.m. or later the following day. The PDF doesn't go up until about 8 a.m. at the earliest. On Sundays and other random days it can be 2 p.m. or later -- sometimes even 8 p.m.
 
-The main scrape script runs daily on a cronjob from a remote Linux/Ubuntu server to collect the data when it's freshest. Varnish and its fat TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day. How well does Varnish play with Django's cross-site forgery request tokens, you ask?
+A daily cronjob set up on a a remote Linux/Ubuntu server runs a shell script that handles the scraper to collect the data when it's freshest as well as restarting server processes whenever the scraper completes. Varnish and its fat TTL steps between Apache and the request to handle caching as the data doesn't change more than once a day. How well does Varnish play with Django's cross-site forgery request tokens, you ask?
 
 ![alt text][puking_rainbows]
 
