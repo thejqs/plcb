@@ -6,5 +6,5 @@ printf "restarting apache and varnish ....\n" >> /sites/projects/plcb/cronlog.tx
 service apache2 restart
 service varnish restart
 printf "done." >> /sites/projects/plcb/cronlog.txt
-printf "_%.0s" {1..30} >> /sites/projects/plcb/cronlog.txt
 printf "\n"
+printf "_%.0s" {1..30} >> /sites/projects/plcb/cronlog.txt
