@@ -40,7 +40,7 @@ def check_for_new_codes(tries=[0]):
         d = datetime.date.today()
         # checking the headers to make sure it's from the right date
         # and right type; if there's a 500 or 503 error, that handles it
-        if d.strftime('%d %b %Y') in req.headers['last-modified'] and req.headers['content-type'] == 'application/pdf':
+        if d.strftime('%d %b %Y') in req.headers['Last-Modified']:
             copy_pdf(pdf_url)
 
         else:

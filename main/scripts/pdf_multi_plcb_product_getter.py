@@ -38,6 +38,7 @@ from multiprocessing import Pool
 import pdf_parser
 import aws_uploader as aws
 import daily_importer as importer
+import restarter
 
 
 def open_url(url):
@@ -278,6 +279,8 @@ def hunt_unicorns():
 
     end_unicorns = datetime.datetime.now()
     print end_unicorns - start_products
+#    print 'restarting apache and varnish ....'
+#    restarter.call_restart(['apache2', 'varnish'])
     print 'all cleaned up. long day. tacos?'
     print '_' * 30
 

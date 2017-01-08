@@ -26,7 +26,7 @@ class Unicorn(models.Model):
     product_id = models.CharField(max_length=10)
     name = models.CharField(max_length=255, null=False, blank=False)
     num_bottles = models.IntegerField(null=False)
-    bottle_size = models.CharField(max_length=10, null=False, blank=False)
+    bottle_size = models.CharField(max_length=50, null=False, blank=False)
     price = models.FloatField(null=False, blank=False)
     on_sale = models.NullBooleanField(null=True, blank=True)
     on_sale_price = models.FloatField(null=True, blank=True)

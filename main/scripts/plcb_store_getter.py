@@ -177,7 +177,7 @@ def start_scrape():
     # number to the listSize attribute here even though it's not a page option.
     # the call to .format() is simply to make that more explicit
     # for future me or anyone who has to read this
-    data = dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize={0}&category=&city=&zip_code=&county=All+Stores&storeNO=%'.format(700))
+    data = dict_builder('http://www.finewineandgoodspirits.com/webapp/wcs/stores/servlet/FindStoreView?storeId=10051&langId=-1&catalogId=10051&pageNum=1&listSize={0}&category=&city=&zip_code=&county=All+Stores&storeNO='.format(700))
     write_json_to_file(data)
     print "done."
 

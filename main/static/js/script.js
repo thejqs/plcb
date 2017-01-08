@@ -105,7 +105,7 @@ function populateMap () {
 
 function secondAjax () {
   var stores_xhr = new XMLHttpRequest();
-  stores_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/retail_stores-2016-05-28.json', true);
+  stores_xhr.open('GET', 'https://s3.amazonaws.com/boozicorns/retail_stores-2017-01-08.json', true);
   stores_xhr.onload = function () {
     if (stores_xhr.status === 200) {
       getStores(stores_xhr);
@@ -152,4 +152,4 @@ function getStores(stores_xhr) {
   document.getElementById('boozicorns-stores-percentage').innerHTML = ', ' + stores_percentage + '% of total';
 };
 
-window.onload = firstAjax();
+firstAjax();

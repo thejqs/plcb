@@ -79,19 +79,19 @@ class AllUnicornsView(View):
             if price > 100:
                 fancy.append(unicorn)
 
-            if 'Whiskey' in name and unicorn not in whiskey:
+            if 'whiskey' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if 'Bourbon' in name and unicorn not in whiskey:
+            if 'bourbon' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if 'Scotch' in name and unicorn not in whiskey:
+            if 'scotch' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if 'Rum' in name and unicorn not in rum:
+            if ' rum ' in name.lower() or name.endswith('Rum') and unicorn not in rum:
                 rum.append(unicorn)
-            if 'Tequila' in name and unicorn not in agave:
+            if 'tequila' in name.lower() and unicorn not in agave:
                 agave.append(unicorn)
-            if 'Mezcal' in name and unicorn not in agave:
+            if 'mezcal' in name.lower() and unicorn not in agave:
                 agave.append(unicorn)
-            if 'Gin' in name and 'Ginjo' not in name and 'Ginger' not in name and unicorn not in gin:
+            if (' gin ' in name.lower() or name.endswith('Gin')) and ('Ginjo' not in name and 'Ginger' not in name) and unicorn not in gin:
                 gin.append(unicorn)
 
         # returns the top 10 store ids
