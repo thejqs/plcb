@@ -43,17 +43,18 @@ class AllUnicornsView(View):
         request_context = RequestContext(request)
         form = SearchBoozicornForm()
         context['form'] = form
+
         # one successful trip to the database, please
         boozicorns = Unicorn.objects.filter(scrape_date=
-                                            day_switcher['today'].strftime('%Y-%m-%d'))  # day_switcher['today'].strftime('%Y-%m-%d')
+                                            day_switcher['today'].strftime('%Y-%m-%d'))
+
         if not boozicorns:
-            try:
-                boozicorns = Unicorn.objects.filter(scrape_date=
-                                                    day_switcher['yesterday'].strftime('%Y-%m-%d'))
-            except Exception:
-                boozicorns = Unicorn.objects.filter(scrape_date=
-                                                    (day_switcher['yesterday'] - datetime.timedelta(days=1)).strftime('%Y-%m-%d'))
-        # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
+            # get the most recent date for data and use that
+            file_date_pattern = '((?<=\-)\d+.*(?=\.))'
+            most_recent_unicorns = sorted(os.listdir('main/data/unicorns_json/'))[-1]
+            most_recent_file_date = re.search(file_date_pattern, most_recent_unicorns).group()
+            boozicorns = Unicorn.objects.filter(scrape_date=most_recent_file_date)
+            # unicorns_json = json.load(fp)  # , object_hook=ascii_encode_dict
         most_bottles = None
         stores = []
         whiskey = []
@@ -66,13 +67,16 @@ class AllUnicornsView(View):
 
         # capturing as much as we can in one loop through the objects
         for unicorn in boozicorns:
+            # name = unicorn.name
             name = unicorn.name
+            # num_bottles = int(unicorn.num_bottles)
             num_bottles = int(unicorn.num_bottles)
             num_bottles_unicorn = None
+            # price = unicorn.price
             price = unicorn.price
             # we'll count these later to see which store has the most
+            # stores.append(unicorn.store.store_id)
             stores.append(unicorn.store.store_id)
-
             if most_bottles is None or most_bottles < num_bottles:
                 most_bottles = num_bottles
                 most_bottles_unicorn = unicorn
@@ -81,17 +85,17 @@ class AllUnicornsView(View):
 
             if 'whiskey' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if 'bourbon' in name.lower() and unicorn not in whiskey:
+            elif 'bourbon' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if 'scotch' in name.lower() and unicorn not in whiskey:
+            elif 'scotch' in name.lower() and unicorn not in whiskey:
                 whiskey.append(unicorn)
-            if ' rum ' in name.lower() or name.endswith('Rum') and unicorn not in rum:
+            elif ' rum ' in name.lower() or name.endswith('Rum') and unicorn not in rum:
                 rum.append(unicorn)
-            if 'tequila' in name.lower() and unicorn not in agave:
+            elif 'tequila' in name.lower() and unicorn not in agave:
                 agave.append(unicorn)
-            if 'mezcal' in name.lower() and unicorn not in agave:
+            elif 'mezcal' in name.lower() and unicorn not in agave:
                 agave.append(unicorn)
-            if (' gin ' in name.lower() or name.endswith('Gin')) and ('Ginjo' not in name and 'Ginger' not in name) and unicorn not in gin:
+            elif (' gin ' in name.lower() or name.endswith('Gin')) and ('Ginjo' not in name and 'Ginger' not in name) and unicorn not in gin:
                 gin.append(unicorn)
 
         # returns the top 10 store ids
