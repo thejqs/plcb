@@ -121,26 +121,17 @@ def import_unicorns(filepath):
         # this is super ugly. like large marge from pee-wee's
         # big adventure ugly. for now it just needs to work
         try:
-            u.store = Store.objects.get(store_id=str(unicorn['store_id']),
-                                        store_data_date='2016-04-10')
+            u.store = Store.objects.filter(store_id=str(unicorn['store_id']))[0]
         except Store.DoesNotExist:
             try:
+                print 'making a new store ....'
+                make_new_store(unicorn)
                 u.store = Store.objects.get(store_id=str(unicorn['store_id']),
-                                            store_data_date='2016-05-15')
-            except Store.DoesNotExist:
-                try:
-                    u.store = Store.objects.get(store_id=str(unicorn['store_id']),
-                                                store_data_date__gt='2016-05-15')
-                except Store.DoesNotExist:
-                    try:
-                        print 'making a new store ....'
-                        make_new_store(unicorn)
-                        u.store = Store.objects.get(store_id=str(unicorn['store_id']),
-                                                store_data_date=day_switcher['today'].strftime('%Y-%m-%d'))
-                        print u.store
+                                        store_data_date=day_switcher['today'].strftime('%Y-%m-%d'))
+                print u.store
 
-                    except Store.DoesNotExist as e:
-                        print unicorn, e
+            except Store.DoesNotExist as e:
+                print unicorn, e
 
         u.save()
 
@@ -151,4 +142,4 @@ def migrate():
 
 
 if __name__ == '__main__':
-    import_unicorns()
+    import_unicorns(filepath)
