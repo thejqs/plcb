@@ -118,8 +118,7 @@ def import_unicorns(filepath):
         u.on_sale = unicorn['on_sale']
         u.on_sale_price = unicorn['on_sale']
         u.scrape_date = unicorn['scrape_date']
-        # this is super ugly. like large marge from pee-wee's
-        # big adventure ugly. for now it just needs to work
+        # this is less ugly than it used to be. still just needs to work
         try:
             u.store = Store.objects.filter(store_id=str(unicorn['store_id']))[0]
         except Store.DoesNotExist:
